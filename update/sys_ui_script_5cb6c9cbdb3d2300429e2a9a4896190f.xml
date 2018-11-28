@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.48.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([48],{
+
+/***/ 1278:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var dashboard_component_1 = __webpack_require__(1369);
+var dashboard_router_1 = __webpack_require__(1595);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var DashboardModule = /** @class */ (function () {
+    function DashboardModule() {
+    }
+    DashboardModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, dashboard_router_1.dashboardRouter],
+            declarations: [dashboard_component_1.DashboardComponent]
+        })
+    ], DashboardModule);
+    return DashboardModule;
+}());
+exports.DashboardModule = DashboardModule;
+
+
+/***/ }),
+
+/***/ 1369:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var router_1 = __webpack_require__(48);
+var page_view_service_1 = __webpack_require__(498);
+var DashboardComponent = /** @class */ (function () {
+    function DashboardComponent(commonServices, cookies, dateFilter, router, pageView) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.router = router;
+        this.pageView = pageView;
+        this.ParentChildFlag = false;
+        this.crFlag = false;
+        this.irFlag = false;
+        this.srFlag = false;
+        this.dashboardWidgets = [];
+        this.currentUser = {};
+        this.selectedDateOption = 'week';
+        this.selectedMappingOption = 'parent';
+        this.trends = 1;
+        this.chartoptions = {
+            chart: {
+                type: 'pieChart',
+                height: 250,
+                x: function (d) { return d.key; },
+                y: function (d) { return d.y; },
+                tooltip: {
+                    enabled: false
+                },
+                showLabels: true,
+                labelType: 'value',
+                duration: 500,
+                donut: true,
+                showLegend: false,
+                valueFormat: function (n) {
+                    return n;
+                },
+                pie: {
+                    dispatch: {
+                        elementClick: function (e) {
+                            _this.chartoptions.chart.tooltip.enabled = false;
+                            _this.pageView.setData({ selectedTab: e.data.name, selectedMappingOption: _this.selectedMappingOption, status: e.data.key });
+                            _this.router.navigate(['/availability'], { preserveFragment: true });
+                        }
+                    },
+                }
+            }
+        };
+        this.noDataChartoptions = {
+            chart: {
+                type: 'pieChart',
+                height: 250,
+                tooltip: {
+                    enabled: false
+                },
+                x: function (d) { return d.key; },
+                y: function (d) { return d.y; },
+                showLabels: true,
+                duration: 500,
+                donut: true,
+                showLegend: false
+            }
+        };
+        this.noChartdata = [{
+                key: "0",
+                y: 1,
+                color: 'rgb(204, 204, 204)'
+            }];
+        this.loadDashBoard = function () {
+            var ticketPostData = {
+                "partyId": _this.currentUser.party_id,
+                "fromDate": _this.fromDate,
+                "toDate": _this.toDate,
+                "displayOption": _this.selectedMappingOption
+            };
+            /* _core/getChildClientsDetails */
+            var postData = {
+                customerName: _this.currentUser.customer_name
+            };
+            _this.commonServices.postRequest('/_core/getChildClientsDetails', postData).then(function (resDetails) {
+                if (resDetails.items.length >= 1) {
+                    _this.ParentChildFlag = true;
+                }
+                else {
+                    _this.ParentChildFlag = false;
+                }
+            });
+            var ITILDashboardFlag = _this.commonServices.checkApiAvailability('ITILDashboard');
+            if (ITILDashboardFlag) {
+                _this.dashboardWidgets = [
+                    {
+                        type: 'customService',
+                        items: [{
+                                "tittle": "Service Requests",
+                                "widgetType": "customBar",
+                                "labelText": "Loading...",
+                                "container": "srRequestChart",
+                                "statusText": "Last 7 Days",
+                                "isReady": false,
+                                "data": [],
+                                "className": "col-md-6",
+                                "dateOption": true,
+                                url: 'service-list',
+                                icon: 'servicerequest.svg'
+                            },
+                            {
+                                "tittle": "Incidents",
+                                "widgetType": "customBar",
+                                "labelText": "Loading...",
+                                "container": "incidentsRequestChart",
+                                "isReady": false,
+                                "statusText": "Last 7 Days",
+                                "data": [],
+                                "className": "col-md-6",
+                                "dateOption": true,
+                                url: 'incident-list',
+                                icon: 'incidentrequest.svg'
+                            },
+                            {
+                                "tittle": "Change Requests",
+                                "widgetType": "customBar",
+                                "labelText": "Loading...",
+                                "container": "cRequestChart",
+                                "isReady": false,
+                                "statusText": "Last 7 Days",
+                                "data": [],
+                                "className": "col-md-6",
+                                "dateOption": true,
+                                url: 'change-list',
+                                icon: 'change_management.svg'
+                            },
+                            {
+                                "tittle": "Trend Requests",
+                                "widgetType": "progressBarChart",
+                                "labelText": "Loading...",
+                                "container": "srTrendChart",
+                                "isReady": false,
+                                "statusText": "Last 30 Days",
+                                "data": [],
+                                "className": "col-md-6",
+                                "dateOption": true,
+                                icon: 'trend.svg'
+                            }]
+                    }
+                ];
+                _this.getTicketsStatsForDash(ticketPostData);
+            }
+            var availabilityDashFlag = _this.commonServices.checkApiAvailability('NW-Status-Dashboard');
+            if (availabilityDashFlag) {
+                _this.getVilAbilityDash(_this.selectedMappingOption);
+            }
+        };
+        this.getVilAbilityDash = function (displayOption) {
+            var availabilityObj = {
+                "tittle": "NETWORK STATUS",
+                "type": "custom-donut",
+                "labelText": "Loading...",
+                "isReady": false,
+                "data": [],
+                "className": "col-md-12",
+                url: 'availability',
+                icon: 'network_details.svg'
+            };
+            _this.dashboardWidgets.push(availabilityObj);
+            var callingurl = '/_asset/getNetworkStatus/' + displayOption;
+            _this.commonServices.getRequest(callingurl).then(function (resDetails) {
+                if (resDetails.status == "success") {
+                    var deviceChartObj = {
+                        title: 'Devices',
+                        chartData: [
+                            { name: 'Devices', key: 'UP', y: resDetails.items[0].device.up, color: 'rgb(154, 187, 88)' },
+                            { name: 'Devices', key: 'DOWN', y: resDetails.items[0].device.down, color: 'rgb(243, 68, 82)' }
+                        ]
+                    };
+                    var linkChartObj = {
+                        title: 'Links',
+                        chartData: [
+                            { name: 'Links', key: 'UP', y: resDetails.items[1].link.up, color: 'rgb(154, 187, 88)' },
+                            { name: 'Links', key: 'DOWN', y: resDetails.items[1].link.down, color: 'rgb(243, 68, 82)' }
+                        ]
+                    };
+                    var siteChartObj = {
+                        title: 'Sites',
+                        chartData: [
+                            { name: 'Sites', key: 'UP', y: resDetails.items[2].site.overAllUpCnt, color: 'rgb(154, 187, 88)' },
+                            { name: 'Sites', key: 'DOWN', y: resDetails.items[2].site.overAllDownCnt, color: 'rgb(243, 68, 82)' }
+                        ]
+                    };
+                    _this.dashboardWidgets[1].data.push(siteChartObj);
+                    _this.dashboardWidgets[1].data.push(deviceChartObj);
+                    _this.dashboardWidgets[1].data.push(linkChartObj);
+                    _this.dashboardWidgets[1].isReady = true;
+                }
+            }, function (err) {
+            });
+        };
+        this.getTicketsStatsForDash = function (postData) {
+            _this.dashboardWidgets[0].items[0].data = {};
+            _this.dashboardWidgets[0].items[1].data = {};
+            _this.dashboardWidgets[0].items[2].data = {};
+            _this.dashboardWidgets[0].items[0].isReady = false;
+            _this.dashboardWidgets[0].items[1].isReady = false;
+            _this.dashboardWidgets[0].items[2].isReady = false;
+            _this.commonServices.postRequest('/_itil/itilDashboard', postData).then(function (resDetails) {
+                if (resDetails.status == "success") {
+                    var responseDetails = resDetails.items[0];
+                    if (responseDetails.ITILDashboardCountSRCustomer) {
+                        var dataItem1 = {
+                            Open: {
+                                Customer: responseDetails.ITILDashboardCountSRCustomer.open,
+                                Sify: responseDetails.ITILDashboardCountSRSify.open,
+                            },
+                            "In Progress": {
+                                Customer: responseDetails.ITILDashboardCountSRCustomer.progress,
+                                Sify: responseDetails.ITILDashboardCountSRSify.progress,
+                            },
+                            Closed: {
+                                Customer: responseDetails.ITILDashboardCountSRCustomer.close,
+                                Sify: responseDetails.ITILDashboardCountSRSify.close,
+                            }
+                        };
+                        _this.dashboardWidgets[0].items[0].isReady = true;
+                        _this.dashboardWidgets[0].items[0].data = dataItem1;
+                    }
+                    else {
+                        _this.dashboardWidgets[0].items[0].labelText = "No Records Found";
+                    }
+                    if (responseDetails.ITILDashboardCountIRCustomer) {
+                        var dataItem2 = {
+                            Open: {
+                                Customer: responseDetails.ITILDashboardCountIRCustomer.open,
+                                Sify: responseDetails.ITILDashboardCountIRSify.open,
+                            },
+                            "In Progress": {
+                                Customer: responseDetails.ITILDashboardCountIRCustomer.progress,
+                                Sify: responseDetails.ITILDashboardCountIRSify.progress,
+                            },
+                            Closed: {
+                                Customer: responseDetails.ITILDashboardCountIRCustomer.close,
+                                Sify: responseDetails.ITILDashboardCountIRSify.close,
+                            }
+                        };
+                        _this.dashboardWidgets[0].items[1].isReady = true;
+                        _this.dashboardWidgets[0].items[1].data = dataItem2;
+                    }
+                    else {
+                        _this.dashboardWidgets[0].items[1].labelText = "No Records Found";
+                    }
+                    if (responseDetails.ITILDashboardCountCRCustomer) {
+                        var dataItem3 = {
+                            Open: {
+                                Customer: responseDetails.ITILDashboardCountCRCustomer.open,
+                                Sify: responseDetails.ITILDashboardCountCRSify.open,
+                            },
+                            "In Progress": {
+                                Customer: responseDetails.ITILDashboardCountCRCustomer.progress,
+                                Sify: responseDetails.ITILDashboardCountCRSify.progress,
+                            },
+                            Closed: {
+                                Customer: responseDetails.ITILDashboardCountCRCustomer.close,
+                                Sify: responseDetails.ITILDashboardCountCRSify.close,
+                            }
+                        };
+                        _this.dashboardWidgets[0].items[2].isReady = true;
+                        _this.dashboardWidgets[0].items[2].data = dataItem3;
+                    }
+                    else {
+                        _this.dashboardWidgets[0].items[2].labelText = "No Records Found";
+                    }
+                    if (responseDetails.ITILDashboardSRTrend) {
+                        var dataItem4 = responseDetails.ITILDashboardSRTrend;
+                        _this.dashboardWidgets[0].items[3].isReady = true;
+                        var dataArr = [];
+                        var colorArr = ["#f12e36", "#f3595f", "#f58387", "#f7acaf", "#f7acaf"];
+                        var indxKey = 0;
+                        dataItem4.forEach(function (item) {
+                            var toPushObj = {};
+                            toPushObj.name = item.incidentType;
+                            toPushObj.value = item.count;
+                            toPushObj.styleObj = {};
+                            toPushObj.countObj = {};
+                            dataArr.push(toPushObj);
+                        });
+                        dataArr.sort(function (a, b) {
+                            if (a.value < b.value)
+                                return 1;
+                            if (a.value > b.value)
+                                return -1;
+                            return 0;
+                        });
+                        dataArr.forEach(function (val, key) {
+                            val.color = colorArr[key];
+                            val.styleObj.backgroundColor = val.color;
+                            val.styleObj.width = ((val.value / dataArr[0].value) * 100) + '%';
+                            val.styleObj.cursor = 'pointer';
+                            val.countObj.left = (((val.value / dataArr[0].value) * 100) + 10) + '%';
+                        });
+                        dataArr.splice(5, dataArr.length);
+                        console.log('dataArr', dataArr);
+                        _this.dashboardWidgets[0].items[3].data = dataArr;
+                    }
+                    else {
+                        _this.dashboardWidgets[0].items[3].labelText = "No Records Found";
+                    }
+                    if (responseDetails.ITILDashboardIRTrend) {
+                        var dataItem5 = responseDetails.ITILDashboardIRTrend;
+                        _this.dashboardWidgets[0].items[3].isReady = true;
+                        var dataArr = [];
+                        var colorArr = ["#f12e36", "#f3595f", "#f58387", "#f7acaf", "#f7acaf"];
+                        var indxKey = 0;
+                        dataItem5.forEach(function (item) {
+                            var toPushObj = {};
+                            toPushObj.name = item.incidentType;
+                            toPushObj.value = item.count;
+                            toPushObj.styleObj = {};
+                            toPushObj.countObj = {};
+                            dataArr.push(toPushObj);
+                        });
+                        dataArr.sort(function (a, b) {
+                            if (a.value < b.value)
+                                return 1;
+                            if (a.value > b.value)
+                                return -1;
+                            return 0;
+                        });
+                        dataArr.forEach(function (val, key) {
+                            val.color = colorArr[key];
+                            val.styleObj.backgroundColor = val.color;
+                            val.styleObj.width = ((val.value / dataArr[0].value) * 100) + '%';
+                            val.styleObj.cursor = 'pointer';
+                            val.countObj.left = (((val.value / dataArr[0].value) * 100) + 10) + '%';
+                        });
+                        dataArr.splice(5, dataArr.length);
+                        _this.dashboardWidgets[0].items[3].incidents = dataArr;
+                    }
+                    else {
+                        _this.dashboardWidgets[0].items[3].labelText = "No Records Found";
+                    }
+                }
+                else {
+                    _this.commonServices.error(resDetails.message);
+                }
+            }, function (resErr) {
+                //this.showDetailsView = false;
+                _this.commonServices.error(resErr.message);
+            });
+        };
+        this.gotoPage = function (widget, status) {
+            _this.pageView.setData({ selectedMappingOption: _this.selectedMappingOption, consolidateStatus: status });
+            if (widget.url == 'service-list' && !_this.srFlag) {
+                return false;
+            }
+            else if (widget.url == 'incident-list' && !_this.irFlag) {
+                return false;
+            }
+            else if (widget.url == 'change-list' && !_this.crFlag) {
+                return false;
+            }
+            _this.router.navigate([widget.url], { preserveFragment: true });
+        };
+        this.goToTrends = function (widget, url) {
+            _this.pageView.setData({ selectedMappingOption: _this.selectedMappingOption });
+            if (url == 'service-list' && !_this.srFlag) {
+                return false;
+            }
+            else if (widget.url == 'incident-list' && !_this.irFlag) {
+                return false;
+            }
+            _this.router.navigate([url], { preserveFragment: true });
+        };
+        this.mappingOption = function (mappingOption) {
+            _this.selectedMappingOption = mappingOption;
+            _this.dashboardWidgets = [];
+            _this.loadDashBoard();
+        };
+        this.choseDate = function (dateOption, index, data) {
+            _this.selectedDateOption = dateOption;
+            _this.dashboardWidgets[0].items[index].isReady = false;
+            var today = new Date();
+            if (dateOption == 'live') {
+                var time = today.getTime();
+                var lastWeekTime = time - (24 * 7 * 60 * 60 * 1000);
+                _this.fromDate = _this.dateFilter.transform(new Date(today), 'dd-MMM-yyyy');
+                _this.toDate = _this.dateFilter.transform(today, 'dd-MMM-yyyy');
+            }
+            else if (dateOption == 'week') {
+                var time = today.getTime();
+                var lastWeekTime = time - (24 * 7 * 60 * 60 * 1000);
+                _this.fromDate = _this.dateFilter.transform(new Date(lastWeekTime), 'dd-MMM-yyyy');
+                _this.toDate = _this.dateFilter.transform(today, 'dd-MMM-yyyy');
+            }
+            else {
+                var time = today.getTime();
+                var lastMonthTime = time - (24 * 30 * 60 * 60 * 1000);
+                _this.fromDate = _this.dateFilter.transform(new Date(lastMonthTime), 'dd-MMM-yyyy');
+                _this.toDate = _this.dateFilter.transform(today, 'dd-MMM-yyyy');
+            }
+            var ticketPostData = {
+                "partyId": _this.currentUser.party_id,
+                "fromDate": _this.fromDate,
+                "toDate": _this.toDate,
+                "displayOption": _this.selectedMappingOption
+            };
+            _this.getTicketsStatsForDash(ticketPostData);
+        };
+        this.changeTrend = function (val) {
+            _this.trends = val;
+        };
+        this.goToHomePage = function () {
+        };
+    }
+    DashboardComponent.prototype.ngOnInit = function () {
+        this.currentUser = this.cookies.getObject('globals');
+        var today = new Date();
+        var time = today.getTime();
+        var lastWeekTime = time - (24 * 7 * 60 * 60 * 1000);
+        this.fromDate = this.dateFilter.transform(new Date(lastWeekTime), 'dd-MMM-yyyy');
+        this.toDate = this.dateFilter.transform(today, 'dd-MMM-yyyy');
+        this.selectedDateOption = 'week';
+        this.selectedMappingOption = 'parent';
+        this.loadDashBoard();
+        this.crFlag = this.commonServices.checkApiAvailability('ITILTicketListCR');
+        this.irFlag = this.commonServices.checkApiAvailability('ITILTicketListIR');
+        this.srFlag = this.commonServices.checkApiAvailability('ITILTicketListSR');
+    };
+    DashboardComponent = __decorate([
+        core_1.Component({
+            selector: '<dashboard>',
+            template: __webpack_require__(1591),
+            styles: [__webpack_require__(1592)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, router_1.Router, page_view_service_1.PageViewService])
+    ], DashboardComponent);
+    return DashboardComponent;
+}());
+exports.DashboardComponent = DashboardComponent;
+
+
+/***/ }),
+
+/***/ 1591:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n    <div class=\"dashboard-txt\">\n\t\t\t<h1>Dashboard</h1>\n\t</div>\n\t<div *ngFor=\"let dashboardWidget of dashboardWidgets\">\n\t\t<div class=\"row\" *ngIf=\"dashboardWidget.type == 'customService'\">\n\t\t\t<div class=\"no-padding\" [ngClass]=\"widget.className\" id=\"chart1\" *ngFor=\"let widget of dashboardWidget.items; let index =index\">\n\t\t\t\t<div class=\"col-md-12\" *ngIf=\"widget.widgetType == 'customBar'\">\n\t\t\t\t  <div class=\"box-title\"> \n\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t  <img-icon class=\"svg\" src=\"{{widget.icon}}\"></img-icon>\n\t\t\t\t\t  <h3>{{widget.tittle}}</h3>\n\t\t\t\t\t</div>            \n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t  </div>\n\t\t\t\t  <div class=\"box-border\">\n\t\t\t\t\t<div class=\"box-customer\">\n\t\t\t\t\t  <ul>\n\t\t\t\t\t\t<li><span class=\"box1-checkbox\"></span>Customer</li>\n\t\t\t\t\t\t<li><span class=\"box2-checkbox\"></span>Sify</li>\n\t\t\t\t\t  </ul>\n\t\t\t\t\t  <div class=\"clearfix\"></div>\n\t\t\t\t\t</div>   \n\t\t\t\t\t<div class=\"box-tab\"> \n\t\t\t\t\t<!-- Nav tabs -->\n\t\t\t\t\t<div style=\"display:inline-block; padding-right:25px\" *ngIf=\"ParentChildFlag\">\n\t\t\t\t\t  <ul class=\"nav nav-tabs\" role=\"tablist\" >\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'all'}\"><a (click)=\"mappingOption('all',index,widget)\" aria-controls=\"all\" role=\"tab\" data-toggle=\"tab\">ALL</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'parent'}\"><a (click)=\"mappingOption('parent',index,widget)\" aria-controls=\"parent\" role=\"tab\" data-toggle=\"tab\">MAIN</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'child'}\"><a (click)=\"mappingOption('child',index,widget)\" aria-controls=\"child\" role=\"tab\" data-toggle=\"tab\">MEMBERS</a></li>\n\t\t\t\t\t  </ul>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div style=\"display:inline-block\">\n\t\t\t\t\t  <!-- Nav tabs -->\n\t\t\t\t\t  <ul class=\"nav nav-tabs\" role=\"tablist\">\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedDateOption == 'live'}\"><a (click)=\"choseDate('live',index,widget)\" aria-controls=\"today1\" role=\"tab\" data-toggle=\"tab\">TODAY</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedDateOption == 'week'}\"><a (click)=\"choseDate('week',index,widget)\" aria-controls=\"week1\" role=\"tab\" data-toggle=\"tab\">WEEK</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedDateOption == 'month'}\"><a (click)=\"choseDate('month',index,widget)\" aria-controls=\"month1\" role=\"tab\" data-toggle=\"tab\">MONTH</a></li>\n\t\t\t\t\t  </ul>   \n\t\t\t\t\t</div>\n\t\t\t\t\t  <!-- Tab panes -->\n\t\t\t\t\t  <div class=\"tab-content\" *ngIf= \"widget.data && widget.isReady\">\n\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane active\" id=\"today1\">\n\t\t\t\t\t\t  <div class=\"row\">\n\t\t\t\t\t\t\t<div class=\"col-xs-4 pointer\" *ngIf=\"widget.data.Open\" (click)=\"gotoPage(widget,'Open')\">\n\t\t\t\t\t\t\t  <div class=\"color-block-1\">{{widget.data.Open.Customer}}</div>\n\t\t\t\t\t\t\t  <div class=\"color-block-2\">{{widget.data.Open.Sify}}</div>\n\t\t\t\t\t\t\t  <div class=\"block-open\">Open</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"col-xs-4 pointer\" *ngIf=\"widget.data['In Progress']\" (click)=\"gotoPage(widget,'In-Progress')\">\n\t\t\t\t\t\t\t  <div class=\"color-block-1\">{{widget.data['In Progress'].Customer}}</div>\n\t\t\t\t\t\t\t  <div class=\"color-block-2\">{{widget.data['In Progress'].Sify}}</div>\n\t\t\t\t\t\t\t  <div class=\"block-in-progress\">In-progress</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"col-xs-4 pointer\" *ngIf=\"widget.data.Closed\" (click)=\"gotoPage(widget,'Closed')\">\n\t\t\t\t\t\t\t  <div class=\"color-block-1\">{{widget.data.Closed.Customer}}</div>\n\t\t\t\t\t\t\t  <div class=\"color-block-2\">{{widget.data.Closed.Sify}}</div>\n\t\t\t\t\t\t\t  <div class=\"block-closed\">Closed</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t  </div>                  \n\t\t\t\t\t\t</div>\n\t\t\t\t\t  </div>\n\t\t\t\t\t  <div style=\"height : 201px\" *ngIf=\"!widget.isReady\">\n\t\t\t\t\t\tLoading...\n\t\t\t\t\t  </div>\n\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t  </div> \n\t\t\t\t  \n\t\t\t\t  <div class=\"col-md-12\" *ngIf=\"widget.widgetType == 'progressBarChart'\">\n\t\t\t\t  <div class=\"box-title\"> \n\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t  <img-icon class=\"svg\" src=\"{{widget.icon}}\"></img-icon>\n\t\t\t\t\t  <h3>{{widget.tittle}}</h3>\n\t\t\t\t\t</div>            \n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t  </div>\n\t\t\t\t  <div class=\"box-border\">\n\t\t\t\t\t<div class=\"box-customer\">\n\t\t\t\t\t  <ul>\n\t\t\t\t\t\t<li (click)=\"changeTrend(0)\"><span [ngClass]=\"{'active' : trends == 0}\" class=\"box1-radio\"></span>Service</li>\n\t\t\t\t\t\t<li (click)=\"changeTrend(1)\"><span [ngClass]=\"{'active' : trends == 1}\" class=\"box2-radio\"></span>Incident</li>\n\t\t\t\t\t  </ul>\n\t\t\t\t\t  <div class=\"clearfix\"></div>\n\t\t\t\t\t</div>   \n\t\t\t\t\t<div class=\"box-tab\"> \n\t\t\t\t\t  <!-- Nav tabs -->\n\t\t\t\t\t  <div style=\"display:inline-block; padding-right:25px\" *ngIf=\"ParentChildFlag\">\n\t\t\t\t\t  <ul class=\"nav nav-tabs\" role=\"tablist\">\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'all'}\"><a (click)=\"mappingOption('all',index,widget)\" aria-controls=\"all\" role=\"tab\" data-toggle=\"tab\">ALL</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'parent'}\"><a (click)=\"mappingOption('parent',index,widget)\" aria-controls=\"parent\" role=\"tab\" data-toggle=\"tab\">MAIN</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'child'}\"><a (click)=\"mappingOption('child',index,widget)\" aria-controls=\"child\" role=\"tab\" data-toggle=\"tab\">MEMBERS</a></li>\n\t\t\t\t\t  </ul>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div style=\"display:inline-block\">\n\t\t\t\t\t  <ul class=\"nav nav-tabs\" role=\"tablist\">\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedDateOption == 'live'}\"><a (click)=\"choseDate('live',index,widget)\" aria-controls=\"today1\" role=\"tab\" data-toggle=\"tab\">TODAY</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedDateOption == 'week'}\"><a (click)=\"choseDate('week',index,widget)\" aria-controls=\"week1\" role=\"tab\" data-toggle=\"tab\">WEEK</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedDateOption == 'month'}\"><a (click)=\"choseDate('month',index,widget)\" aria-controls=\"month1\" role=\"tab\" data-toggle=\"tab\">MONTH</a></li>\n\t\t\t\t\t  </ul>   \n\t\t\t\t\t</div>\n\t\t\t\t\t  <!-- Tab panes -->\n\t\t\t\t\t  <div style=\"min-height : 201px\" class=\"tab-content\" *ngIf= \"widget.isReady && widget.data\">\n\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane active\">\n\t\t\t\t\t\t  <div class=\"row\" *ngIf=\"trends == 0\">\n\t\t\t\t\t\t\t<div class=\"progress-container col-xs-12\" *ngFor=\"let bar of widget.data\">\n\t\t\t\t\t\t\t\t\t<div class=\"col-xs-6\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"bar-title\"><b>{{bar.name}}</b></div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"col-xs-4\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"progress progress-chart\" [ngStyle]=\"bar.styleObj\" (click)=\"goToTrends(bar,'service-list')\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"100\" aria-valuemin=\"0\" aria-valuemax=\"100\" >\n\t\t\t\t\t\t\t\t\t\t\t\t<span [ngStyle]=\"bar.countObj\" class=\"bar-count\"><b>{{bar.value}}</b></span>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"row\" *ngIf=\"trends == 1\">\n\t\t\t\t\t\t\t<div class=\"progress-container col-xs-12\" *ngFor=\"let bar of widget.incidents\">\n\t\t\t\t\t\t\t\t\t<div class=\"col-xs-6\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"bar-title\"><b>{{bar.name}}</b></div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"col-xs-4\">\n\t\t\t\t\t\t\t\t\t\t<div (click)=\"goToTrends(bar,'incident-list')\" class=\"progress progress-chart\" [ngStyle]=\"bar.styleObj\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"100\" aria-valuemin=\"0\" aria-valuemax=\"100\" >\n\t\t\t\t\t\t\t\t\t\t\t\t<span [ngStyle]=\"bar.countObj\" class=\"bar-count\"><b>{{bar.value}}</b></span>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t  </div>                  \n\t\t\t\t\t\t</div>\n\t\t\t\t\t  </div>\n\t\t\t\t\t  <div style=\"height : 201px\" *ngIf=\"!widget.isReady\">\n\t\t\t\t\t\tLoading...\n\t\t\t\t\t  </div>\n\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t  </div>\t\t  \n\t\t\t</div>\t  \n\t\t</div>\n\t\t<div class=\"col-md-12 no-padding\" *ngIf=\"dashboardWidget.type == 'custom-donut'\">\n\t\t\t<div class=\"box-title\"> \n\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t <img-icon class=\"svg\" src=\"{{dashboardWidget.icon}}\"></img-icon>\n\t\t\t\t  <h3>{{dashboardWidget.tittle}}</h3>\n\t\t\t\t</div>            \n\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t</div>\n\t\t\t \n\t\t\t <div class=\"box-border\" >\n\t\t\t\t<div class=\"box-tab\" *ngIf=\"ParentChildFlag\">\n\t\t\t\t  <div style=\"display:inline-block; padding-right:25px\">\n\t\t\t\t\t  <ul class=\"nav nav-tabs\" role=\"tablist\">\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'all'}\"><a (click)=\"mappingOption('all',index,widget)\" aria-controls=\"all\" role=\"tab\" data-toggle=\"tab\">ALL</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'parent'}\"><a (click)=\"mappingOption('parent',index,widget)\" aria-controls=\"parent\" role=\"tab\" data-toggle=\"tab\">MAIN</a></li>\n\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'child'}\"><a (click)=\"mappingOption('child',index,widget)\" aria-controls=\"child\" role=\"tab\" data-toggle=\"tab\">MEMBERS</a></li>\n\t\t\t\t\t  </ul>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<ul class =\"row col-5\" *ngIf=\"dashboardWidget.isReady\">\n\t\t\t\t\t<li class=\"nw-donut-chart\" *ngFor=\"let donut of dashboardWidget.data\">\n\t\t\t\t\t\t<h4 class=\"custom-dont-title\">{{donut.title}}</h4>\n\t\t\t\t\t\t<nvd3 *ngIf = \"donut.chartData.length\" [options]=\"chartoptions\" [data]=\"donut.chartData\"></nvd3>\n\t\t\t\t\t\t<nvd3 *ngIf = \"!donut.chartData.length\" [options]=\"noDataChartoptions\" [data]=\"noChartdata\"></nvd3>\n\t\t\t\t\t\t<ul class=\"donut-legend\">\n\t\t\t\t\t\t\t<div><span class=\"donut-legend-up\"></span>UP - {{donut.chartData[0].y}}</div>\n\t\t\t\t\t\t\t<div><span class=\"donut-legend-down\"></span>DOWN - {{donut.chartData[1].y}}</div><div><span class=\"donut-legend-total\"></span>TOTAL - {{donut.chartData[1].y + donut.chartData[0].y}}</div>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t\t <div style=\"height : 201px\" *ngIf=\"!dashboardWidget.isReady\">\n\t\t\t\t\t\tLoading...\n\t\t\t\t </div>\n\t\t\t</div>\n\t\t\t \n\t\t   \n\t   </div>\n\t</div>\n    </section>\n</section>";
+
+/***/ }),
+
+/***/ 1592:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1593);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1593:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1594);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./dashboard.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./dashboard.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1594:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".date-options span{\r\n  padding:  10px;\r\n  color: #00a6c9;\r\n  cursor: pointer;\r\n}\r\n.date-options span:hover{\r\n  text-decoration: underline;\r\n}\r\n.date-options .active {\r\n   text-decoration: underline;\r\n}\r\n.dash-table-cell td{\r\n\tpadding : 5px !important;\r\n}\r\n.barChartContainer, .progreesBar{\r\n\tmargin-top: 30px;\r\n}\r\n#srRequestChart, #cRequestChart, #incidentsRequestChart{\r\n\t/*overflow: visible;*/\r\n}.pie-chart-container{\r\n  margin-top : 35px;\r\n}\r\n.progress-chart{\r\n\theight : 16px !important;\r\n\tborder-radius : 10px !important;\r\n}\r\n.bar-count {\r\n\t\tposition: absolute;\r\n\t\tcolor: #636363;\r\n\t\tfont-size : 20px;\r\n}\r\n\r\n.custom-dont-title {\r\n\ttext-align : center;\r\n}\r\n\r\n.nw-donut-chart svg{\r\n\tmargin-top : -30px;\r\n}\r\n.nw-donut-chart {\r\n\twidth : 33% !important;\r\n}\r\n.donut-legend-up{\r\n\theight: 12px;\r\n\twidth: 12px;\r\n\tdisplay: inline-block;\r\n\tmargin-right: 5px;\r\n\tbackground : #9bbb58;\r\n}\r\n.donut-legend-down{\r\n\theight: 12px;\r\n\twidth: 12px;\r\n\tdisplay: inline-block;\r\n\tmargin-right: 5px;\r\n\tbackground : #f34452;\r\n}\r\n.donut-legend-total{\r\n\theight: 12px;\r\n\twidth: 12px;\r\n\tdisplay: inline-block;\r\n\tmargin-right: 5px;\r\n\tbackground : #596577;\r\n}\r\n.donut-legend{\r\n\tcolor: #636363;\r\n    font-size: 14px;\r\n\tmargin-left : 150px;\r\n\tfont-weight: bold;\r\n}\r\n.bar-title{\r\n\tcolor : #000;\r\n}\r\n.box-title img{\r\n    width: 30px !important;\r\n    height: 30px !important;\r\n}\r\n.table-box{\r\n\theight : 286px;\r\n\toverflow : auto;\r\n}\r\n.pointer { \r\n\tcursor : pointer;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1595:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var dashboard_component_1 = __webpack_require__(1369);
+var DASHBOARD_ROUTER = [
+    {
+        path: '',
+        component: dashboard_component_1.DashboardComponent,
+        pathMatch: 'full'
+    }
+];
+exports.dashboardRouter = router_1.RouterModule.forChild(DASHBOARD_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>48.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>5cb6c9cbdb3d2300429e2a9a4896190f</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.48.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_5cb6c9cbdb3d2300429e2a9a4896190f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:22:58</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

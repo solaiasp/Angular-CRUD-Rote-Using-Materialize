@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.25.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([25],{
+
+/***/ 1319:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var nse_sla_report_component_1 = __webpack_require__(1558);
+var nse_sla_report_router_1 = __webpack_require__(1906);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var NseSlaReportModule = /** @class */ (function () {
+    function NseSlaReportModule() {
+    }
+    NseSlaReportModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, nse_sla_report_router_1.NseSlaReportRouter],
+            declarations: [nse_sla_report_component_1.NseSlaReportComponent]
+        })
+    ], NseSlaReportModule);
+    return NseSlaReportModule;
+}());
+exports.NseSlaReportModule = NseSlaReportModule;
+
+
+/***/ }),
+
+/***/ 1558:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var ngx_pipes_1 = __webpack_require__(267);
+var nse_sla_report_column_1 = __webpack_require__(1901);
+var common_1 = __webpack_require__(6);
+var modal_1 = __webpack_require__(104);
+var NseSlaReportComponent = /** @class */ (function () {
+    function NseSlaReportComponent(commonServices, cookies, dateFilter, filter, modalService) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.filter = filter;
+        this.modalService = modalService;
+        this.slaListGridObj = {};
+        this.activeTabName = 'slaReportList';
+        //titletab = 'SLA Parameters';
+        this.titletab = 'Ticket Based NSE SLA';
+        this.dateDropDown = [];
+        this.assetSubMenus = [];
+        this.availDate = '';
+        this.userData = {};
+        this.selectedGrp = 'all';
+        this.slaLists = [];
+        this.slacopylists = [];
+        this.selectedGroup = '';
+        this.getSlaReportsDashs = [];
+        this.getSlaReportsDashs_copy = [];
+        this.slaParamsReports = [];
+        this.listCopy = [];
+        this.totalpages = 0;
+        this.pageSize = 15;
+        this.currentPage = 1;
+        this.totalCount = 0;
+        this.slaReportLoader = false;
+        this.directionLinks = true;
+        this.previousLabel = '';
+        this.nextLabel = '';
+        this.SlaReports = [];
+        this.slaListLoader = false;
+        this.loader = false;
+        this.countsLoader = false;
+        this.reportsLoader = false;
+        this.reportsTable = false;
+        this.slaParamCounts = {};
+        this.reportParamGridObj = {};
+        this.selectedSite = '';
+        this.reportName = '';
+        this.SlaData = {};
+        this.linkUpTimeLists = [];
+        this.modalLoader = true;
+        this.loading = false;
+        this.visibleBox = false;
+        this.ticketData = [];
+        this.commentsSec = true;
+        this.activityStatus = [];
+        this.selectDate = function (date) {
+            var mnth = date.split('-')[0];
+            var year = date.split('-')[1];
+            year = year.substr(-2);
+            var finalDate = mnth + '-' + year;
+            var _postData = { "month": finalDate, "partyid": '7813', "linkid": "" };
+            _this.getSlaReports(_postData);
+            //this.getSlaReportsDash();			
+        };
+        this.getMonthReports = function (dateStr) {
+            var date = new Date(dateStr);
+            var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            _this.countsLoader = true;
+            _this.reportsTable = false;
+            var fromFoematedDate = _this.dateFilter.transform(new Date(Date.parse(firstDay)), 'yyyy-MM-dd');
+            var toFormatedDate = _this.dateFilter.transform(new Date(Date.parse(lastDay)), 'yyyy-MM-dd');
+            var postUrl = "/_mcpe/getThresholdTopsCountsForDashboard";
+            var postData = {
+                "ioniClientId": 10122,
+                "fromDateISO": fromFoematedDate,
+                "toDateISO": toFormatedDate,
+                "partyIdArr": [78367]
+            };
+            _this.commonServices.postRequest(postUrl, postData).then(function (response) {
+                if (response.status == 'success') {
+                    var slaParamCounts = response.items[0];
+                    _this.slaParamCounts.sitesList = slaParamCounts.sitesList;
+                    _this.slaParamCounts.headers = [];
+                    for (var key in slaParamCounts) {
+                        if (key !== 'sitesList') {
+                            _this.slaParamCounts.headers.push(slaParamCounts[key]);
+                        }
+                    }
+                    console.log('this.slaParamCounts', _this.slaParamCounts);
+                }
+                _this.countsLoader = false;
+            }, function (err) {
+                this.countsLoader = false;
+            });
+        };
+        this.getSlaParamsReports = function (type, list, selectSite) {
+            _this.reportParamGridObj.data = [];
+            _this.reportParamGridObj.columns = [];
+            var date = new Date(_this.availDate);
+            var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            var fromFoematedDate = _this.dateFilter.transform(new Date(Date.parse(firstDay)), 'yyyy-MM-dd');
+            var toFormatedDate = _this.dateFilter.transform(new Date(Date.parse(lastDay)), 'yyyy-MM-dd');
+            _this.reportsLoader = true;
+            _this.selectedSite = "";
+            _this.reportName = list.displayName;
+            if (type && type == "site") {
+                _this.selectedSite = selectSite.site;
+            }
+            var thresholdvalue = list.thresholdValue;
+            var reportType = "";
+            if (list.displayName == "Link Utilization") {
+                reportType = "linkUtilization";
+            }
+            else if (list.displayName == "Errors") {
+                reportType = "errors";
+            }
+            else if (list.displayName == "Memory Utilization") {
+                reportType = "memoryUtilization";
+            }
+            else if (list.displayName == "CPU Utilization") {
+                reportType = "cpuUtilization";
+            }
+            else if (list.displayName == "PacketLoss") {
+                reportType = "packetLoss";
+            }
+            else if (list.displayName == "Latency") {
+                reportType = "latency";
+            }
+            else if (list.displayName == "Links With SLA < 90") {
+                reportType = "lowSLALinksCount";
+            }
+            _this.reportParamGridObj.id = reportType;
+            _this.reportParamGridObj.pdfName = _this.reportName;
+            _this.reportParamGridObj.pdfTitle = _this.reportName;
+            _this.reportParamGridObj.excelTitle = _this.reportName;
+            _this.reportParamGridObj.excelName = _this.reportName;
+            if (reportType == "latency" || reportType == "RoundTripTime" || reportType == "Jitter") {
+                _this.reportsTable = true;
+                _this.reportParamGridObj.columns = [
+                    {
+                        dataKey: 'site',
+                        title: 'Group'
+                    },
+                    {
+                        dataKey: 'sitename',
+                        title: 'Site Name'
+                    },
+                    {
+                        field: 'hostname',
+                        title: 'Source'
+                    },
+                    /*{
+                        field: 'link_desc',
+                        displayName: 'Link Desc'
+                    },*/
+                    {
+                        dataKey: 'logical_name',
+                        title: 'Destination'
+                    }
+                ];
+            }
+            else if (reportType == "packetLoss") {
+                _this.reportsTable = true;
+                _this.reportParamGridObj.columns = [
+                    {
+                        dataKey: 'site',
+                        title: 'Group'
+                    },
+                    {
+                        dataKey: 'sitename',
+                        title: 'Site Name'
+                    },
+                    {
+                        dataKey: 'hostname',
+                        title: 'Source'
+                    },
+                    /*{
+                        field: 'link_desc',
+                        displayName: 'Link Desc'
+                    },*/
+                    {
+                        dataKey: 'logical_name',
+                        title: 'Destination'
+                    }
+                ];
+            }
+            else if (reportType == "memoryUtilization" || reportType == "cpuUtilization") {
+                _this.reportsTable = true;
+                _this.reportParamGridObj.columns = [
+                    {
+                        dataKey: 'site',
+                        title: 'Group'
+                    },
+                    {
+                        dataKey: 'sitename',
+                        title: 'Site Name'
+                    },
+                    {
+                        dataKey: 'hostname',
+                        title: 'Host Name'
+                    }
+                    /*{
+                        field: 'link_desc',
+                        displayName: 'Link Desc'
+                    }*/
+                ];
+            }
+            else if (reportType == "linkUtilization" || reportType == "errors") {
+                _this.reportsTable = true;
+                _this.reportParamGridObj.columns = [
+                    {
+                        dataKey: 'site',
+                        title: 'Group'
+                    },
+                    {
+                        dataKey: 'sitename',
+                        title: 'Site Name'
+                    },
+                    {
+                        dataKey: 'hostname',
+                        title: 'Host Name'
+                    },
+                    {
+                        dataKey: 'link_desc',
+                        title: 'Link Desc'
+                    }
+                ];
+            }
+            else if (reportType == "lowSLALinksCount") {
+                _this.reportsTable = true;
+                _this.reportParamGridObj.columns = [
+                    {
+                        dataKey: 'site',
+                        title: 'Group'
+                    },
+                    {
+                        dataKey: 'sitename',
+                        title: 'Site Name'
+                    },
+                    {
+                        dataKey: 'name',
+                        title: 'Host Name'
+                    }
+                    /*{
+                        field: 'link_desc',
+                        displayName: 'Link Desc'
+                    }*/
+                ];
+            }
+            var d1Str = new Date(Date.parse(_this.availDate)).toString().substr(-2, 2);
+            var d2Str = new Date(Date.parse(_this.availDate)).toString().substr(-2, 2);
+            var dateDiff = d1Str - d2Str;
+            //console.log(dateDiff);
+            var date1 = new Date(Date.parse(_this.availDate));
+            var date2 = new Date(Date.parse(_this.availDate));
+            var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            if (diffDays <= 31) {
+                var postUrl = "/_mcpe/getThresholdCountsDetailedList";
+                var postData = {
+                    "ioniClientId": 10122,
+                    "fromDateISO": fromFoematedDate,
+                    "toDateISO": toFormatedDate,
+                    "reportFor": reportType,
+                    "partyIdArr": [78367]
+                };
+                _this.commonServices.postRequest(postUrl, postData).then(function (response) {
+                    _this.slaParamsReports = [];
+                    if (response.status == 'success') {
+                        var columnObj = {};
+                        if (reportType == "latency" || reportType == "RoundTripTime") {
+                            columnObj = {
+                                dataKey: 'count',
+                                title: ">" + thresholdvalue + "(ms)"
+                            };
+                        }
+                        else if (reportType == "errors" || reportType == "packetLoss") {
+                            columnObj = {
+                                dataKey: 'count',
+                                title: ">" + thresholdvalue + "(%)"
+                            };
+                        }
+                        else if (reportType == "lowSLALinksCount") {
+                            columnObj = {
+                                dataKey: 'availability',
+                                title: "<" + thresholdvalue
+                            };
+                        }
+                        else {
+                            columnObj = {
+                                dataKey: 'count',
+                                title: ">" + thresholdvalue
+                            };
+                        }
+                        _this.reportParamGridObj.columns.push(columnObj);
+                        console.log(response.items);
+                        //response.items = $filter("orderBy")(response.items,'-count');
+                        _this.reportParamGridObj.data = response.items;
+                        _this.reportsTable = true;
+                        setTimeout(function () {
+                            $('html, body').animate({
+                                scrollTop: ($("#SLAParamList").offset().top)
+                            }, 150);
+                        }, 150);
+                    }
+                    _this.reportsLoader = false;
+                }, function (err) {
+                });
+            }
+            else {
+                _this.commonServices.error('Date range should not be more than 31 days');
+            }
+        };
+        this.changeGroup = function (group, reporttab) {
+            _this.selectedGrp = group;
+            if (group == 'all') {
+                _this.selectedGroup = "";
+                if (reporttab == "slaReportList") {
+                    _this.slaLists = _this.slacopylists.slice();
+                    _this.slaListGridObj.data = _this.slaLists;
+                }
+                if (reporttab == "slaReports") {
+                    _this.getSlaReportsDashs = _this.getSlaReportsDashs_copy.slice();
+                    var getSlaReportsDashs = _this.getSlaReportsDashs;
+                    _this.totalpages = Math.ceil(getSlaReportsDashs.length / 15);
+                    _this.pageSize = 15;
+                    _this.currentPage = 1;
+                    _this.totalCount = _this.getSlaReportsDashs.length;
+                }
+            }
+            else {
+                _this.selectedGroup = group;
+                if (reporttab == "slaReportList") {
+                    _this.slaLists = _this.filter.transform(_this.slacopylists, ['site'], group);
+                    _this.slaListGridObj.data = _this.slaLists;
+                }
+                if (reporttab == "slaReports") {
+                    _this.getSlaReportsDashs = _this.getSlaReportsDashs_copy.slice();
+                    var getSlaReportsDashs = _this.getSlaReportsDashs;
+                    _this.getSlaReportsDashs = _this.filter.transform(_this.getSlaReportsDashs, ['site'], group);
+                    _this.totalpages = Math.ceil(_this.getSlaReportsDashs.length / 15);
+                    _this.pageSize = 15;
+                    _this.currentPage = 1;
+                    _this.totalCount = _this.getSlaReportsDashs.length;
+                }
+            }
+        };
+        /* Old Logic getSlaReports = (_postData : any) => {
+            this.loader = true;
+            this.slaListLoader = true;
+            this.slaLists = [];
+            this.slacopylists = [];
+            this.commonServices.postRequest('/api/service_uptime_demo',_postData).then((response : any)=>{
+                if(response.status == 'success'){
+                    this.SlaReports = response.items[0];
+                    for(var i=0; i< this.SlaReports.rows.length; i++){
+                        var obj : any = {}
+                        for(var k=0; k< this.SlaReports.rows[i].length ; k++){
+                            if( this.SlaReports.metaData[k].name == "TO_CHAR(L.FOR_MONTH,'MON-YY')"){
+                                this.SlaReports.metaData[k].name = 'month';
+                            }
+                            obj[this.SlaReports.metaData[k].name] = this.SlaReports.rows[i][k]
+                        }
+                        obj.AVAILABILITY
+                        if(obj.AVAILABILITY != 100){
+                            obj.AVAILABILITY = obj.AVAILABILITY.toFixed(2) + '%';
+                        }else{
+                            obj.AVAILABILITY = obj.AVAILABILITY + '%';
+                        }
+                        this.slaLists.push(obj);
+                    }
+                    for(var i=0; i<this.slaLists.length; i++ ){
+                        if (!this.slaLists[i].s_operator || this.slaLists[i].s_operator == "") {
+                            this.slaLists[i].s_operator = "Sify";
+                        }
+                        if (!this.slaLists[i].site || this.slaLists[i].site == "") {
+                            this.slaLists[i].site = "MBB";
+                        }
+                        if (!this.slaLists[i].sitename || this.slaLists[i].sitename == "") {
+                            this.slaLists[i].sitename = "Bangalore_MBB";
+                        }
+                    }
+                    this.slacopylists = [...this.slaLists];
+                    this.slaListGridObj.data = this.slaLists;
+                }
+                this.loader = false;
+                this.slaListLoader = false;
+            },
+            function(err){
+                this.loader = false;
+                this.slaListLoader = false;
+            });
+        } */
+        this.changeGroupNew = function (tapname) {
+            _this.selectedGrp = tapname;
+            return _this.slaListGridObj.data = _this.listCopy[tapname];
+        };
+        this.getSlaReports = function (_postData) {
+            _this.loader = true;
+            _this.slaListLoader = true;
+            _this.slacopylists = [];
+            _this.selectedGrp = 'all';
+            _this.commonServices.postRequest('/_workflow/getSLA', _postData).then(function (response) {
+                if (response.status == 'success') {
+                    var displayActivity_1 = [];
+                    _this.assetSubMenus = [];
+                    if (response.items[0].ITILSLAList.length <= 0) {
+                        _this.listCopy = [];
+                        _this.slaListGridObj.data = _this.listCopy;
+                    }
+                    else {
+                        console.log("getSlaReports2", response);
+                        _this.SlaReports = response.items[0].ITILSLAList;
+                        response.items[0].ITILSLAList.forEach(function (value, key) {
+                            if (value.sitename == '' || value.sitename == undefined) {
+                                value.sitename = 'NoName';
+                            }
+                            _this.activityStatus = (value.sitename).replace(/ /gi, "_").toLowerCase().slice(0, 6);
+                            value = _this.setActivityDetails(value, _this.activityStatus);
+                            if ((typeof _this.listCopy[_this.activityStatus]) == 'undefined') {
+                                _this.listCopy[_this.activityStatus] = [];
+                                if ((typeof displayActivity_1[_this.activityStatus]) == 'undefined') {
+                                    displayActivity_1[_this.activityStatus] = [];
+                                }
+                                displayActivity_1.push(_this.activityStatus);
+                                _this.assetSubMenus.push({ "site": _this.activityStatus, "sitedisplay": _this.activityStatus });
+                            }
+                            _this.listCopy[_this.activityStatus].push(value);
+                        });
+                        _this.changeGroupNew(_this.assetSubMenus[0].site);
+                        _this.SlaReports.forEach(function (element) {
+                            if (element.availability != 100) {
+                                element.availability = element.availability.toFixed(2) + '%';
+                            }
+                            else {
+                                element.availability = element.availability + '%';
+                            }
+                        });
+                        _this.slaListGridObj.data = _this.listCopy[displayActivity_1[0]];
+                    }
+                    /* this.slacopylists = [...this.SlaReports];
+                    this.slaListGridObj.data = this.SlaReports; */
+                    _this.slacopylists = _this.listCopy.slice();
+                }
+                _this.loader = false;
+                _this.slaListLoader = false;
+            }, function (err) {
+                this.loader = false;
+                this.slaListLoader = false;
+            });
+        };
+        this.setActivityDetails = function (orig, status) {
+            var newobj;
+            newobj = orig;
+            return newobj;
+        };
+        this.getSlaReportsDash = function () {
+            var postData = { "partyId": _this.userData.party_id, "ioniClientId": _this.userData.ioni_clientid };
+            _this.slaReportLoader = true;
+            var postUrl = " /_siteconnect/getSLAReportsDrilledDown";
+            _this.commonServices.postRequest(postUrl, postData).then(function (response) {
+                if (response.status == 'success') {
+                    _this.getSlaReportsDashs = response.items;
+                    _this.getSlaReportsDashs_copy = response.items.slice();
+                    _this.totalpages = Math.ceil(_this.getSlaReportsDashs.length / 15);
+                    _this.pageSize = 15;
+                    _this.currentPage = 1;
+                    _this.totalCount = _this.getSlaReportsDashs.length;
+                    _this.slaReportLoader = false;
+                }
+                else {
+                    _this.slaReportLoader = false;
+                }
+            }, function (err) {
+                _this.slaReportLoader = false;
+            });
+        };
+        this.viewDetail = function (data) {
+            _this.SlaData = data;
+            _this.linkUpTimeLists = [];
+            _this.modalLoader = true;
+            _this.modalRef = _this.modalService.show(_this.slaDetailPopUpTemplate, Object.assign({}, { class: 'modal-lg' }));
+            var _postData = { "month": data.month, "partyId": 78367, "linkId": data.linkID };
+            _this.commonServices.postRequest('api/serviceLinkUptimeDetails', _postData).then(function (response) {
+                _this.linkUpTimeLists = response.items;
+                _this.modalLoader = false;
+            }, function (err) {
+                _this.modalLoader = false;
+            });
+        };
+        this.showTab = function (tabName) {
+            _this.activeTabName = tabName;
+            if (tabName == "slaParams") {
+                _this.titletab = "SLA Parameters";
+            }
+            else if (tabName == "slaReports") {
+                _this.titletab = "Reports";
+            }
+            else if (tabName == "slaReportList") {
+                _this.titletab = "Ticket Based SLA";
+            }
+        };
+        this.paginate = function (page) {
+            _this.currentPage = page;
+        };
+        this.getLinkedData = function (eventObj) {
+            console.log('eventObj', eventObj.row);
+            _this.viewDetail(eventObj.row);
+        };
+        this.getTagDetails = function (tadid) {
+            _this.loading = true;
+            _this.modalRef.hide();
+            _this.modalRef = _this.modalService.show(_this.modalTemplate, Object.assign({}, { class: 'modal-lg' }));
+            var _post = {
+                srNumber: tadid
+            };
+            _this.commonServices.postRequest('/_itil/itilTicketDetails', _post).then(function (response) {
+                console.log('response', response);
+                if (response.status == "success") {
+                    _this.loading = false;
+                    _this.visibleBox = true;
+                    _this.commentsSec = false;
+                    _this.ticketData = response.items[0];
+                    //this.commentsData = response.arrVal2;
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                    _this.loading = false;
+                    _this.visibleBox = true;
+                    _this.commentsSec = false;
+                }
+            });
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        this.subscription = this.commonServices.textSearched$.subscribe(function (searchText) {
+            var clonedReport = _this.getSlaReportsDashs_copy.slice();
+            var filterArr = _this.commonServices.constructFilter(clonedReport);
+            _this.getSlaReportsDashs = _this.filter.transform(clonedReport, filterArr, searchText);
+            _this.totalpages = Math.ceil(_this.getSlaReportsDashs.length / 15);
+            _this.pageSize = 15;
+            _this.currentPage = 1;
+            _this.totalCount = _this.getSlaReportsDashs.length;
+        });
+    }
+    NseSlaReportComponent.prototype.ngOnInit = function () {
+        this.userData = this.cookies.getObject('globals') || {};
+        this.slaListGridObj = nse_sla_report_column_1.slaListGridObj;
+        this.slaListGridObj.columns[6].cell = function (row, column) {
+            var obj = {
+                click: false,
+                html: row[column.dataKey]
+            };
+            if (row[column.dataKey] != '100%') {
+                obj.click = true;
+                obj.html = '<span>' + row[column.dataKey] + '</sapn>';
+            }
+            return obj;
+        };
+        var today = new Date();
+        var currentMnth = today.getMonth() - 1;
+        var currentYear = today.getFullYear();
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        this.dateDropDown = [];
+        this.availDate = months[currentMnth] + '-' + currentYear;
+        for (var k = 0; k < 12; k++) {
+            if (currentMnth - k < 0) {
+                var dateOption = months[currentMnth + (12 - k)] + '-' + (currentYear - 1);
+                this.dateDropDown.push(dateOption);
+            }
+            else {
+                var dateOption = months[(currentMnth - k)] + '-' + currentYear;
+                this.dateDropDown.push(dateOption);
+            }
+        }
+        /* this.commonServices.postRequest('/api/cus_dash_details?&service_type=groupBasedCnt&clientid=10122&usertype=0&groupid='+this.userData.group_id+'',{}).then((resDetails : any) => {
+            resDetails = {"status":"success","message":"","totalItems":7,"start":0,"end":6,"items":[{"site":"CPE","sitecount":"3","devcount":"3","linkcount":"3"},{"site":"MBB","sitecount":"27","devcount":"244","linkcount":"250"},{"site":"MBB_DC","sitecount":"9","devcount":"18","linkcount":"58"},{"site":"MBB_DR","sitecount":"1","devcount":"2","linkcount":"7"},{"site":"RBI_DC","sitecount":"4","devcount":"14","linkcount":"34"},{"site":"RBI_RO","sitecount":"39","devcount":"78","linkcount":"156"},{"site":"REP_DC","sitecount":"5","devcount":"10","linkcount":"22"}]}
+             if (resDetails.status == "success") {
+                 this.assetSubMenus = resDetails.items;
+             }
+         },(resErr : any) => {
+           
+        }); */
+        //	this.getMonthReports(this.availDate)
+        this.selectDate(this.availDate);
+    };
+    NseSlaReportComponent.prototype.ngOnDestroy = function () {
+        if (this.modalRef) {
+            this.modalRef.hide();
+        }
+    };
+    __decorate([
+        core_1.ViewChild('viewsrdetailsmodel'),
+        __metadata("design:type", core_1.ElementRef)
+    ], NseSlaReportComponent.prototype, "modalTemplate", void 0);
+    __decorate([
+        core_1.ViewChild('slaDetailPopUp'),
+        __metadata("design:type", core_1.ElementRef)
+    ], NseSlaReportComponent.prototype, "slaDetailPopUpTemplate", void 0);
+    NseSlaReportComponent = __decorate([
+        core_1.Component({
+            selector: '<nse-sla-report>',
+            template: __webpack_require__(1902),
+            styles: [__webpack_require__(1903)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, ngx_pipes_1.FilterByPipe, modal_1.BsModalService])
+    ], NseSlaReportComponent);
+    return NseSlaReportComponent;
+}());
+exports.NseSlaReportComponent = NseSlaReportComponent;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34)))
+
+/***/ }),
+
+/***/ 1901:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.slaListGridObj = {
+    pdfName: 'SLA Reports',
+    pdfTitle: 'SLA Reports',
+    excelTitle: 'SLA Reports',
+    excelName: 'SLA Reports',
+    id: 'SLA_reports',
+    data: [],
+    columns: [{
+            dataKey: 'site',
+            title: 'Group',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'sitename',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkID',
+            title: 'Link Id ',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'location',
+            title: 'Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkName',
+            title: 'Link Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkType',
+            title: 'Link Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'availability',
+            title: 'Availability(%)',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'downtime',
+            title: 'Down Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'month',
+            title: 'Month',
+            hide: false,
+            width: ''
+        } /*,{
+            dataKey : 's_operator',
+            title :  'Provider',
+            hide : false,
+            width:''
+        }*/
+    ]
+};
+
+
+/***/ }),
+
+/***/ 1902:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n\t<section class=\"wrapper\">\n\t\t<ol class=\"breadcrumb\">\n\t\t\t<li><a (click)=\"goToHomePage()\">Home</a></li>\n\t\t\t<li class=\"active\">NSE SLA Management</li>\n\t\t</ol>\n\t\t<!-- <div class=\"dashboard-txt\">\n\t\t\t<h1>SLA Management</h1>\n\t\t</div> -->\n\t\t<div class=\"pn-ProductNav_Wrapper\">\n\t\t\t<nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n\t\t\t\t<div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\">\n\t\t\t\t\t<a class=\"pn-ProductNav_Link\" [ngClass]=\"{'active' : selectedGrp == menu.site}\" (click)=\"changeGroupNew(menu.site)\" *ngFor=\"let menu of assetSubMenus\">{{menu.site}}</a>\n\t\t\t\t\t<span id=\"pnIndicator\" class=\"pn-ProductNav_Indicator\">====</span>\n\t\t\t\t</div>\n\t\t\t</nav>\n\t\t</div>\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-md-12\" id=\"ticketBasedSla\">\n\t\t\t\t<div class=\"box-title box-title-tabs box-title-tabs-sla\">\n\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t<ul class=\"box-title-right\">\n\t\t\t\t\t\t\t<!-- <li [ngClass]=\"{'active' : activeTabName == 'slaParams'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"SLA Parameters\"><a data-target=\"#threshold\" data-toggle=\"tab\" (click)=\"showTab('slaParams')\"><img-icon src=\"SLA_parameters.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t<li [ngClass]=\"{'active' : activeTabName == 'slaReports'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Reports\"><a data-target=\"#current\" data-toggle=\"tab\" (click)=\"showTab('slaReports')\"><img-icon src=\"report.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t<li [ngClass]=\"{'active' : activeTabName == 'slaReportList'}\" data-toggle=\"tooltip\" [ngClass]=\"{'active':isFacebookUser}\" placement=\"top\" tooltip=\"Ticket Based SLA\"><a data-target=\"#historical\" data-toggle=\"tab\" (click)=\"showTab('slaReportList')\"><img-icon src=\"tickets.svg\" class=\"svg\"></img-icon></a></li> -->\n\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t\t<div class=\"picker\" [hidden]=\"activeTabName != 'slaReportList'\">\n\t\t\t\t\t\t\t\t   <select [(ngModel)]=\"availDate\" (ngModelChange)=\"selectDate(availDate)\" style=\"border: 1px solid #d5d5d5;height:30px;\" class=\"form-control\">\n\t\t\t\t\t\t\t\t\t  <option *ngFor=\" let date of dateDropDown\" value=\"{{date}}\">{{date}}</option>\n\t\t\t\t\t\t\t\t   </select>\n\t\t\t\t\t\t\t\t   <i class=\"fa fa-calendar\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"picker\" [hidden]=\"activeTabName != 'slaParams'\">\n\t\t\t\t\t\t\t\t   <select [(ngModel)]=\"availDate\" (ngModelChange)=\"selectDate(availDate)\" style=\"border: 1px solid #d5d5d5;height:30px;\" class=\"form-control\">\n\t\t\t\t\t\t\t\t\t  <option *ngFor=\" let date of dateDropDown\" value=\"{{date}}\">{{date}}</option>\n\t\t\t\t\t\t\t\t   </select>\n\t\t\t\t\t\t\t\t   <i class=\"fa fa-calendar\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"pull-left\">\n                  <!-- <img class=\"svg\" src=\"images/icons/user-management.svg\"> -->\n\t\t\t\t\t\t<h3>{{titletab}}</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"\">\n\t\t\t\t\t<div class=\"tab-content clearfix\">\n\t\t\t\t\t\t<div class=\"tab-pane\" id=\"current\" [ngClass]=\"{'active' : activeTabName == 'slaReports'}\">\n\t\t\t\t\t\t\t<div class=\"pn-ProductNav_Wrapper\">\n\t\t\t\t\t\t\t\t<nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n\t\t\t\t\t\t\t\t\t<div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\"  >\n\t\t\t\t\t\t\t\t\t\t<a [ngClass]=\"{'active' : selectedGrp == 'all'}\" (click)=\"changeGroup('all','slaReports')\" class=\"pn-ProductNav_Link\" >All</a>\n\t\t\t\t\t\t\t\t\t\t<a class=\"pn-ProductNav_Link\" [ngClass]=\"{'activepro' : selectedGrp == menu.site}\" (click)=\"changeGroup(menu.site,'slaReports')\" *ngFor=\"let menu of assetSubMenus\">{{menu.site}}</a>\n\t\t\t\t\t\t\t\t\t\t<span id=\"pnIndicator\" class=\"pn-ProductNav_Indicator\"></span>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</nav>\n\t\t\t\t\t\t\t\t<button id=\"pnAdvancerLeft\" class=\"pn-Advancer pn-Advancer_Left\" type=\"button\">\n\t\t\t\t\t\t\t\t   <svg class=\"pn-Advancer_Icon\" xmlns=\"\" viewBox=\"0 0 551 1024\">\n\t\t\t\t\t\t\t\t\t  <path d=\"M445.44 38.183L-2.53 512l447.97 473.817 85.857-81.173-409.6-433.23v81.172l409.6-433.23L445.44 38.18z\"/>\n\t\t\t\t\t\t\t\t   </svg>\n\t\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t\t<button id=\"pnAdvancerRight\" class=\"pn-Advancer pn-Advancer_Right\" type=\"button\">\n\t\t\t\t\t\t\t\t   <svg class=\"pn-Advancer_Icon\" xmlns=\"\" viewBox=\"0 0 551 1024\">\n\t\t\t\t\t\t\t\t\t  <path d=\"M105.56 985.817L553.53 512 105.56 38.183l-85.857 81.173 409.6 433.23v-81.172l-409.6 433.23 85.856 81.174z\"/>\n\t\t\t\t\t\t\t\t   </svg>\n\t\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<content-loader *ngIf=\"slaReportLoader\"></content-loader>\n\t\t\t\t\t\t\t<div *ngIf=\"!slaReportLoader\">\n\t\t\t\t\t\t\t\t<div class=\"pagination-box\">\n\t\t\t\t\t\t\t\t\t<div class=\"pull-left paging_top\">\n\t\t\t\t\t\t\t\t\t\tTotal Records - <a href=\"\">{{totalCount}}</a>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t\t\t\t\t<pagination-controls *ngIf=\"totalCount != 0\"\n\t\t\t\t\t\t\t\t\t\t\t\t id=\"slaReport-page\"\n\t\t\t\t\t\t\t\t\t\t\t\t [directionLinks]=\"directionLinks\"\n\t\t\t\t\t\t\t\t\t\t\t\t [previousLabel]=\"previousLabel\"\n\t\t\t\t\t\t\t\t\t\t\t\t [nextLabel]=\"nextLabel\"\n\t\t\t\t\t\t\t\t\t\t\t\t (pageChange)=\"paginate($event)\">\n\t\t\t\t\t\t\t\t\t\t</pagination-controls>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<hr>\n\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-4 col-sm-6\" *ngFor=\"let item of getSlaReportsDashs | paginate: { id: 'slaReport-page',itemsPerPage: pageSize,currentPage: currentPage,totalItems: totalCount}\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"asset-box\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset\">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-header asset-with-img\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<img-icon class=\"svg\" src=\"site.svg\"></img-icon>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<h4> {{item.site}} </h4>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-section\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"col-lg-6 asset-section-box\" *ngFor=\"let device of item.devices | slice:0:2\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<h5>{{device.deviceName}}  -</h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<span>( {{device.deviceIp}} )</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-section-bottom\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<li *ngFor=\"let month of device.links[0].monthWiseStat\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <span *ngIf=\"month.slaAvailability == 100.00\">{{month.month}} <br>100 %\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  </span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <span *ngIf=\"month.slaAvailability != 100.00\">{{month.month}} {{month.slaAvailability}} %\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t  </span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t<hr>\n\t\t\t\t\t\t\t\t<div class=\"pagination-box\">\n\t\t\t\t\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t\t\t\t\t  Total Records - <a href=\"\">{{totalCount}}</a>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t\t\t\t\t   <pagination-controls *ngIf=\"totalCount != 0\"\n\t\t\t\t\t\t\t\t\t\t\t\t id=\"slaReport-page\"\n\t\t\t\t\t\t\t\t\t\t\t\t [directionLinks]=\"directionLinks\"\n\t\t\t\t\t\t\t\t\t\t\t\t [previousLabel]=\"previousLabel\"\n\t\t\t\t\t\t\t\t\t\t\t\t [nextLabel]=\"nextLabel\"\n\t\t\t\t\t\t\t\t\t\t\t\t (pageChange)=\"paginate($event)\">\n\t\t\t\t\t\t\t\t\t\t\t</pagination-controls>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\n\t\t\t\t\t\t<div [ngClass]=\"{'active' : activeTabName == 'slaReportList'}\" class=\"tab-pane \" id=\"historical\">\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"pn-ProductNav_Wrapper\">\n\t\t\t\t\t\t\t\t\t<!-- <nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n\t\t\t\t\t\t\t\t\t   <div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\"  > \n\t\t\t\t\t\t\t\t\t\t\t<a [ngClass]=\"{'active' : selectedGrp == 'all'}\" (click)=\"changeGroup('all','slaReportList')\" class=\"pn-ProductNav_Link\" >All</a>\n\t\t\t\t\t\t\t\t\t\t\t<a class=\"pn-ProductNav_Link\" [ngClass]=\"{'active' : selectedGrp == menu.site}\" (click)=\"changeGroup(menu.site,'slaReportList')\" *ngFor=\"let menu of assetSubMenus\">{{menu.site}}</a>\n\t\t\t\t\t\t\t\t\t\t\t  <span id=\"pnIndicator\" class=\"pn-ProductNav_Indicator\"></span>\n\t\t\t\t\t\t\t\t\t   </div>\n\t\t\t\t\t\t\t\t\t</nav> -->\n\t\t\t\t\t\t\t\t\t<button id=\"pnAdvancerLeft\" class=\"pn-Advancer pn-Advancer_Left\" type=\"button\">\n\t\t\t\t\t\t\t\t\t   <svg class=\"pn-Advancer_Icon\" xmlns=\"\" viewBox=\"0 0 551 1024\">\n\t\t\t\t\t\t\t\t\t\t  <path d=\"M445.44 38.183L-2.53 512l447.97 473.817 85.857-81.173-409.6-433.23v81.172l409.6-433.23L445.44 38.18z\"/>\n\t\t\t\t\t\t\t\t\t   </svg>\n\t\t\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t\t\t<button id=\"pnAdvancerRight\" class=\"pn-Advancer pn-Advancer_Right\" type=\"button\">\n\t\t\t\t\t\t\t\t\t   <svg class=\"pn-Advancer_Icon\" xmlns=\"\" viewBox=\"0 0 551 1024\">\n\t\t\t\t\t\t\t\t\t\t  <path d=\"M105.56 985.817L553.53 512 105.56 38.183l-85.857 81.173 409.6 433.23v-81.172l-409.6 433.23 85.856 81.174z\"/>\n\t\t\t\t\t\t\t\t\t   </svg>\n\t\t\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<data-grid *ngIf=\"!slaListLoader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"slaListGridObj\"></data-grid>\n\t\t\t\t\t\t\t<content-loader *ngIf=\"slaListLoader\"></content-loader>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"tab-pane\" [ngClass]=\"{'active' : activeTabName == 'slaParams'}\"  id=\"threshold\">\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div id=\"SLA-List\" class=\"table-panel panel panel- b\">\n\t\t\t\t\t\t\t\t\t<div class=\"box-borde\" style=\"padding:15px;\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"table-responsive\"  *ngIf=\"!countsLoader\">\n\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-bordered table-striped inner-table ng-scope\">\n\t\t\t\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t\t   <tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <th>SI.No.</th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t Report Name \n\t\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t Threshold Value \n\t\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t Total\n\t\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t All\n\t\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <th *ngFor=\"let group of slaParamCounts.sitesList\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t {{group.site}}\n\t\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t   </tr>\n\t\t\t\t\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr *ngFor=\"let value of slaParamCounts.headers; index as index\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <td>{{index + 1}}</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t <a (click)=\"getSlaParamsReports('allSite',value)\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t{{value.displayName}} </a>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  </td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <td>{{value.thresholdValue}}</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <td class=\"text-center\">{{value.overallTotal}}</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <td class=\"text-center\"><a (click)=\"getSlaParamsReports('allSite',value)\">{{value.grandTotal}}</a></td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <td *ngFor=\"let site of value.siteWiseCounts\" class=\"text-center\"><a  (click)=\"getSlaParamsReports('site',value,site)\" >{{site.count}}</a></td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"text-center\" *ngIf=\"!countsLoader && !slaParamCounts\"> No Data </div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"countsLoader\"></content-loader>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<content-loader *ngIf=\"reportsLoader\"></content-loader>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<data-grid  *ngIf=\"!reportsLoader && reportsTable\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"reportParamGridObj\"></data-grid>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<ng-template #slaDetailPopUp>\n\t\t\t\t\t\t<div class=\"modal-header\">\n\t\t\t\t\t\t\t<button type=\"button\" class=\"close\" (click)=\"modalRef.hide()\" data-dismiss=\"modal\">&times;</button>\n\t\t\t\t\t\t\t<h4 class=\"modal-title\">Link Uptime Details - {{SlaData.linkID}}</h4>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"modal-body\">\n\t\t\t\t\t\t\t<div id=\"SLA-List\" class=\"table-panel panel panel- b\">\n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\">\n\t\t\t\t\t\t\t\t\t<table class=\"table table-bordered table-responsive ng-scope\">\n\t\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t<tr class=\"table-heading-row\">\n\t\t\t\t\t\t\t\t\t\t\t\t  <th style=\"COLOR:WHITE\" class=\"text-center\">SI.No.</th>\n\t\t\t\t\t\t\t\t\t\t\t\t  <th >\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"th-title\"> Tag Id </div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t  <th >\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"th-title\"> From Date </div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t  <th >\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"th-title\"> To Date </div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t  <th >\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"th-title\"> Down Time </div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t\t  <th >\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"th-title\"> Considered Down Time </div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t\t   <tr *ngFor=\"let item of linkUpTimeLists; index as index\">\n\t\t\t\t\t\t\t\t\t\t\t  <td  class=\"pointer text-center ng-binding\" role=\"button\" tabindex=\"0\">{{index + 1}}</td>\n\t\t\t\t\t\t\t\t\t\t\t  <td  class=\"pointer text-center ng-binding\" role=\"button\" tabindex=\"0\"><a (click)=\"getTagDetails(item.TAC_NUMBER)\">{{item.TAC_NUMBER}}</a></td>\n\t\t\t\t\t\t\t\t\t\t\t  <td  class=\"pointer text-center ng-binding\" role=\"button\" tabindex=\"0\">{{ item.DATE_OF_FIRST_ASSIGN }}</td>\n\t\t\t\t\t\t\t\t\t\t\t  <td  class=\"pointer text-center ng-binding\" role=\"button\" tabindex=\"0\">{{ item.RESOLVED_DATE | date : 'dd-MMM-yy' }}</td>\n\t\t\t\t\t\t\t\t\t\t\t  <td  class=\"pointer text-center ng-binding\" role=\"button\" tabindex=\"0\">{{item.TOTAL_DOWNTIME}}</td>\n\t\t\t\t\t\t\t\t\t\t\t  <td  class=\"pointer text-center ng-binding\" role=\"button\" tabindex=\"0\">{{item.EFFECTIVE_DOWNTIME}}</td>\n\t\t\t\t\t\t\t\t\t\t   </tr>\n\t\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\t\t<div class=\"text-center\" *ngIf=\"!modalLoader && !linkUpTimeLists.length\"> No Data </div>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"modalLoader\"></content-loader>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</ng-template>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n</section>\n\n\n<ng-template #viewsrdetailsmodel>\n\t\t<div class=\"modal-header\" id=\"headernew\">\n\t\t\t <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n\t\t\t<h4>Ticket Detail</h4>\n\t\t</div>\n\t\t<div class=\"modal-body\" id='contentdiv' style=\"height: 550px;overflow-y:auto;padding: 10px;\">\n\t\t\t<content-loader *ngIf=\"loading\"></content-loader>\n\t\t\t<table *ngIf=\"!loading && visibleBox\" class=\"table table-striped display\" id=\"get_sr_det\">\n\t\t\t\t<thead></thead>\n\t\t\t\t<tbody>\n\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>INCIDENT ID</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='incident_id'>{{ticketData.incidentID}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>SR Number</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='incident_number'>{{ticketData.ticketNumber}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>LINK ID</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='address'>{{ticketData.linkID}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>ADDRESS</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='site_code'>{{ticketData.address}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>SITE CODE</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='incident_type'>{{ticketData.sitename}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>INCIDENT TYPE</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='problem_code'>{{ticketData.incidentType}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>PROBLEM CODE</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='logged_by'>{{ticketData.problemCode}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>LOGGED BY</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='creation_date'>{{ticketData.loggedBy}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>CREATION DATE</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='status'>{{ticketData.loggedDate}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>STATUS</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='incident_id'>{{ticketData.status}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>CLOSE DATE</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='incident_number'>{{ticketData.closeDate}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>SUMMARY</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='address'>{{ticketData.summary}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>GROUP NAME</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='site_code'>{{ticketData.group}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t<td><b>EMAIL ADDRESS</b>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td><span id='incident_type'>{{ticketData.email}}</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr [hidden]=\"commentsSec!=true\">\n\t\t\t\t\t\t <td colspan=\"2\">                                    \n\t\t\t\t\t\t\t<table class=\"table table-striped table-hover table-bordered dataTable\">\n\t\t\t\t\t\t\t\t<tr >\n\t\t\t\t\t\t\t\t\t<td colspan=\"2\" align=\"center\">   THIS CASE IS SUBMITTED BY </td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t\t\t<b>Email Address</b>\n\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t\t\t<span id='incident_id'>{{ticketData.email}}</span>\n\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t\t\t<b>Customer ID</b>\n\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t\t\t<span id='incident_id'>{{ticketData.customerId}}</span>\n\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td colspan=\"2\">\n\t\t\t\t\t\t\t<table class=\"table table-striped table-hover table-bordered dataTable\">\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<th>Date / Time</th>\n\t\t\t\t\t\t\t\t\t<th>User</th>\n\t\t\t\t\t\t\t\t\t<th>Remarks </th>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t<tr *ngFor =\"let x of ticketData.ITILRemarks\" class='det'>\n\t\t\t\t\t\t\t\t\t<td>{{x.datetime}} </td>\n\t\t\t\t\t\t\t\t\t<td>{{x.user}}</td>\n\t\t\t\t\t\t\t\t\t<td>{{x.remarks}}</td>\n\t\t\t\t\t\t\t\t</tr>\n\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<table [hidden]=\"ticketData.status.trim()=='Closed' || ticketData.status.trim()=='Resolved'\" style=\"margin: 0 10px;\">\n\t\t\t\t\t\t<tr class='det_com'>\n\t\t\t\t\t\t\t<td><b>Add Remarks<span style=\"color: red;\"> *</span></b>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t<td><span id='nodevals'></span>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<textarea rows=\"4\" cols=\"50\" name=\"comment\" [(ngModel)]=\"comment\" form=\"usrform\" placeholder=\"Enter the text here\" style=\"margin-bottom: 10px;\"> </textarea>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<button [disabled]=\"!comment\" class=\"btn m-b-xs btn-sm btn-success btn-addon\" (click)=\"editTicketSR(ticketData,comment)\"> Add Remarks</button>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</tbody>\n\t\t\t</table>\n\t\t</div>\n\t</ng-template>";
+
+/***/ }),
+
+/***/ 1903:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1904);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1904:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1905);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./nse-sla-report.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./nse-sla-report.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1905:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".activepro {\n   background: #4d5b68;\n   color: #fff;\n   border: none; }\n   .activepro:after {\n   content: \"\";\n   width: 0;\n   height: 0;\n   border-left: 13px solid transparent;\n   border-right: 13px solid transparent;\n   border-top: 13px solid #4d5b68;\n   position: absolute;\n   bottom: -12px;\n   left: 0;\n   right: 0;\n   margin: auto;\n   top: 43px;\n   z-index: 100; }\n   #ticketBasedSla .box-title-tabs-sla .picker .fa-calendar {\n   position: absolute;\n   right: 2px;\n   top: 1px;\n   font-size: 18px; }\n   .box-borde table th{ background: #dbdcdd !important; color: #000 !important;}\n   .dashboard-txt h1 {\n    margin-bottom: 6px;}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1906:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var nse_sla_report_component_1 = __webpack_require__(1558);
+var NSE_SLA_REPORT_ROUTER = [
+    {
+        path: '',
+        component: nse_sla_report_component_1.NseSlaReportComponent,
+        pathMatch: 'full'
+    }
+];
+exports.NseSlaReportRouter = router_1.RouterModule.forChild(NSE_SLA_REPORT_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>25.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>98b6c9cbdb3d2300429e2a9a48961975</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.25.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_98b6c9cbdb3d2300429e2a9a48961975</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:22:31</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

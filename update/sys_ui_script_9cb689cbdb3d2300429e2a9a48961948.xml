@@ -1,0 +1,1547 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.18.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([18],{
+
+/***/ 1277:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var asset_component_1 = __webpack_require__(1368);
+var asset_router_1 = __webpack_require__(1590);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var AssetModule = /** @class */ (function () {
+    function AssetModule() {
+    }
+    AssetModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, asset_router_1.assetRouter],
+            declarations: [asset_component_1.AssetComponent]
+        })
+    ], AssetModule);
+    return AssetModule;
+}());
+exports.AssetModule = AssetModule;
+
+
+/***/ }),
+
+/***/ 1368:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var router_1 = __webpack_require__(48);
+var ngx_cookie_1 = __webpack_require__(62);
+var pdf_service_1 = __webpack_require__(269);
+var excell_service_1 = __webpack_require__(266);
+var ngx_pipes_1 = __webpack_require__(267);
+var asset_column_1 = __webpack_require__(1582);
+var AssetComponent = /** @class */ (function () {
+    function AssetComponent(router, cookie, commonServices, filter, pageView, excellService, pdfService) {
+        var _this = this;
+        this.router = router;
+        this.cookie = cookie;
+        this.commonServices = commonServices;
+        this.filter = filter;
+        this.pageView = pageView;
+        this.excellService = excellService;
+        this.pdfService = pdfService;
+        this.assetImages = {
+            CLOUD: 'src/assets/images/cloud.png',
+            LAN: 'src/assets/images/lan.png',
+            WAN: 'src/assets/images/wan.png',
+            APPS: 'src/assets/images/apps.png'
+        };
+        this.pageSize = 11;
+        this.currentPage = 1;
+        this.totalCount = 0;
+        this.totalPages = 0;
+        this.gridPageSize = 15;
+        this.gridCurrentPage = 1;
+        this.gridTotalPages = 0;
+        this.gridTotalCount = 0;
+        this.assetSearch = '';
+        this.userType = '';
+        this.selectedGrp = 'all';
+        this.selectedDeviceGrp = '';
+        this.selectedSite = '';
+        this._assetlist = [];
+        this._asset_details = [];
+        this.assetSubMenus = [];
+        this._asset_report_details = [];
+        this.groupId = '';
+        this.allow_dev_info = false;
+        this.allow_link_info = false;
+        this.backboneLinksAssets = false;
+        this.bsoLinksAssets = false;
+        this.radioLinksAssets = false;
+        this.gatewayLinksAssets = false;
+        this.siteconnectLinksAssets = false;
+        this.fiberLinksAssets = false;
+        this.allow_backlink_info = false;
+        this.allow_radiolink_info = false;
+        this.allow_gateway_info = false;
+        this.allow_bsolink_info = false;
+        this.allow_siteconnectlink_info = false;
+        this.allow_fiberlink_info = false;
+        this.mydate = {};
+        this.totalAssets = [];
+        this.totalLinkCount = 0;
+        this.totalLinkCountCopy = 0;
+        this.totalDeviceCount = 0;
+        this.totalDeviceCountCopy = 0;
+        this.devicelength = 0;
+        this.linklength = 0;
+        this.loader = false;
+        this.backLinkLoader = false;
+        this.radioLinkLoader = false;
+        this.gateWayLinkLoader = false;
+        this.bsoLinkLoader = false;
+        this.deviceLoader = false;
+        this.linkLoader = false;
+        this.siteconnectLinkLoader = false;
+        this.fiberLinkLoader = false;
+        this.ParentChildFlag = true;
+        this.defaultTab = false;
+        this.selecteTab = 'Assets';
+        this.allAssets = [];
+        this._asset_link_list = [];
+        this.totalAssetDevice = [];
+        this.totalAssetLinks = [];
+        this.operToProviderNameMap = {
+            "Others": "Others",
+            "1": "Sify",
+            "2": "MTNL",
+            "3": "MTNL ISDN",
+            "4": "TULIP",
+            "5": "BSNL",
+            "6": "BSNL ISDN",
+            "7": "P2P",
+            "8": "BSNL P2P",
+            "9": "RELIANCE",
+            "10": "Airtel",
+            "11": "TATA",
+            "12": "VODAFONE",
+            "13": "Aircel"
+        };
+        this.directionLinks = true;
+        this.emsFields = false;
+        this.previousLabel = '';
+        this.nextLabel = '';
+        this.assetInventoryServices = {};
+        this.assetInventoryAllSites = {};
+        this.assetClassName = '';
+        this.boxClassName = '';
+        this.assetInventoryList = [];
+        this.assetInventoryLinkList = [];
+        this.assertExcelData = [];
+        this.gridDataObj = {
+            pdfName: 'Asset-details',
+            pdfTitle: 'Asset details',
+            excelTitle: 'Asset details',
+            excelName: 'Asset-details',
+        };
+        this.deviceGridDataObj = {
+            pdfName: 'Device-Inventory-Details',
+            pdfTitle: 'Device Inventory Details',
+            excelTitle: 'Device Inventory Details',
+            excelName: 'Device-Inventory-Details',
+            data: []
+        };
+        this.deviceInventLoader = false;
+        this.linkGridDataObj = {
+            pdfName: 'Link-Inventory-Details',
+            pdfTitle: 'Link Inventory Details',
+            excelTitle: 'Link Inventory Details',
+            excelName: 'Link-Inventory-Details',
+            data: []
+        };
+        this.linkInventLoader = false;
+        this.deviceInventoryFlag = false;
+        this.isMemberNameDiaplay = false;
+        this.hideNseAttributes = false;
+        this.backboneLinksObj = {
+            pdfName: 'Backbone Links',
+            pdfTitle: 'Backbone Links',
+            excelTitle: 'Backbone Links',
+            excelName: 'Backbone Links',
+            id: 'backboneLinksObj_performance',
+            data: [],
+            columns: [{
+                    dataKey: 'deviceIp',
+                    title: 'Device IP',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'hostname',
+                    title: 'Host Name',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'popName',
+                    title: 'Site Name',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'linkType',
+                    title: 'Type',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'interface',
+                    title: 'Interface',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'linkdesc',
+                    title: 'Description',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'provider',
+                    title: 'Provider',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'bandwidth',
+                    title: 'Bandwidth',
+                    hide: false,
+                    width: '',
+                }, {
+                    dataKey: 'externalLinkId',
+                    title: 'External Link Id',
+                    hide: false,
+                    width: '',
+                    dataType: 'float'
+                }, {
+                    dataKey: 'sifyLinkId',
+                    title: 'Sify Link Id',
+                    hide: false,
+                    width: '',
+                    dataType: 'float'
+                }]
+        };
+        this.gridDataRadioLinkObj = asset_column_1.radioLinkObj;
+        this.gridDataGateWayLinkObj = asset_column_1.gateWayLinkObj;
+        this.gridDataBSOLinkObj = asset_column_1.bsoLinkObj;
+        this.gridDataSiteconnectLinkObj = asset_column_1.siteconnectLinkObj;
+        this.gridDataFiberLinkObj = asset_column_1.fiberLinkObj;
+        this.radioLinkList = [];
+        this.gatewayLinkList = [];
+        this.bsoLinkList = [];
+        this.siteconnectLinkList = [];
+        this.fiberLinkList = [];
+        this.nseCoreLinkList = [];
+        this.selectedMappingOption = 'parent';
+        this.setTab = function (tab) {
+            _this.selecteTab = tab;
+        };
+        this.loadInitFn = function () {
+            _this.initialFn();
+            var postData = { customerName: _this.currentUser.customer_name };
+            _this.commonServices.postRequest('/_core/getChildClientsDetails', postData).then(function (resDetails) {
+                if (resDetails.items.length >= 1) {
+                    _this.ParentChildFlag = true;
+                }
+                else {
+                    _this.ParentChildFlag = false;
+                }
+            });
+            if (_this.deviceInventoryFlag) {
+                _this.asset_deviceinfo();
+            }
+            _this.asset_linkinfo();
+            if (_this.backboneLinksAssets) {
+                _this.getAssetBackBoneList();
+            }
+            if (_this.radioLinksAssets) {
+                _this.getRadioLinks();
+            }
+            if (_this.bsoLinksAssets) {
+                _this.getBSOLinks();
+            }
+            if (_this.gatewayLinksAssets) {
+                _this.getGateWayLinks();
+            }
+            if (_this.siteconnectLinksAssets) {
+                _this.getSiteconnectLinks();
+            }
+            if (_this.fiberLinksAssets) {
+                _this.getFiberLinks();
+            }
+        };
+        this.mappingOption = function (mappingOption) {
+            _this.selectedMappingOption = mappingOption;
+            _this.loadInitFn();
+        };
+        this.getAssetBackBoneList = function () {
+            _this.backLinkLoader = true;
+            _this.commonServices.getRequest('_workflow/NSECoreLinkDetail').then(function (response) {
+                if (response.status == 'success') {
+                    _this.nseCoreLinkList = response.items[0].NSECoreLinkList;
+                    _this.backboneLinksObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.backboneLinksObj.data = _this.nseCoreLinkList.slice();
+                    }
+                    else {
+                        _this.nseCoreLinkList.forEach(function (coreLink) {
+                            if (coreLink.popName.toLowerCase() == _this.selectedSite.toLowerCase()) {
+                                _this.backboneLinksObj.data.push(coreLink);
+                            }
+                        });
+                    }
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                }
+                _this.backLinkLoader = false;
+            }, function (err) {
+                _this.backLinkLoader = false;
+            });
+        };
+        this.getRadioLinks = function () {
+            _this.radioLinkLoader = true;
+            _this.commonServices.postRequest('/_asset/getWifiRadiosList', { performance: "No" }).then(function (response) {
+                if (response.status == 'success') {
+                    _this.radioLinkList = response.items[0].WifiRadiosList;
+                    _this.gridDataRadioLinkObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.gridDataRadioLinkObj.data = _this.radioLinkList.slice();
+                    }
+                    else {
+                        _this.radioLinkList.forEach(function (radioLink) {
+                            _this.gridDataRadioLinkObj.data.push(radioLink);
+                        });
+                    }
+                }
+                _this.radioLinkLoader = false;
+            }, function (err) {
+                _this.radioLinkLoader = false;
+            });
+        };
+        this.getGateWayLinks = function () {
+            _this.gateWayLinkLoader = true;
+            _this.commonServices.postRequest('/_asset/getGateWaylinks', { performance: "No" }).then(function (response) {
+                if (response.status == 'success') {
+                    _this.gatewayLinkList = response.items[0].GatewayLinks;
+                    _this.gridDataGateWayLinkObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.gridDataGateWayLinkObj.data = _this.gatewayLinkList.slice();
+                    }
+                    else {
+                        _this.gatewayLinkList.forEach(function (gateLink) {
+                            if (gateLink.siteName.toLowerCase() == _this.selectedSite.toLowerCase()) {
+                                _this.gridDataGateWayLinkObj.data.push(gateLink);
+                            }
+                        });
+                    }
+                }
+                _this.gateWayLinkLoader = false;
+            }, function (err) {
+                _this.gateWayLinkLoader = false;
+            });
+        };
+        this.getBSOLinks = function () {
+            _this.bsoLinkLoader = true;
+            _this.commonServices.postRequest('_asset/getBsoLinkList', { performance: "No" }).then(function (response) {
+                if (response.status == 'success') {
+                    _this.bsoLinkList = response.items[0].BsoLinkList;
+                    _this.gridDataBSOLinkObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.gridDataBSOLinkObj.data = _this.bsoLinkList.slice();
+                    }
+                    else {
+                        _this.bsoLinkList.forEach(function (bsoLink) {
+                            if (bsoLink.fromFacility.toLowerCase() == _this.selectedSite.toLowerCase() || bsoLink.toFacility.toLowerCase() == _this.selectedSite.toLowerCase()) {
+                                _this.gridDataBSOLinkObj.data.push(bsoLink);
+                            }
+                        });
+                    }
+                }
+                _this.bsoLinkLoader = false;
+            }, function (err) {
+                _this.bsoLinkLoader = false;
+            });
+        };
+        this.getSiteconnectLinks = function () {
+            _this.siteconnectLinkLoader = true;
+            _this.commonServices.postRequest('_asset/getSiteConnectLinks', { performance: "No" }).then(function (response) {
+                if (response.status == 'success') {
+                    _this.siteconnectLinkList = response.items[0].SiteConnectLinkList;
+                    _this.gridDataSiteconnectLinkObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.gridDataSiteconnectLinkObj.data = _this.siteconnectLinkList.slice();
+                    }
+                    else {
+                        _this.siteconnectLinkList.forEach(function (siteconnectLink) {
+                            if (siteconnectLink.fecId.toLowerCase() == _this.selectedSite.toLowerCase()) {
+                                _this.gridDataSiteconnectLinkObj.data.push(siteconnectLink);
+                            }
+                        });
+                    }
+                }
+                _this.siteconnectLinkLoader = false;
+            }, function (err) {
+                _this.siteconnectLinkLoader = false;
+            });
+        };
+        this.getFiberLinks = function () {
+            _this.fiberLinkLoader = true;
+            _this.commonServices.postRequest('_asset/getFiberLinkList', { performance: "No" }).then(function (response) {
+                if (response.status == 'success') {
+                    _this.fiberLinkList = response.items[0].FiberLinkList;
+                    _this.gridDataFiberLinkObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.gridDataFiberLinkObj.data = _this.fiberLinkList.slice();
+                    }
+                    else {
+                        _this.fiberLinkList.forEach(function (fiberLink) {
+                            if (fiberLink.fecId.toLowerCase() == _this.selectedSite.toLowerCase()) {
+                                _this.gridDataFiberLinkObj.data.push(fiberLink);
+                            }
+                        });
+                    }
+                }
+                _this.fiberLinkLoader = false;
+            }, function (err) {
+                _this.fiberLinkLoader = false;
+            });
+        };
+        this.initialFn = function () {
+            var pageViewData = _this.pageView.getData();
+            var userData = _this.cookie.getObject('globals') || {};
+            _this.deviceGridDataObj.id = 'devicedata-status-grid';
+            _this.deviceGridDataObj.columns = [
+                { dataKey: 'group', title: 'Group', hide: true, width: '' },
+                { dataKey: 'siteName', title: 'Site Name', hide: false, width: '' },
+                { dataKey: 'hostname', title: 'Host Name', hide: false, width: 100 },
+                { dataKey: 'ip', title: 'Device IP', hide: false, width: '' },
+                { dataKey: 'make', title: 'Make', hide: false, width: '' },
+                { dataKey: 'location', title: 'Location', hide: true, width: '' },
+                { dataKey: 'model', title: 'Model', hide: false, width: '' },
+                { dataKey: 'serialNumber', title: 'Serial No', hide: false, width: '' },
+                { dataKey: 'firmware', title: 'Firmware', hide: false, width: 100 },
+                { dataKey: 'linkCnt', title: 'Link Count', hide: false, width: '' },
+                { dataKey: 'discoveredDate', title: 'Discovered Date', hide: false, width: '' }
+            ];
+            if (_this.emsFields) {
+                _this.deviceGridDataObj.columns.push({ dataKey: 'su_customerName', title: 'Customer Name', hide: false, width: '' });
+                _this.deviceGridDataObj.columns.push({ dataKey: 'su_linkid', title: 'Link ID', hide: false, width: '' });
+                _this.deviceGridDataObj.columns.push({ dataKey: 'apIP', title: 'AP IP', hide: false, width: '' });
+                _this.deviceGridDataObj.columns.push({ dataKey: 'type', title: 'Device Type', hide: false, width: '' });
+            }
+            _this.linkGridDataObj.id = 'linkdata-status-grid';
+            _this.linkGridDataObj.columns = [
+                {
+                    dataKey: 'ip',
+                    title: 'Device IP',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'device_name',
+                    title: 'Host Name',
+                    hide: false,
+                    width: 100
+                }, {
+                    dataKey: 'siteName',
+                    title: 'Site Name',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'link_desc',
+                    title: 'Description',
+                    hide: false,
+                    width: 100
+                }, {
+                    dataKey: 'interface_name',
+                    title: 'Interface Name',
+                    hide: false,
+                    width: '',
+                }, {
+                    dataKey: 'vlinkid',
+                    title: 'Link Id',
+                    hide: false,
+                    width: '',
+                }, {
+                    dataKey: 's_operator',
+                    title: 'Provider',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'evlinkid',
+                    title: 'External Link Id',
+                    hide: false,
+                    width: '',
+                }, {
+                    dataKey: 'link_monitoring_type',
+                    title: 'Monitoring Type',
+                    hide: false,
+                    width: '',
+                } /*,{
+                    dataKey : 'link_type',
+                    title :  'Type',
+                    hide : true,
+                    width:''
+                }*/,
+                {
+                    dataKey: 'bandwidth',
+                    title: 'Bandwidth (Kbps)',
+                    hide: false,
+                    width: ''
+                }
+            ];
+            if (!_this.deviceInventoryFlag) {
+                _this.linkGridDataObj.columns = [
+                    {
+                        dataKey: 'vlinkid',
+                        title: 'Link Id',
+                        hide: false,
+                        width: '',
+                        link: true
+                    }, {
+                        dataKey: 'link_desc',
+                        title: 'Description',
+                        hide: false,
+                        width: ''
+                    }, {
+                        dataKey: 'link_type',
+                        title: 'Type',
+                        hide: true,
+                        width: ''
+                    }, {
+                        dataKey: 'bandwidth',
+                        title: 'Bandwidth (Kbps)',
+                        hide: false,
+                        width: ''
+                    }
+                ];
+            }
+            if (_this.isMemberNameDiaplay) {
+                //this.linkGridDataObj.columns.push({dataKey : 'customerName',title : 'Name',hide : false,width:''});
+                _this.linkGridDataObj.columns.unshift({ dataKey: 'customerFullName', title: 'Name', hide: false, width: '' });
+                //this.deviceGridDataObj.columns.push({dataKey : 'customerName',title : 'Name',hide : false,width:''});
+                _this.deviceGridDataObj.columns.unshift({ dataKey: 'customerFullName', title: 'Name', hide: false, width: '' });
+            }
+            if (_this.hideNseAttributes) {
+                _this.linkGridDataObj.columns.forEach(function (column) {
+                    if (column.dataKey == 'link_monitoring_type') {
+                        column.hide = true;
+                    }
+                });
+            }
+            //if (typeof pageViewData !="undefined" && pageViewData && Object.keys(pageViewData).length > 0 ) {
+            /*userData.ioni_clientid = '10122';
+            var _postData = {"ioniClientId":userData.ioni_clientid, "groupId":this.groupId}
+            this.commonServices.postRequest('/_mcpe/getSiteWiseAssetCounts',_postData).then((response : any) => {
+                if(response.status == 'success'){
+                    this._asset_report_details = response.items;
+                    this.allAssets = [...this._asset_report_details];
+                    this.totalAssets = this.allAssets.length;
+                    this.totalCount = this._asset_report_details.length;
+                    this.totalPages = this.totalPages = Math.ceil(this.totalCount / this.pageSize);
+                    if (pageViewData.pageViewType && pageViewData.pageViewType == "assetDahboard") {
+                        this.changeGroup(pageViewData.groupName,pageViewData.value);
+                    }
+                    
+                }else{
+                    this.commonServices.error(response.message);
+                }
+                this.loader = false;
+            },
+            (err : any) => {
+                this.loader = false;
+            });*/
+            //}else{
+            _this.loader = true;
+            var postData;
+            if (_this.ParentChildFlag) {
+                postData = { displayOption: _this.selectedMappingOption, performance: "No" };
+            }
+            else {
+                postData = { displayOption: 'all', performance: "No" };
+            }
+            _this.commonServices.postRequest('_asset/assetInventoryServiceCount', postData).then(function (response) {
+                if (response.status == 'success') {
+                    _this.assetInventoryServices = response.items[0].AssetInventoryServices;
+                    _this.assetInventoryAllSites = response.items[0].AssetInventoryAllSites;
+                    var classObj = _this.generateClassName(_this.assetInventoryServices);
+                    _this.assetClassName = classObj.asset;
+                    _this.boxClassName = classObj.box;
+                    _this._asset_report_details = response.items[0].AssetInventorySites;
+                    _this.allAssets = _this._asset_report_details.slice();
+                    _this.totalAssets = _this.allAssets.length;
+                    _this.totalCount = _this._asset_report_details.length;
+                    _this.totalPages = _this.totalPages = Math.ceil(_this.totalCount / _this.pageSize);
+                    _this.excelDataBuild(_this._asset_report_details);
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                }
+                _this.loader = false;
+            }, function (err) {
+                _this.loader = false;
+            });
+            //}
+            _this.defaultTab = false;
+        };
+        this.generateClassName = function (services) {
+            var classNames = ['', 'col-lg-12', 'col-lg-6', 'col-lg-4', 'col-lg-3'];
+            var boxClassNames = ['', 'col-md-2 small-box assetBoxView', 'col-md-3 medium-box assetBoxView', 'col-md-4 col-sm-6 assetBoxView', 'col-md-4 col-sm-6 assetBoxView'];
+            var index = 0;
+            for (var key in services) {
+                if (services[key] > 0) {
+                    index = index + 1;
+                }
+            }
+            return { asset: classNames[index], box: boxClassNames[index] };
+        };
+        this.send_sitename = function (resp_datalist) {
+            _this.pageView.setData(resp_datalist);
+        };
+        this.paginate = function (page) {
+            _this.currentPage = page;
+        };
+        this.back = function () {
+            _this.resetFlags();
+        };
+        /*changeGroup = (group : any,type : any)=>{
+            this.currentPage = 1;
+            this.allow_dev_info = false;
+            this.allow_link_info = false;
+            this._asset_report_details = [];
+            this.selectedGrp = group;
+            if(group == 'all'){
+                this._asset_report_details = [...this.allAssets];
+                this.totalDeviceCount = this.totalDeviceCountCopy;
+                this.totalLinkCount = this.totalLinkCountCopy;
+            }else{
+                this.totalDeviceCount = 0;
+                this.totalLinkCount = 0;
+                this.allAssets.map((data : any,i : any)=>{
+                    if(data.site == group){
+                        this.totalDeviceCount = this.totalDeviceCount + parseInt(data.devcount);
+                        this.totalLinkCount = this.totalLinkCount + parseInt(data.linkcount);
+                        this._asset_report_details.push(data);
+                    }
+                });
+            }
+            if(type && type =="assetDevice"){
+                this.getDeviceList('',group);
+            }else if(type && type == "assetLink"){
+                this.getLinkList('',group);
+            }
+            this.totalCount = this._asset_report_details.length;
+            this.totalPages = this.totalPages = Math.ceil(this.totalCount / this.pageSize);
+        }*/
+        this.getDeviceLinks = function (siteName, service) {
+            /*var serviceObj : any = {
+                APPS : 'AssetInventoryAPP',
+                CLOUD : 'AssetInventoryCloud',
+                LAN : 'AssetInventoryLAN',
+                WAN : 'AssetInventoryWAN'
+            }*/
+            _this.backboneLinksObj.data = [];
+            _this.gridDataRadioLinkObj.data = [];
+            _this.gridDataGateWayLinkObj.data = [];
+            _this.gridDataBSOLinkObj.data = [];
+            _this.deviceGridDataObj.data = [];
+            _this.linkGridDataObj.data = [];
+            _this.gridDataSiteconnectLinkObj.data = [];
+            _this.gridDataFiberLinkObj.data = [];
+            if (siteName == 'all') {
+                _this.selectedSite = 'ALL';
+                _this.deviceGridDataObj.data = _this.assetInventoryList.slice();
+                _this.linkGridDataObj.data = _this.assetInventoryLinkList.slice();
+                _this.backboneLinksObj.data = _this.nseCoreLinkList.slice();
+                _this.gridDataRadioLinkObj.data = _this.radioLinkList.slice();
+                _this.gridDataGateWayLinkObj.data = _this.gatewayLinkList.slice();
+                _this.gridDataBSOLinkObj.data = _this.bsoLinkList.slice();
+                _this.gridDataSiteconnectLinkObj.data = _this.siteconnectLinkList.slice();
+                _this.gridDataFiberLinkObj.data = _this.fiberLinkList.slice();
+            }
+            else {
+                _this.selectedSite = siteName;
+                _this.assetInventoryList.forEach(function (asset) {
+                    if (asset.siteName == siteName) {
+                        _this.deviceGridDataObj.data.push(asset);
+                    }
+                });
+                _this.assetInventoryLinkList.forEach(function (link) {
+                    if (link.siteName == siteName) {
+                        _this.linkGridDataObj.data.push(link);
+                    }
+                });
+                _this.nseCoreLinkList.forEach(function (coreLink) {
+                    if (coreLink.popName.toLowerCase() == siteName.toLowerCase()) {
+                        _this.backboneLinksObj.data.push(coreLink);
+                    }
+                });
+                _this.radioLinkList.forEach(function (radioLink) {
+                    _this.gridDataRadioLinkObj.data.push(radioLink);
+                });
+                _this.gatewayLinkList.forEach(function (gateLink) {
+                    if (gateLink.siteName.toLowerCase() == siteName.toLowerCase()) {
+                        _this.gridDataGateWayLinkObj.data.push(gateLink);
+                    }
+                });
+                _this.bsoLinkList.forEach(function (bsoLink) {
+                    if (bsoLink.fromFacility.toLowerCase() == siteName.toLowerCase() || bsoLink.toFacility.toLowerCase() == siteName.toLowerCase()) {
+                        _this.gridDataBSOLinkObj.data.push(bsoLink);
+                    }
+                });
+                _this.siteconnectLinkList.forEach(function (siteconnectLink) {
+                    if (siteconnectLink.fecId.toLowerCase() == siteName.toLowerCase()) {
+                        _this.gridDataSiteconnectLinkObj.data.push(siteconnectLink);
+                    }
+                });
+                _this.fiberLinkList.forEach(function (fiberLink) {
+                    if (fiberLink.fecId.toLowerCase() == siteName.toLowerCase()) {
+                        _this.gridDataFiberLinkObj.data.push(fiberLink);
+                    }
+                });
+            }
+            if (_this.deviceInventoryFlag) {
+                _this.setTab('Devices Inventory');
+                _this.getDeviceList();
+            }
+            else {
+                _this.setTab('Links Inventory');
+                _this.getLinkList();
+            }
+        };
+        this.getDeviceList = function () {
+            _this.resetFlags();
+            _this.allow_dev_info = true;
+        };
+        this.getBackLinkList = function () {
+            _this.resetFlags();
+            _this.allow_backlink_info = true;
+        };
+        this.getBsoLinkList = function () {
+            _this.resetFlags();
+            _this.allow_bsolink_info = true;
+        };
+        this.getGatewayLinkList = function () {
+            _this.resetFlags();
+            _this.allow_gateway_info = true;
+        };
+        this.getRadioLinkList = function () {
+            _this.resetFlags();
+            _this.allow_radiolink_info = true;
+        };
+        this.getSiteConnectLinkList = function () {
+            _this.resetFlags();
+            _this.allow_siteconnectlink_info = true;
+        };
+        this.getFiberLinkList = function () {
+            _this.resetFlags();
+            _this.allow_fiberlink_info = true;
+        };
+        this.getLinkList = function () {
+            _this.showLinkLists();
+        };
+        this.showLinkLists = function () {
+            _this.resetFlags();
+            _this.allow_link_info = true;
+        };
+        this.resetFlags = function () {
+            _this.commonServices.globalSearch('');
+            _this.allow_dev_info = false;
+            _this.allow_link_info = false;
+            _this.allow_backlink_info = false;
+            _this.allow_radiolink_info = false;
+            _this.allow_gateway_info = false;
+            _this.allow_bsolink_info = false;
+            _this.allow_siteconnectlink_info = false;
+            _this.allow_fiberlink_info = false;
+        };
+        this.asset_deviceinfo = function () {
+            _this.deviceLoader = true;
+            var postData;
+            if (_this.ParentChildFlag) {
+                postData = { displayOption: _this.selectedMappingOption, performance: "No" };
+            }
+            else {
+                postData = { displayOption: 'all', performance: "No" };
+            }
+            _this.commonServices.postRequest('_asset/assetInventoryList', postData).then(function (resp) {
+                if (resp.status == "success") {
+                    _this.deviceLoader = false;
+                    _this.assetInventoryList = resp.items[0].AssetInventoryList;
+                    _this.deviceGridDataObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.deviceGridDataObj.data = _this.assetInventoryList.slice();
+                    }
+                    else {
+                        _this.assetInventoryList.forEach(function (asset) {
+                            if (asset.siteName == _this.selectedSite) {
+                                _this.deviceGridDataObj.data.push(asset);
+                            }
+                        });
+                    }
+                }
+                else {
+                    _this.deviceLoader = false;
+                    _this.commonServices.error(resp.message);
+                }
+            }, function (err) {
+                _this.deviceLoader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.asset_linkinfo = function () {
+            _this.linkLoader = true;
+            var postData;
+            if (_this.ParentChildFlag) {
+                postData = { displayOption: _this.selectedMappingOption, performance: "No" };
+            }
+            else {
+                postData = { displayOption: 'all', performance: "No" };
+            }
+            _this.commonServices.postRequest('/_asset/assetInventoryLinkListStatus', postData).then(function (resp) {
+                if (resp.status == "success") {
+                    _this.linkLoader = false;
+                    var responseLinks = resp.items[0];
+                    var asset_links = responseLinks.AssetInventoryLinkAPP.concat(responseLinks.AssetInventoryLinkCloud, responseLinks.AssetInventoryLinkLAN, responseLinks.AssetInventoryLinkWAN);
+                    asset_links.map(function (val) {
+                        //val.s_operator = this.operToProviderNameMap[val.provider];
+                        val.s_operator = val.provider;
+                        val.status = (val.linkPerformaceData.linkstatus && val.linkPerformaceData.linkstatus == 1 ? 'UP' : 'DOWN');
+                    });
+                    _this._asset_link_list = asset_links;
+                    _this.assetInventoryLinkList = asset_links.slice();
+                    _this.linkGridDataObj.data = [];
+                    if (_this.selectedSite == 'ALL') {
+                        _this.linkGridDataObj.data = _this.assetInventoryLinkList.slice();
+                    }
+                    else {
+                        _this.assetInventoryLinkList.forEach(function (link) {
+                            if (link.siteName == _this.selectedSite) {
+                                _this.linkGridDataObj.data.push(link);
+                            }
+                        });
+                    }
+                }
+                else {
+                    _this.linkLoader = false;
+                    _this.commonServices.error(resp.message);
+                }
+            }, function (err) {
+                _this.linkLoader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.excelDataBuild = function (arr) {
+            if (arr === void 0) { arr = []; }
+            console.log("excelDataBuild", arr);
+            _this.assertExcelData = [];
+            if (arr.length > 0) {
+                arr.forEach(function (data) {
+                    if (data.siteDetails && data.siteDetails.length) {
+                        var tempObject = {};
+                        var tempDeviceCnt = 0;
+                        tempObject.groupName = data.groupName;
+                        tempObject.siteName = data.siteName;
+                        tempObject.address1 = data.siteDetails[0].address1;
+                        tempObject.address2 = data.siteDetails[0].address2;
+                        tempObject.business_hours = data.siteDetails[0].business_hours;
+                        tempObject.city = data.siteDetails[0].city;
+                        tempObject.groupcode = data.siteDetails[0].groupcode;
+                        tempObject.latitude = data.siteDetails[0].latitude;
+                        tempObject.longitude = data.siteDetails[0].longitude;
+                        tempObject.pincode = data.siteDetails[0].pincode;
+                        tempObject.region = data.siteDetails[0].region;
+                        tempObject.state = data.siteDetails[0].state;
+                        data.AssetInventoryServiceCount.forEach(function (devicedata) {
+                            var t = devicedata.deviceCount;
+                            tempDeviceCnt += t;
+                        });
+                        tempObject.devicecount = tempDeviceCnt;
+                        _this.assertExcelData.push(tempObject);
+                    }
+                });
+            }
+        };
+        this.excelDownlod = function (arr) {
+            if (arr === void 0) { arr = []; }
+            console.log("excelDownlod", arr);
+            _this.gridDataObj.id = 'asset-detail-list';
+            _this.gridDataObj.columns = [{
+                    dataKey: 'groupName',
+                    title: 'Group Name',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'siteName',
+                    title: 'Site Name',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'groupcode',
+                    title: 'Group code',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'business_hours',
+                    title: 'Business hours',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'devicecount',
+                    title: 'Device Count',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'address1',
+                    title: 'Address 1',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'address2',
+                    title: 'Address 2',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'city',
+                    title: 'City',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'pincode',
+                    title: 'Pincode',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'state',
+                    title: 'State',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'region',
+                    title: 'Region',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'latitude',
+                    title: 'Latitude',
+                    hide: false,
+                    width: ''
+                }, {
+                    dataKey: 'longitude',
+                    title: 'Longitude',
+                    hide: false,
+                    width: ''
+                }];
+            _this.gridDataObj.data = arr;
+            _this.excellService.generateExcell(_this.gridDataObj);
+        };
+        this.getLinkedData = function (eventObj) {
+            _this.showLinkLists();
+            setTimeout(function () {
+                _this.commonServices.globalSearch(eventObj.row.ip);
+            }, 100);
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        this.subscription = this.commonServices.textSearched$.subscribe(function (searchText) {
+            var clonedReport = _this.allAssets.slice();
+            var filterArr = _this.commonServices.constructFilter(clonedReport);
+            _this._asset_report_details = _this.filter.transform(clonedReport, filterArr, searchText);
+            _this.totalCount = _this._asset_report_details.length;
+            _this.pageSize = 11;
+            _this.currentPage = 1;
+            _this.totalPages = Math.ceil(_this.totalCount / _this.pageSize);
+        });
+    }
+    AssetComponent.prototype.ngOnInit = function () {
+        this.deviceInventoryFlag = this.commonServices.checkApiAvailability('Device-Inventory');
+        this.backboneLinksAssets = this.commonServices.checkApiAvailability('BackboneLinksAssets');
+        this.bsoLinksAssets = this.commonServices.checkApiAvailability('BSOLinks');
+        this.radioLinksAssets = this.commonServices.checkApiAvailability('RadioLinks');
+        this.gatewayLinksAssets = this.commonServices.checkApiAvailability('GatewayLinks');
+        this.siteconnectLinksAssets = this.commonServices.checkApiAvailability('SiteConnectLinks');
+        this.fiberLinksAssets = this.commonServices.checkApiAvailability('FiberPowerLinks');
+        this.isMemberNameDiaplay = this.commonServices.checkApiAvailability('isMemberNameDiaplay');
+        this.hideNseAttributes = this.commonServices.checkApiAvailability('hideNseAttributes');
+        this.emsFields = this.commonServices.checkApiAvailability('EMSFields');
+        this.currentUser = this.cookie.getObject('globals');
+        var userData = this.cookie.getObject('globals') || {};
+        var userType = this.currentUser.user_type;
+        this.pageSize = 11;
+        this.currentPage = 1;
+        this.totalCount = 0;
+        this.gridPageSize = 15;
+        this.gridCurrentPage = 1;
+        this.gridTotalPages = 0;
+        this.assetSearch = '';
+        this.userType = userType;
+        if (userType == 6) {
+            this.groupId = this.currentUser.group_id;
+        }
+        this.selectedGrp = 'all';
+        this.mydate = new Date();
+        this.loadInitFn();
+    };
+    AssetComponent.prototype.ngOnDestroy = function () {
+        // prevent memory leak when component destroyed
+        this.subscription.unsubscribe();
+    };
+    AssetComponent = __decorate([
+        core_1.Component({
+            selector: 'app-asset',
+            template: __webpack_require__(1583),
+            styles: [__webpack_require__(1587)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, ngx_cookie_1.CookieService, common_service_1.CommonService, ngx_pipes_1.FilterByPipe, page_view_service_1.PageViewService, excell_service_1.ExcellService, pdf_service_1.PdfService])
+    ], AssetComponent);
+    return AssetComponent;
+}());
+exports.AssetComponent = AssetComponent;
+
+
+/***/ }),
+
+/***/ 1582:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.radioLinkObj = {
+    pdfName: 'Radio Links',
+    pdfTitle: 'Radio Links',
+    excelTitle: 'Radio Links',
+    excelName: 'Radio Links',
+    id: 'radioLinksObj_performance',
+    data: [],
+    columns: [{
+            dataKey: 'radioName',
+            title: 'Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'deviceip',
+            title: 'Device IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'macAddr',
+            title: 'MAC Address',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'clients',
+            title: 'Clients',
+            hide: false,
+            width: '',
+            link: true
+        }, {
+            dataKey: 'usage',
+            title: 'Usage (Kbps)',
+            hide: false,
+            width: '',
+            link: true
+        }, {
+            dataKey: 'channel',
+            title: 'Channel',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'txPower',
+            title: 'T	X Power',
+            hide: false,
+            width: '',
+            link: true
+        }, {
+            dataKey: 'ssid',
+            title: 'SSID',
+            hide: false,
+            width: ''
+        }]
+};
+exports.bsoLinkObj = {
+    pdfName: 'BSO Links',
+    pdfTitle: 'BSO Links',
+    excelTitle: 'BSO Links',
+    excelName: 'BSO Links',
+    id: 'bsoLinksObj_performance',
+    data: [],
+    columns: [{
+            dataKey: 'linkId',
+            title: 'Link Id',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkDesc',
+            title: 'Link Desc',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'bandwidth',
+            title: 'Bandwidth (Mbps)',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'siteCode',
+            title: 'Site Code',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'location',
+            title: 'Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkType',
+            title: 'Link Type',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'blId',
+            title: 'B1 Id',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'bwType',
+            title: 'BW Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'bso',
+            title: 'BSO',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'bsoType',
+            title: 'BSO Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'apIp',
+            title: 'AP IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'suIp',
+            title: 'SU IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'wireLength',
+            title: 'Wire Length',
+            hide: false,
+            width: '',
+            dataType: 'float'
+        }, {
+            dataKey: 'fromLoc',
+            title: 'From Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'toLoc',
+            title: 'To Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'fromFacility',
+            title: 'From Facility',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'toFacility',
+            title: 'To Facility',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'circuitId',
+            title: 'Circuit Id',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkCreationDate',
+            title: 'Creation Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkCreationDate',
+            title: 'Creation Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'reportType',
+            title: 'Report Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'fRtrSwtip',
+            title: 'From Switch IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'fRtrSwtinterface',
+            title: 'From Switch Interface',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'tRtrSwtip',
+            title: 'To Switch IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'tRtrSwtinterface',
+            title: 'To Switch Interface',
+            hide: false,
+            width: ''
+        }]
+};
+exports.gateWayLinkObj = {
+    pdfName: 'Gateway Links',
+    pdfTitle: 'Gateway Links',
+    excelTitle: 'Gateway Links',
+    excelName: 'Gateway Links',
+    id: 'gatewayLinksObj_performance',
+    data: [],
+    columns: [{
+            dataKey: 'remarks',
+            title: 'Gateway Name',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'hostName',
+            title: 'Host Name',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'peip',
+            title: 'PE IP',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'peInterface',
+            title: 'PE Interface',
+            hide: false,
+            width: ''
+        }]
+};
+exports.siteconnectLinkObj = {
+    pdfName: 'Siteconnect Links',
+    pdfTitle: 'Siteconnect Links',
+    excelTitle: 'Siteconnect Links',
+    excelName: 'Siteconnect Links',
+    id: 'siteconnect_performance',
+    data: [],
+    columns: [{
+            dataKey: 'customerName',
+            title: 'Customer Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkId',
+            title: 'Link ID',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'sitecode',
+            title: 'Sitecode',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'bandwidthSpeed',
+            title: 'Bandwidth (Mbps)',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'linkLastMile',
+            title: 'Link Last Mile',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkType',
+            title: 'Link Type',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'region',
+            title: 'Region',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'partyId',
+            title: 'Party ID',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'accountId',
+            title: 'Account ID',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'rsdeTermPeip',
+            title: 'RSDE Term PE IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'fcicTerminPeinter',
+            title: 'FCIC Term PE Inter',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'apIp',
+            title: 'AP IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'suip',
+            title: 'SU IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'productType',
+            title: 'Product Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'fecId',
+            title: 'Base Station',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'termSwitchIP',
+            title: 'Term Switch IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'termSwitchPort',
+            title: 'Term Switch Port',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'elementId',
+            title: 'Element ID',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'ehealthip',
+            title: 'EHealth IP',
+            hide: false,
+            width: ''
+        }]
+};
+exports.fiberLinkObj = {
+    pdfName: 'Fiber Links',
+    pdfTitle: 'Fiber Links',
+    excelTitle: 'Fiber Links',
+    excelName: 'Fiber Links',
+    id: 'fiber_performance',
+    data: [],
+    columns: [{
+            dataKey: 'deviceIp',
+            title: 'Device IP',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'hostname',
+            title: 'Host Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'fecId',
+            title: 'FEC ID',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'interfaceName',
+            title: 'Interface Name',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'linkDesc',
+            title: 'Link Desc',
+            hide: false,
+            width: '',
+        }]
+};
+
+
+/***/ }),
+
+/***/ 1583:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = " <section id=\"main-content\">\n\t\t<section class=\"wrapper\">\n\t\t\t<ol class=\"breadcrumb\">\n\t\t\t\t<li><a (click)=\"goToHomePage()\">Home</a></li>\n\t\t\t  <li class=\"active\">My Asset</li>\n\t\t\t</ol>\n\t\t\t<div class=\"row\" id=\"asset-management\">\n\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t<div class=\"box-title box-title-tabs\">\n\t\t\t\t\t\t<div *ngIf=\"!(allow_link_info || allow_dev_info || allow_backlink_info || allow_radiolink_info || allow_gateway_info || allow_bsolink_info || allow_siteconnectlink_info || allow_fiberlink_info) && ParentChildFlag\" class=\"pull-right asset-parent-filter\">\n\t\t\t\t\t\t\t<div class=\"box-tab\">\t\t\t\n\t\t\t\t\t\t\t\t  <ul class=\"nav nav-tabs\" role=\"tablist\" >\n\t\t\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'all'}\"><a (click)=\"mappingOption('all')\" aria-controls=\"all\" role=\"tab\" data-toggle=\"tab\">ALL</a></li>\n\t\t\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'parent'}\"><a (click)=\"mappingOption('parent')\" aria-controls=\"parent\" role=\"tab\" data-toggle=\"tab\">MAIN</a></li>\n\t\t\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'child'}\"><a (click)=\"mappingOption('child')\" aria-controls=\"child\" role=\"tab\" data-toggle=\"tab\">MEMBERS</a></li>\n\t\t\t\t\t\t\t\t  </ul>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"pull-right\"  *ngIf=\"allow_link_info || allow_dev_info || allow_backlink_info || allow_radiolink_info || allow_gateway_info || allow_bsolink_info || allow_siteconnectlink_info || allow_fiberlink_info\">\n\t\t\t\t\t\t\t\t<ul class=\"box-title-right\">\n\t\t\t\t\t\t\t\t\t<li *ngIf=\"deviceInventoryFlag\"  [ngClass]=\"{'active' : allow_dev_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Devices Inventory\"><a (click)=\"setTab('Devices Inventory');getDeviceList()\"><img-icon src=\"devise.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li [ngClass]=\"{'active' : allow_link_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Links Inventory\"><a (click)=\"setTab('Links Inventory');getLinkList()\"><img-icon src=\"link.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li *ngIf=\"backboneLinksAssets\" [ngClass]=\"{'active' : allow_backlink_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Backbone Links\"><a (click)=\"setTab('Backbone Links');getBackLinkList()\"><img-icon src=\"trend.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li *ngIf=\"radioLinksAssets\" [ngClass]=\"{'active' : allow_radiolink_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Radio Links\"><a (click)=\"setTab('Radio Links');getRadioLinkList()\"><img-icon src=\"mappin.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li *ngIf=\"gatewayLinksAssets\" [ngClass]=\"{'active' : allow_gateway_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Gateway Links\"><a (click)=\"setTab('Gateway Links');getGatewayLinkList()\"><img-icon src=\"platform.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li *ngIf=\"bsoLinksAssets\" [ngClass]=\"{'active' : allow_bsolink_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"BSO Links\"><a (click)=\"setTab('BSO Links');getBsoLinkList()\"><img-icon src=\"network-port.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li *ngIf=\"siteconnectLinksAssets\" [ngClass]=\"{'active' : allow_siteconnectlink_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Siteconnect Links\"><a (click)=\"setTab('Siteconnect Links');getSiteConnectLinkList()\"><img-icon src=\"network.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li *ngIf=\"fiberLinksAssets\" [ngClass]=\"{'active' : allow_fiberlink_info}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Fiber Links\"><a (click)=\"setTab('Fiber Links');getFiberLinkList()\"><img-icon src=\"site.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t\t\t\t\t<a class=\"pull-right asset-top-page\" data-target=\"#current\" data-toggle=\"tab\" (click)=\"setTab('Assets');back()\" style=\"float: right;margin-top: 2px;text-decoration: underline;font-size: 16px;cursor: pointer;\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Back</a>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t\t\t\t<h3>{{selecteTab}}</h3>\n\t\t\t\t\t\t\t</div>           \n\t\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n        <div class=\"row\" id=\"asset-detail-container\">\n\t\t\t<div class=\"col-md-12\" *ngIf=\"!allow_link_info && !allow_dev_info && !loader && !allow_backlink_info && !allow_radiolink_info && !allow_gateway_info && !allow_bsolink_info && !allow_siteconnectlink_info && !allow_fiberlink_info\">\n\t\t\t\t<div  class=\"pagination-box\">\n\t\t\t\t\t<div class=\"pull-left paging_top\">\n\t\t\t\t\t  Total Sites - <a href=\"\">{{_asset_report_details.length}}</a>\n\t\t\t\t\t</div>\n\t\t\t\t\t<ul class=\"box-title-right pull-right\" style=\"margin-top: -2px;cursor: pointer;\">\n\t\t\t\t\t\t\t<li><img src=\"" + __webpack_require__(500) + "\" (click)=\"excelDownlod(assertExcelData)\"></li>\n\t\t\t\t\t\t\t\t <!-- <li><img src=\"../../../assets/images/pdf.png\" (click)=\"pdfDownload(reportName,'')\"></li> -->\n\t\t\t\t\t</ul>\n\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t<pagination-controls *ngIf=\"totalCount != 0\"\n\t\t\t\t\t\t\t\t id=\"asset-box\"\n\t\t\t\t\t\t\t\t [directionLinks]=\"directionLinks\"\n\t\t\t\t\t\t\t\t [previousLabel]=\"previousLabel\"\n\t\t\t\t\t\t\t\t [nextLabel]=\"nextLabel\"\n\t\t\t\t\t\t\t\t (pageChange)=\"paginate($event)\">\n\t\t\t\t\t\t</pagination-controls>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t    </div>\n\t\t\t\t  <hr>\n\t\t\t  </div>\n            <div class=\"col-sm-12\" style=\"padding: 0;\">\n                <div class=\"col-md-12 no-padding\" id=\"reports\">\n\t\t\t\t\t<content-loader *ngIf=\"loader\" ></content-loader>\n                    <div *ngIf=\"!loader\"> \n                        <div class=\"tab-content clearfix\">\n                            <div class=\"tab-pane\" [ngClass]=\"{'active' : !allow_link_info && !allow_dev_info && !loader && !allow_backlink_info && !allow_radiolink_info && !allow_gateway_info && !allow_bsolink_info && !allow_siteconnectlink_info && !allow_fiberlink_info}\" id=\"current\">\n                              <div class=\"auto-clear unalign\">\n\t\t\t\t\t\t\t\t\t<div [ngClass]= \"boxClassName\">\n\t\t\t\t\t\t\t\t\t  <div class=\"asset-box\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"asset\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-header text-center\"> \n\t\t\t\t\t\t\t\t\t\t\t\t  <h4> All Assets </h4>\n\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-section\">\n\t\t\t\t\t\t\t\t\t\t\t  <div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <a [hidden]= \"!assetInventoryServices['APPS']\" data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getDeviceLinks('all','APPS')\" class=\"asset-section-box asset-with-img\" [ngClass]= \"assetClassName\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-child-box\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <img class=\"svg\" src=\"{{assetImages['APPS']}}\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>APPS <span>{{assetInventoryAllSites.appsCnt}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</a>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <a [hidden]= \"!assetInventoryServices['CLOUD']\" data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getDeviceLinks('all','CLOUD')\" class=\"asset-section-box asset-with-img\" [ngClass]= \"assetClassName\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-child-box\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <img class=\"svg\" src=\"{{assetImages['CLOUD']}}\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>CLOUD <span>{{assetInventoryAllSites.cloudCnt}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </a> \n\t\t\t\t\t\t\t\t\t\t\t\t   <a [hidden]= \"!assetInventoryServices['LAN']\" data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getDeviceLinks('all','LAN')\" class=\"asset-section-box asset-with-img\" [ngClass]= \"assetClassName\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-child-box\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <img class=\"svg\" src=\"{{assetImages['LAN']}}\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>LAN <span>{{assetInventoryAllSites.lanCnt}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </a> \n\t\t\t\t\t\t\t\t\t\t\t\t   <a [hidden]= \"!assetInventoryServices['WAN']\" data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getDeviceLinks('all','WAN')\" class=\"asset-section-box asset-with-img\" [ngClass]= \"assetClassName\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-child-box\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <img class=\"svg\" src=\"{{assetImages['WAN']}}\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>WAN <span>{{assetInventoryAllSites.wanCnt}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </a> \n\t\t\t\t\t\t\t\t\t\t\t  \n\t\t\t\t\t\t\t\t\t\t\t  </div> \n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>        \n\t\t\t\t\t\t\t\t\t\t</div>    \n\t\t\t\t\t\t\t\t\t  </div>    \n\t\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t\t<div [ngClass]= \"boxClassName\" *ngFor=\"let lists of _asset_report_details | paginate : { id: 'asset-box',itemsPerPage: pageSize,currentPage: currentPage,totalItems: totalCount};index as index\">\n\t\t\t\t\t\t\t\t\t  <div class=\"asset-box\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"{{lists.siteName}}\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset\">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-header text-center\"> \n\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>{{lists.siteName.substr(0, 30)}} <!--<br>{{lists.site}}--> <span *ngIf=\"(lists.siteName.length > 30)\">...</span></h4>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-section\">\n\t\t\t\t\t\t\t\t\t\t\t\t  <div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t\t\t  \n\t\t\t\t\t\t\t\t\t\t\t\t  <a [hidden]= \"!assetInventoryServices[site.service]\"  *ngFor=\"let site of lists.AssetInventoryServiceCount\" data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getDeviceLinks(lists.siteName,site.service)\" class=\"asset-section-box asset-with-img\" [ngClass]= \"assetClassName\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"asset-child-box\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <img class=\"svg\" src=\"{{assetImages[site.service]}}\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>{{site.service}} <span>{{site.deviceCount}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </a>  \n\t\t\t\t\t\t\t\t\t\t\t\t  <!--  <a data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getLinkList(lists.sitename)\" class=\"col-lg-3 asset-section-box asset-with-img\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <img class=\"svg\" src=\"" + __webpack_require__(1584) + "\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>Wan <span>{{1}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </a> \n\t\t\t\t\t\t\t\t\t\t\t\t  <a data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getDeviceList(lists.sitename)\" class=\"col-lg-3 asset-section-box asset-with-img\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <img class=\"svg\" src=\"" + __webpack_require__(1585) + "\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>LAN <span>{{lists.devcount}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </a>  \n\t\t\t\t\t\t\t\t\t\t\t\t  <a data-target=\"#historical\" data-toggle=\"tab\" (click)=\"getLinkList(lists.sitename)\" class=\"col-lg-3 asset-section-box asset-with-img\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <img class=\"svg\" src=\"" + __webpack_require__(1586) + "\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t <h5>Apps <span>{{4}}</span></h5>\n\t\t\t\t\t\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t  </a> -->\n\t\t\t\t\t\t\t\t\t\t\t\t  </div> \n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div>        \n\t\t\t\t\t\t\t\t\t\t\t</div>    \n\t\t\t\t\t\t\t\t\t\t</div>    \n\t\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t\t<div class=\"clearfix\"></div> \n\t\t\t\t\t\t\t\t\t<hr>\n\t\t\t\t\t\t\t\t\t<div class=\"col-sm-12\" *ngIf=\"!loader\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"pagination-box\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t\t\t\t\t\t  Total Sites - <a href=\"\">{{_asset_report_details.length}}</a>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t\t\t\t\t\t\t<pagination-controls *ngIf=\"totalCount != 0\"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t id=\"asset-box\"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t [directionLinks]=\"directionLinks\"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t [previousLabel]=\"previousLabel\"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t [nextLabel]=\"nextLabel\"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t (pageChange)=\"paginate($event)\">\n\t\t\t\t\t\t\t\t\t\t\t\t</pagination-controls>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n                            </div>\n\t\t\t\t\t\t\t<div class=\"tab-pane \"  [ngClass]=\"{'active' : allow_link_info || allow_dev_info || allow_backlink_info || allow_radiolink_info || allow_gateway_info || allow_bsolink_info || allow_siteconnectlink_info || allow_fiberlink_info}\" id=\"historical\" style=\"margin-top: -20px;\">\n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_dev_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!deviceLoader\" [gridobj]=\"deviceGridDataObj\" (linkClick)=\"getLinkedData($event)\"></data-grid>\n    \t\t\t\t\t\t\t<content-loader *ngIf=\"deviceLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_link_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!linkLoader\" [gridobj]=\"linkGridDataObj\"></data-grid>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"linkLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_backlink_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!backLinkLoader\" [gridobj]=\"backboneLinksObj\"></data-grid>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"backLinkLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_radiolink_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!radioLinkLoader\" [gridobj]=\"gridDataRadioLinkObj\"></data-grid>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"radioLinkLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_gateway_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!gateWayLinkLoader\" [gridobj]=\"gridDataGateWayLinkObj\"></data-grid>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"gateWayLinkLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_bsolink_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!bsoLinkLoader\" [gridobj]=\"gridDataBSOLinkObj\"></data-grid>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"bsoLinkLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_siteconnectlink_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!siteconnectLinkLoader\" [gridobj]=\"gridDataSiteconnectLinkObj\"></data-grid>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"siteconnectLinkLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t<div class=\"panel-body table-panel-body\" id='DownloadExcel' *ngIf=\"allow_fiberlink_info\"> \n\t\t\t\t\t\t\t\t\t<data-grid  *ngIf=\"!fiberLinkLoader\" [gridobj]=\"gridDataFiberLinkObj\"></data-grid>\n\t\t\t\t\t\t\t\t\t<content-loader *ngIf=\"fiberLinkLoader\"></content-loader>   \n\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t</div>\n                         </div>\n                    </div>\n                </div>\n            </div>\n\t\t</div>\n    </section>\n</section>\n    <!--  Section End -->                  \n                        ";
+
+/***/ }),
+
+/***/ 1584:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "src/assets/images/lan.png";
+
+/***/ }),
+
+/***/ 1585:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "src/assets/images/wan.png";
+
+/***/ }),
+
+/***/ 1586:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "src/assets/images/apps.png";
+
+/***/ }),
+
+/***/ 1587:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1588);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1588:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1589);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./asset.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./asset.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1589:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#asset-detail-container .all-asset-link {\n\tcolor : #000;\n}\n#asset-detail-container .table > tbody > tr > td {\n\tfont-size: 12px;\n}\n#asset-detail-container .pointer\n\t{\n\t  cursor:auto;\n\t}\n#asset-detail-container hr {\n  margin-bottom: 10px;\n\t  margin-top: 5px;\n}\n\n#asset-detail-container .pn-ProductNav_Wrapper {\n\tmargin-bottom: 0px;\n}\n\n#asset-detail-container .pagination-box {\n    margin: 5px 0;\n}.padding_totalcount{padding:10px 0px;}\n\n.asset-child-box {\n\tdisplay : table;\n\tmargin : auto;\n}\n#asset-custom-title #pnProductNav {\n\tfloat : left;\n}\n.asset-top-page {\n\tmargin-top : 12px;\n\tmargin-right : 12px;\n}\n#asset-detail-container .small-box .asset-header h4{\n\tfont-size : 14px;\n}\n#asset-detail-container .medium-box .asset-header h4{\n\tfont-size : 18px;\n}\n#asset-detail-container .asset-header {\n\tmin-height : 65px;\n}\n\n#asset-management .box-tab li.active a:after, #asset-management .box-tab li a:hover:after{\n\tborder : none;\n}\n\n.asset-parent-filter .box-tab .nav-tabs{\n\tmargin-bottom : 0;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1590:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var asset_component_1 = __webpack_require__(1368);
+var ASSET_ROUTER = [
+    {
+        path: '',
+        component: asset_component_1.AssetComponent,
+        pathMatch: 'full'
+    }
+];
+exports.assetRouter = router_1.RouterModule.forChild(ASSET_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>18.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>9cb689cbdb3d2300429e2a9a48961948</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.18.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_9cb689cbdb3d2300429e2a9a48961948</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:20:59</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.41.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([41],{
+
+/***/ 1305:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var nse_circuit_summary_component_1 = __webpack_require__(1540);
+var nse_circuit_summary_router_1 = __webpack_require__(1797);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var NseCircuitSummaryModule = /** @class */ (function () {
+    function NseCircuitSummaryModule() {
+    }
+    NseCircuitSummaryModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, nse_circuit_summary_router_1.NseCircuitSummaryRouter],
+            declarations: [
+                nse_circuit_summary_component_1.NseCircuitSummaryComponent,
+            ],
+        })
+    ], NseCircuitSummaryModule);
+    return NseCircuitSummaryModule;
+}());
+exports.NseCircuitSummaryModule = NseCircuitSummaryModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1540:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var router_1 = __webpack_require__(48);
+var ngx_cookie_1 = __webpack_require__(62);
+var NseCircuitSummaryComponent = /** @class */ (function () {
+    function NseCircuitSummaryComponent(commonService, pageView, router, cookies) {
+        var _this = this;
+        this.commonService = commonService;
+        this.pageView = pageView;
+        this.router = router;
+        this.cookies = cookies;
+        this.loader = false;
+        this.generateCell = function () {
+            _this.gridDataObj.columns.forEach(function (column) {
+                column.cell = function (cellRow, cellColumn) {
+                    if (cellColumn.dataKey == 'total') {
+                        return {
+                            click: true,
+                            html: '<span class="summary-total">' + (cellRow[cellColumn.dataKey] || '0') + '</span>'
+                        };
+                    }
+                    else if (cellRow.popName == 'total' && cellColumn.dataKey != 'popName') {
+                        return {
+                            click: true,
+                            html: '<span class="summary-total">' + (cellRow[cellColumn.dataKey] || '0') + '</span>'
+                        };
+                    }
+                    else if (cellColumn.dataKey != 'total' && cellColumn.dataKey != 'popName') {
+                        return {
+                            click: true,
+                            html: '<span class="summary-count">' + (cellRow[cellColumn.dataKey] || '0') + '</span>'
+                        };
+                    }
+                    else {
+                        return {
+                            html: '<span>' + (cellRow[cellColumn.dataKey] || '0') + '</span>'
+                        };
+                    }
+                };
+            });
+        };
+        this.getLinkedData = function (eventObj) {
+            _this.pageView.setData({ popName: eventObj.row.linkPop, providerName: eventObj.column.dataKey });
+            _this.router.navigate(['/nse-circuit-lists']);
+        };
+        this.goToHomePage = function () {
+            _this.commonService.gotoDashboard();
+        };
+    }
+    NseCircuitSummaryComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.gridDataObj = {
+            hidePaging: true,
+            hideIndex: true,
+            hideFilter: true,
+            itemsPerPage: 10,
+            data: [],
+            columns: [],
+            pdfName: 'NSE Circuit Summary',
+            pdfTitle: 'NSE Circuit Summary',
+            excelTitle: 'NSE Circuit Summary',
+            excelName: 'NSE Circuit Summary'
+        };
+        this.gridDataObj.id = 'nse-circuit-summary';
+        this.currentUser = this.cookies.getObject('globals');
+        var postData = { customerName: this.currentUser.customer_name };
+        this.loader = true;
+        this.commonService.postRequest('/_core/getChildClientsDetails', postData).then(function (resDetails) {
+            if (resDetails.items.length >= 1) {
+                _this.ParentChildFlag = true;
+                _this.getCustomerList();
+            }
+            else {
+                _this.ParentChildFlag = false;
+                _this.router.navigate(['/nse-circuit-lists']);
+            }
+        });
+    };
+    NseCircuitSummaryComponent.prototype.getCustomerList = function () {
+        var _this = this;
+        this.loader = true;
+        var postUrl = "/_workflow/getPopServiceProviderCountWiseData";
+        this.commonService.postRequest(postUrl, { type: 'circuit' }).then(function (res) {
+            if (res.status == 'success') {
+                var serviceProviders_1 = [], totalProviders = 0;
+                var data = [];
+                var total_1 = {};
+                _this.gridDataObj.columns.push({ dataKey: 'popName', title: 'POP', hide: false, width: '' });
+                res.items[0].popNameList.map(function (popDetails) {
+                    var obj = {};
+                    var count = 0;
+                    obj['total'] = 0;
+                    obj['popName'] = popDetails.popName;
+                    obj['linkPop'] = popDetails.linkPop;
+                    popDetails.serviceProviderList.map(function (val) {
+                        var serviceProName = val.serviceProviderName.toLowerCase();
+                        if (serviceProviders_1.indexOf(serviceProName) == -1) {
+                            serviceProviders_1.push(serviceProName);
+                            _this.gridDataObj.columns.push({ dataKey: serviceProName, title: serviceProName.toUpperCase(), hide: false, width: 60 });
+                            total_1[serviceProName] = 0;
+                            console.log(val);
+                        }
+                        obj[serviceProName] = val.serviceProviderCount ? val.serviceProviderCount : "0";
+                        count += +val.serviceProviderCount;
+                        total_1[serviceProName] += +val.serviceProviderCount;
+                    });
+                    obj['total'] = count;
+                    _this.gridDataObj.data.push(obj);
+                });
+                for (var i in total_1) {
+                    totalProviders += total_1[i];
+                }
+                _this.gridDataObj.columns.push({ dataKey: 'total', title: 'Total', hide: false, width: 60 });
+                var total_data = Object.assign({}, total_1, { popName: 'Total', linkPop: 'total', total: totalProviders });
+                _this.gridDataObj.data.sort(function (a, b) {
+                    if (a.popName < b.popName) {
+                        return -1;
+                    }
+                    else if (a.popName > b.popName) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                _this.gridDataObj.data.push(total_data);
+                _this.gridDataObj.itemsPerPage = _this.gridDataObj.data.length;
+                _this.generateCell();
+            }
+            else {
+                _this.commonService.error(res.message);
+            }
+            _this.loader = false;
+        }, function (err) {
+            _this.commonService.error(err);
+            _this.loader = false;
+        });
+    };
+    NseCircuitSummaryComponent = __decorate([
+        core_1.Component({
+            selector: 'nse-circuit-summary',
+            template: __webpack_require__(1793),
+            styles: [__webpack_require__(1794)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, page_view_service_1.PageViewService, router_1.Router, ngx_cookie_1.CookieService])
+    ], NseCircuitSummaryComponent);
+    return NseCircuitSummaryComponent;
+}());
+exports.NseCircuitSummaryComponent = NseCircuitSummaryComponent;
+
+
+/***/ }),
+
+/***/ 1793:
+/***/ (function(module, exports) {
+
+module.exports = "<!--  Section Start -->\n<section id=\"main-content\">\n  <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li class=\"active\">NSE Circuit Summary</li>\n      </ol>\n    <div class=\"col-sm-12 no-padding\">\n        <div class=\"box-title box-title-tabs\">    \n        <div class=\"pull-right\">\n          <!-- ul class=\"box-title-right\">\n              <li>\n                  <button type=\"button\" class=\"button-upload btn btn-primary\" style=\"padding:4px;\" (click)=\"openbulkupload(bulkUpload)\" >Bulk Upload</button>\n                </li>\n          </ul> -->\n      </div>\n      <div class=\"pull-left\">\n          <h3>NSE Circuit Summary</h3>\n        </div>           \n        <div class=\"clearfix\"></div>\n      </div>\n    </div>\n    <div class=\"col-sm-12\" *ngIf=\"loader\"></div>\n    <div class=\"col-md-8 col-md-offset-2\">\n    <content-loader *ngIf=\"loader\"></content-loader>\n    <data-grid *ngIf=\"!loader\" [gridobj]=\"gridDataObj\" (linkClick)=\"getLinkedData($event)\"></data-grid>\n    </div>\n\n    <!--\n      <data-grid  *ngIf=\"!loader\" (linkClick)=\"getRequestListNext($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n      \n      <content-loader *ngIf=\"loader\"></content-loader> \n      -->\n  </section>\n</section>\n<!--  Section End -->";
+
+/***/ }),
+
+/***/ 1794:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1795);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1795:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1796);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./nse-circuit-summary.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./nse-circuit-summary.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1796:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".summary-total {\r\n\tcolor: #3aa269;\r\n    display: block;\r\n    text-align: center;\r\n    font-size: 16px;\r\n}\r\n\r\n.summary-count {\r\n\ttext-align: center;\r\n\tdisplay: block;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1797:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var nse_circuit_summary_component_1 = __webpack_require__(1540);
+var NSE_CIRCUIT_ROUTER = [
+    {
+        path: '',
+        component: nse_circuit_summary_component_1.NseCircuitSummaryComponent,
+        pathMatch: 'full'
+    }
+];
+exports.NseCircuitSummaryRouter = router_1.RouterModule.forChild(NSE_CIRCUIT_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>41.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>1cb689cbdb3d2300429e2a9a489619e2</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.41.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_1cb689cbdb3d2300429e2a9a489619e2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="db_image">
+    <db_image action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <category/>
+        <format/>
+        <height/>
+        <image>62b0d2c3db316300429e2a9a48961935</image>
+        <name>src/assets/images/icons/link.svg</name>
+        <size_bytes>1428</size_bytes>
+        <sys_class_name>db_image</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:30:22</sys_created_on>
+        <sys_id>bb7e0e43db316300429e2a9a4896197a</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>src/assets/images/icons/link.svg</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>db_image_bb7e0e43db316300429e2a9a4896197a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 12:58:49</sys_updated_on>
+        <thumbnail/>
+        <width/>
+    </db_image>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color/>
+        <chunk_size_bytes>734003</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>image/svg+xml</content_type>
+        <file_name>image</file_name>
+        <image_height/>
+        <image_width/>
+        <size_bytes>1428</size_bytes>
+        <size_compressed>789</size_compressed>
+        <state>available</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:40:08</sys_created_on>
+        <sys_id>62b0d2c3db316300429e2a9a48961935</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 12:40:08</sys_updated_on>
+        <table_name>ZZ_YYdb_image</table_name>
+        <table_sys_id>bb7e0e43db316300429e2a9a4896197a</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAAAA==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="image" sys_id="62b0d2c3db316300429e2a9a48961935">62b0d2c3db316300429e2a9a48961935</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:40:08</sys_created_on>
+        <sys_id>a2b0d2c3db316300429e2a9a48961935</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>bVRdb9NAEHz3r1iOFypx8X347DOqW9G0QkgUqlJAfYwSN4lI4yixmopfz8w5pQVRxb7T3e7M7Oy6x6eP9yt5aLe7ZbdulB0ZJbt+sp5NVt26bdS6U6cn2fGr8y/jm9urC9k9zOXq29mnj2NROs9/+HGen9+cy9fvH8QZY01tijy/+KwyUYu+37zL8/1+P9r7Ubed5zfXOYPy64uxRob+kwGIHNDWjGb9TIGQPH+rgs71rvkPKEAMk0G5X876RaNwMjLpb9MrWbTL+aL/9/Rh2e7PusdGGTHyfPViC7zNtt2124f2/W7TTvvrSb/sGvV4uZzd4pH7tu2pdS79drLe3XXb+0al7WrSt2+ecN4+Qx7JbjpZ8coOV/ppd6Syu+Vq1ajXB3J0Ydv9TB1Yt2TZTPqFzBp1WXsntqyDTHUl2hZ4nGhvDmtAPTqIi6JdkNKKLrCYdFOmgCxisVGQigz8AFPiJIiuvOia+UB1tpYCkS5W4muslQSTiKwb1tJmRipk+/QGANiiFCkW/MguiXM4GfThgXbtLbVTfIVX7TNEQDWBa6HA2gpm47CiJmwTU6oU4PYg2R9WYNECBMQsuVJga3kUorhUB9lSRcx1IFkxjk6VWL2HowmNB1VySpeg9bSSP0iGQBZmqClZEZKxyNWuFmRb2hOlhBc4rGAhlIMmZmQuJcbUEJqLehzwKzhWSFUSxFIj2uaSDiTGYUGwlcB4CT5zhZSRJrBdqAXAhSAJDUZoyS1uHHRbi94hj+LoQXDiiGWieFpkMrxDYE2eQh2d9uDhi4amhroiqUDyimtRkwoB08jxCUR2FV3HxtMYWA8WzF7iKilPBzP0CWzDqBXUTV0sFZ2uOBEYk8pm4DTJa23pObsVfqn85VcQkGlZ2hTJxWH+a/JxylzBmknjYFERh/kjQ5pD3JpMw3KOHhSkM3hH7Y6V88QDtkzOY2bhKj4DywZHfjbolknF4azI+M24xEK/Ya4Onh7pCDdZFor3gxB+eiakQbbpygyF5XO+8G/sJPsNWv3xyZQFAAA=</data>
+        <length>1040</length>
+        <position>1</position>
+        <sys_attachment display_value="image" sys_id="62b0d2c3db316300429e2a9a48961935">62b0d2c3db316300429e2a9a48961935</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:40:08</sys_created_on>
+        <sys_id>26b0d2c3db316300429e2a9a48961935</sys_id>
+    </sys_attachment_doc>
+</record_update>

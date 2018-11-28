@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.26.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([26],{
+
+/***/ 1300:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var ns_linkid_details_component_1 = __webpack_require__(1531);
+var ns_linkid_details_router_1 = __webpack_require__(1763);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var NsLinkIdModule = /** @class */ (function () {
+    function NsLinkIdModule() {
+    }
+    NsLinkIdModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, ns_linkid_details_router_1.NsLinkIdRouter],
+            declarations: [
+                ns_linkid_details_component_1.NsLinkIdComponent
+            ],
+        })
+    ], NsLinkIdModule);
+    return NsLinkIdModule;
+}());
+exports.NsLinkIdModule = NsLinkIdModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1531:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var ns_linkid_details_columns_1 = __webpack_require__(1758);
+var page_view_service_1 = __webpack_require__(498);
+var router_1 = __webpack_require__(48);
+var common_1 = __webpack_require__(6);
+var NsLinkIdComponent = /** @class */ (function () {
+    function NsLinkIdComponent(commonServices, cookies, router, PageViewService, dateFilter) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.router = router;
+        this.PageViewService = PageViewService;
+        this.dateFilter = dateFilter;
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.gridDetails = {};
+        this.dynamicTab = [
+            { 'activeTabName': 'reconnect', 'tooltip': 'Reconnect Details', ' targetTab': 'reConnectTab', 'tabIcon': 'change_management.svg' },
+            { 'activeTabName': 'disconnect', 'tooltip': 'Disconnect Details', ' targetTab': 'connectTab', 'tabIcon': 'link.svg' },
+        ];
+        this.pageViewGet = this.PageViewService.getData();
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.getGridItems = function (serviceStatusText, postDataVal) {
+            _this.loader = true;
+            // console.log("postDataVal", postDataVal);
+            _this.commonServices.postRequest('/_ns/ServiceOrderResponse', postDataVal).then(function (response) {
+                if (response.status == "success") {
+                    _this.gridDetails.data = response.items[0].ServiceOrders.filter(function (obj) {
+                        return obj.service == serviceStatusText;
+                    }).slice();
+                    _this.loader = false;
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                    _this.loader = false;
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+                _this.loader = false;
+            });
+        };
+        this.showTab = function (tabName) {
+            _this.activeTabName = tabName;
+            if (tabName == "disconnect") {
+                _this.serviceStatus = 'Fusion Disconnect';
+                _this.titletab = "Disconnect Details";
+            }
+            else if (tabName == "reconnect") {
+                _this.serviceStatus = 'Fusion Reconnect';
+                _this.titletab = "Reconnect Details";
+            }
+            _this.getGridItems(_this.serviceStatus, _this.postData);
+        };
+        this.getLists = function (getFromDate, getToDate) {
+            _this.postData = { "fromDate": _this.dateFilter.transform(getFromDate, "yyyy-MM-dd"), "toDate": _this.dateFilter.transform(getToDate, "yyyy-MM-dd") };
+            _this.getGridItems(_this.serviceStatus, _this.postData);
+        };
+        this.redirectModules = function () {
+            _this.router.navigate(['linkid-ns']);
+        };
+    }
+    NsLinkIdComponent.prototype.ngOnInit = function () {
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.loader = false;
+        this.gridDetails = ns_linkid_details_columns_1.nsLinkGridColumnInfo;
+        this.maxDate = new Date();
+        this.maxDate.setDate(this.maxDate.getDate() - 1);
+        if (Object.keys(this.pageViewGet).length != 0) {
+            this.activeTabName = this.pageViewGet.connect_status;
+            if (this.pageViewGet.connect_status == 'disconnect') {
+                this.serviceStatus = 'Fusion Disconnect';
+                this.titletab = "Disconnect Details";
+            }
+            else if (this.pageViewGet.connect_status == 'reconnect') {
+                this.serviceStatus = 'Fusion Reconnect';
+                this.titletab = "Reconnect Details";
+            }
+        }
+        else {
+            this.activeTabName = 'reconnect';
+            this.titletab = 'Reconnect Details';
+            this.serviceStatus = 'Fusion Reconnect';
+        }
+        var today = new Date();
+        var time = today.getTime();
+        var lastMnthTime = time - (24 * 31 * 60 * 60 * 1000);
+        var yesterday = time - (24 * 1 * 60 * 60 * 1000);
+        this.fromDate = new Date(lastMnthTime);
+        this.toDate = new Date();
+        this.postData = { "fromDate": this.dateFilter.transform(this.fromDate, "yyyy-MM-dd"), "toDate": this.dateFilter.transform(this.toDate, "yyyy-MM-dd") };
+        this.getGridItems(this.serviceStatus, this.postData);
+    };
+    NsLinkIdComponent = __decorate([
+        core_1.Component({
+            selector: 'ns-linkid-details',
+            template: __webpack_require__(1759),
+            styles: [__webpack_require__(1760)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, router_1.Router, page_view_service_1.PageViewService, common_1.DatePipe])
+    ], NsLinkIdComponent);
+    return NsLinkIdComponent;
+}());
+exports.NsLinkIdComponent = NsLinkIdComponent;
+
+
+/***/ }),
+
+/***/ 1758:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.nsLinkGridColumnInfo = {
+    pdfName: 'NS-LinkId-Details',
+    pdfTitle: 'NS-LinkId-Details',
+    excelTitle: 'NS-LinkId-Details',
+    excelName: 'NS-LinkId-Details',
+    id: 'NS-LinkId-Details_id',
+    updateEvent: false,
+    deleteEvent: false,
+    hasCheckbox: false,
+    data: [],
+    columns: [{
+            dataKey: 'linkId',
+            title: 'Link ID',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'orderName',
+            title: 'Order Name',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'orderNumber',
+            title: 'Order Number',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'orderDate',
+            title: 'Order Date',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'peIP',
+            title: 'PE-IP',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'peInterface',
+            title: 'PE-Interface',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'service',
+            title: 'Service',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'make',
+            title: 'Make',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'status',
+            title: 'Status',
+            hide: false,
+            link: false,
+            width: ''
+        }]
+};
+
+
+/***/ }),
+
+/***/ 1759:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n      <ol class=\"breadcrumb\">\n        <li><a (click)=\"this.commonServices.gotoDashboard()\">Home</a></li>\n        <li class=\"active\">{{titletab}}</li>\n      </ol>\n      <div class=\"row\">\n        <div class=\"col-md-12\">\n          <div class=\"box-title box-title-tabs box-title-tabs-sla\" style=\"padding-bottom: 0px;\">\n            <div class=\"pull-right\">\n              <ul class=\"box-title-right\" id=\"nsLinkId\">\n                <li>\n                    <div class=\"picker\">                    \n                        <div class=\"input-group datetimepicker-start-end\">\n                            <input bsDatepicker  (ngModelChange)=\"getLists($event ,toDate)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [maxDate]=\"maxDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\"><span>to</span>\n                            <input bsDatepicker  (ngModelChange)=\"getLists(fromDate,$event)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\" [minDate]=\"fromDate\" [maxDate]=\"maxDate\">\n                        </div>\n                        <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n                    </div>\n                </li>\n                <li>\n                  <a (click)=\"redirectModules()\" class=\"user_create pull-right\">Create</a>\n                </li>\n                <li *ngFor=\"let tab of dynamicTab\" [ngClass]=\"{'active' : activeTabName == tab.activeTabName}\" data-toggle=\"tooltip\" placement=\"top\"\n                  tooltip=\"{{tab.tooltip}}\">\n                  <a data-target=\"#{{tab.targetTab}}\" data-toggle=\"tab\" (click)=\"showTab(tab.activeTabName)\">\n                    <img-icon src=\"{{tab.tabIcon}}\" class=\"svg\"></img-icon>\n                  </a>\n                </li>\n              </ul>\n            </div>\n            <div class=\"pull-left\">\n              <h3>{{titletab}}</h3>\n            </div>\n            <div class=\"clearfix\"></div>\n          </div>\n  \n          <div class=\"box-ns\">\n            <div class=\"tab-content clearfix\">\n              <div class=\"tab-pane\" id=\"connectTab\" [ngClass]=\"{'active' : activeTabName == 'disconnect'}\">\n                <div class=\"row\">\n                  <div class=\"col-md-12\" *ngIf=\"!loader\">\n                    <data-grid [gridobj]=\"gridDetails\"></data-grid>\n                  </div>\n                  <content-loader *ngIf=\"loader\"></content-loader>\n                </div>\n              </div>\n              <div class=\"tab-pane\" id=\"reConnectTab\" [ngClass]=\"{'active' : activeTabName == 'reconnect'}\">\n                  <div class=\"row\">\n                      <div class=\"col-md-12\" *ngIf=\"!loader\">\n                          <data-grid [gridobj]=\"gridDetails\"></data-grid>\n                       </div>\n                      <content-loader *ngIf=\"loader\"></content-loader>\n                  </div>\n              </div>\n             \n            </div>\n          </div>\n        </div>\n      </div>\n    </section>\n  </section>";
+
+/***/ }),
+
+/***/ 1760:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1761);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1761:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1762);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./ns-linkid-details.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./ns-linkid-details.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1762:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#nsLinkId .user_create{\n    margin-right: 6px;text-decoration: none;cursor: pointer;\n}\n\n#nsLinkId .user_create:hover{\n    background: #556670;\n    color: #fff;\n    text-decoration: none;\n}\n\n#nsLinkId .box-title {\n    padding-bottom: 0px !important  ; \n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1763:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var ns_linkid_details_component_1 = __webpack_require__(1531);
+var NSLINKID_ROUTER = [
+    {
+        path: '',
+        component: ns_linkid_details_component_1.NsLinkIdComponent,
+        pathMatch: 'full'
+    }
+];
+exports.NsLinkIdRouter = router_1.RouterModule.forChild(NSLINKID_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>26.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>dcb689cbdb3d2300429e2a9a48961971</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.26.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_dcb689cbdb3d2300429e2a9a48961971</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:00</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

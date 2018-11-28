@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.39.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([39],{
+
+/***/ 1318:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var order_status_component_1 = __webpack_require__(1557);
+var order_status_router_1 = __webpack_require__(1900);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var OrderStatusModule = /** @class */ (function () {
+    function OrderStatusModule() {
+    }
+    OrderStatusModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, order_status_router_1.OrderStatusRouter],
+            declarations: [
+                order_status_component_1.OrderStatusComponent,
+            ],
+        })
+    ], OrderStatusModule);
+    return OrderStatusModule;
+}());
+exports.OrderStatusModule = OrderStatusModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1557:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var common_1 = __webpack_require__(6);
+__webpack_require__(504);
+var page_view_service_1 = __webpack_require__(498);
+var router_1 = __webpack_require__(48);
+var OrderStatusComponent = /** @class */ (function () {
+    function OrderStatusComponent(router, commonService, dateFilter, pageView) {
+        var _this = this;
+        this.router = router;
+        this.commonService = commonService;
+        this.dateFilter = dateFilter;
+        this.pageView = pageView;
+        this.loader = true;
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.goToHomePage = function () {
+            _this.commonService.gotoDashboard();
+        };
+    }
+    OrderStatusComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.pageViewData = this.pageView.getData();
+        if (this.pageViewData.data == undefined) {
+            this.router.navigate(['/nse-sla-dashboard']);
+        }
+        else {
+            this.renderlLogicOnce = false;
+            this.adjust = true;
+            this.filteredData = [];
+            this.orderType = [];
+            this.options = [];
+            this.optionsinprogress = [];
+            this.dateLoader = false;
+            this.orderLoader = true;
+            var today = new Date();
+            var time = today.getTime();
+            var lastWeekTime = time - (24 * 7 * 60 * 60 * 1000);
+            this.fromDate = new Date(lastWeekTime);
+            this.maxDate = new Date();
+            this.maxDate.setDate(this.maxDate.getDate() - 1);
+            this.yesterDay = new Date();
+            this.yesterDay.setDate(this.yesterDay.getDate() - 1);
+            this.fromDate = this.dateFilter.transform(this.yesterDay, "yyyy-MM-dd");
+            this.toDate = this.dateFilter.transform(this.maxDate, "yyyy-MM-dd");
+            this.data = [[], [], []];
+            this.datainprogress = [[], [], []];
+            this.gridDataObj = {
+                id: 'orders-sla-4',
+                data: [],
+                columns: [],
+                pdfName: 'Order Status SLA',
+                pdfTitle: 'Order Status SLA',
+                excelTitle: 'Order Status SLA',
+                excelName: 'Order Status SLA'
+            };
+            this.gridDataObj.columns = [
+                { dataKey: 'requestId', title: 'Request id', hide: false, width: '' },
+                { dataKey: 'insertDate', title: 'Insert Date', hide: false, width: '' },
+                { dataKey: 'orderStatus', title: 'Order Status', hide: false, width: '' },
+                { dataKey: 'dateDiff', title: 'No Of Days', hide: false, width: '' },
+                { dataKey: 'slaStatus', title: 'SLA', hide: false, width: '' }
+            ];
+            this.resetCompletedOptions();
+            this.resetInProgressOptions();
+            document.getElementsByClassName("fa-bars")[0].addEventListener('click', function () {
+                console.log(_this.adjust);
+                var translate = 0;
+                _this.adjust = !_this.adjust;
+                _this.renderlLogicOnce = !_this.renderlLogicOnce;
+                if (_this.adjust) {
+                    translate = 20;
+                }
+                if (translate == 0) {
+                    for (var i = 0; i < 6; i++) {
+                        _this.options[i].chart.duration = 470;
+                        _this.optionsinprogress[i].chart.duration = 470;
+                    }
+                }
+                else {
+                    for (var i = 0; i < 6; i++) {
+                        _this.options[i].chart.duration = 500;
+                        _this.optionsinprogress[i].chart.duration = 500;
+                    }
+                }
+                console.log('this.options', _this.options);
+                var pc = document.getElementsByClassName('nv-pieChart');
+                console.log('pc', pc.length);
+                for (var i = 0; i < pc.length; i++) {
+                    //console.log(pc[i].getAttribute("transform"));
+                    pc[i].setAttribute("transform", "translate(20,30)");
+                }
+            });
+            this.getOrderDetails();
+        }
+    };
+    OrderStatusComponent.prototype.refreshData = function () {
+        this.gridDataObj.data = this.filteredData;
+    };
+    OrderStatusComponent.prototype.getOrderDetails = function () {
+        //console.log("this.fromDate",this.fromDate,"this.toDate",this.toDate);
+        this.dateLoader = true;
+        this.getOrderDetailsList();
+    };
+    OrderStatusComponent.prototype.resetCompletedOptions = function () {
+        var _this = this;
+        for (var i = 0; i < 6; i++) {
+            this.options.push({
+                chart: {
+                    type: 'pieChart',
+                    height: 290,
+                    width: 210,
+                    donut: true,
+                    x: function (d) { return d.slaStatus; },
+                    y: function (d) {
+                        Number.prototype['get10'] = function () {
+                            return d.Count;
+                        };
+                        if (d.Count == 0) {
+                            return new Number(0.01);
+                        }
+                        return new Number(d.Count);
+                    },
+                    showLabels: true,
+                    title: 'Implemented',
+                    titleOffset: -100,
+                    pie: {
+                        startAngle: function (d) { return d.startAngle - Math.PI / 2; },
+                        endAngle: function (d) { return d.endAngle - Math.PI / 2; },
+                        dispatch: {
+                            elementClick: function (e) {
+                                //  this.options.chart.tooltip.enabled = false;
+                                //console.log('e',e);
+                                _this.gridDataObj.data = _this.filteredData;
+                                _this.gridDataObj.data = _this.filteredData.filter(function (val) {
+                                    return (val.orderStatus == e.data.OrderStatus) && (val.slaStatus == e.data.slaStatus) && (val.activityCode == e.data.activityCode);
+                                });
+                            }
+                        }
+                    },
+                    labelType: 'value',
+                    valueFormat: function (n, extra) {
+                        //console.log('function',n,extra);
+                        /* if(this.datano)
+                        return 0; */
+                        return n.get10();
+                    },
+                    duration: 500,
+                    legendPosition: "bottom",
+                    legend: {
+                        margin: {
+                            top: 15,
+                            right: -10,
+                            bottom: 10,
+                            left: 0
+                        },
+                        dispatch: {}
+                    },
+                    dispatch: {
+                        renderEnd: function (t) {
+                            console.log('statechange', t);
+                            var pc = document.getElementsByClassName('nv-pieChart');
+                            console.log('pc', pc.length);
+                            for (var i_1 = 0; i_1 < pc.length; i_1++) {
+                                //console.log(pc[i].getAttribute("transform"));
+                                pc[i_1].setAttribute("transform", "translate(20,30)");
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    };
+    OrderStatusComponent.prototype.resetInProgressOptions = function () {
+        var _this = this;
+        for (var i = 0; i < 6; i++) {
+            this.optionsinprogress.push({
+                chart: {
+                    type: 'pieChart',
+                    height: 290,
+                    width: 210,
+                    donut: true,
+                    x: function (d) { return d.slaStatus; },
+                    y: function (d) {
+                        Number.prototype['get10'] = function () {
+                            return d.Count;
+                        };
+                        if (d.Count == 0) {
+                            return new Number(0.01);
+                        }
+                        return new Number(d.Count);
+                    },
+                    title: 'In Progress',
+                    titleOffset: -100,
+                    showLabels: true,
+                    pie: {
+                        startAngle: function (d) { return d.startAngle - Math.PI / 2; },
+                        endAngle: function (d) { return d.endAngle - Math.PI / 2; },
+                        dispatch: {
+                            elementClick: function (e) {
+                                //  this.options.chart.tooltip.enabled = false;
+                                //console.log('e',e);
+                                _this.gridDataObj.data = _this.filteredData;
+                                _this.gridDataObj.data = _this.filteredData.filter(function (val) {
+                                    return (val.orderStatus == e.data.OrderStatus) && (val.slaStatus == e.data.slaStatus) && (val.activityCode == e.data.activityCode);
+                                });
+                            }
+                        },
+                    },
+                    labelType: 'value',
+                    valueFormat: function (n) {
+                        //console.log('function',n);
+                        /* if(this.inprogressno)
+                        return 0; */
+                        return n.get10();
+                    },
+                    duration: 500,
+                    legendPosition: "bottom",
+                    legend: {
+                        margin: {
+                            top: 15,
+                            right: -10,
+                            bottom: 10,
+                            left: 10
+                        },
+                        dispatch: {}
+                    },
+                    dispatch: {
+                        renderEnd: function (t) {
+                            console.log('statechange', t);
+                            var pc = document.getElementsByClassName('nv-pieChart');
+                            console.log('pc', pc.length);
+                            for (var i_2 = 0; i_2 < pc.length; i_2++) {
+                                //console.log(pc[i].getAttribute("transform"));
+                                pc[i_2].setAttribute("transform", "translate(20,30)");
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    };
+    OrderStatusComponent.prototype.getOrderDetailsList = function () {
+        var _this = this;
+        //console.log('post');
+        this.data = [[], [], []];
+        this.datainprogress = [[], [], []];
+        var from = this.dateFilter.transform(this.fromDate, "yyyy-MM-dd");
+        var to = this.dateFilter.transform(this.toDate, "yyyy-MM-dd");
+        /* this.commonService.postRequest(' /_workflow/getNSEOrdersSLADetailList',{"fromdate":from,"todate":to}).then((res:any)=>{ */
+        this.orderDetails = this.pageViewData.data.NSEOrdersSLADetailList; //res.items[0].NSEOrdersSLADetailList;
+        this.filteredData = this.orderDetails.slice();
+        this.gridDataObj.data = this.filteredData;
+        this.dateLoader = false;
+        this.orderLoader = true;
+        /*
+        this.data=[[],[],[]];
+        this.datainprogress=[[],[],[]]; */
+        var NSEOrdersSLAList = this.pageViewData.data.NSEOrdersSLAList;
+        var donutall = [];
+        var donuts = [[], [], []];
+        NSEOrdersSLAList.map(function (val, index) {
+            donutall.push(val);
+            //console.log('donutall',donutall);
+            _this.orderType.push(val.orderType);
+            donutall[index].NSEOrdersSLAStatusDetails.map(function (val1) {
+                val1.NSEOrdersSLAStatusData.map(function (val2) {
+                    for (var i in val2) {
+                        donuts[index].push({
+                            OrderStatus: val1.StatusType,
+                            percentage: val1.percentage,
+                            slaStatus: i,
+                            Count: val2[i],
+                            activityCode: val.orderType
+                        });
+                    }
+                });
+            });
+        });
+        //console.log('donuts',donuts);
+        donuts.map(function (val, index) {
+            _this.getCustomerList(val, index);
+        });
+        /* },(err:any)=>{
+          this.commonService.error(err);
+          this.dateLoader=false;
+          this.orderLoader=false;
+        }); */
+    };
+    OrderStatusComponent.prototype.getCustomerList = function (res, index) {
+        var _this = this;
+        //console.log('res',res,'index',index);
+        //console.log('this.data,this.datainprogress',JSON.stringify(this.data[index]),JSON.stringify(this.datainprogress[index]));
+        var order_status = res;
+        //Donut chart example
+        order_status.map(function (val) {
+            if (val.OrderStatus == 'complete') {
+                val['slacount'] = val.Count + "";
+                val.Count = parseInt(val.Count);
+                if (val.slaStatus == 'withInSLA')
+                    val.color = "#4dc21f";
+                else if (val.slaStatus == 'breached')
+                    val.color = "#f71717";
+                _this.data[index].push(val);
+            }
+            else {
+                val['slacount'] = val.Count + "";
+                val.Count = parseInt(val.Count);
+                if (val.slaStatus == 'withInSLA')
+                    val.color = "#4dc21f";
+                else if (val.slaStatus == 'breached')
+                    val.color = "#f71717";
+                _this.datainprogress[index].push(val);
+            }
+        });
+        if (this.data[index].length == 0) {
+            var completedData = [
+                {
+                    "OrderStatus": "complete",
+                    "slaStatus": "withInSLA",
+                    "Count": "0",
+                    "color": "#4dc21f"
+                },
+                {
+                    "OrderStatus": "complete",
+                    "slaStatus": "breached",
+                    "Count": "0",
+                    "color": "#f71717"
+                }
+            ];
+            this.data[index] = completedData.slice();
+        }
+        if (this.datainprogress[index].length == 0) {
+            var inprogressData = [
+                {
+                    "OrderStatus": "incomplete",
+                    "slaStatus": "withInSLA",
+                    "Count": "0",
+                    "color": "#4dc21f"
+                },
+                {
+                    "OrderStatus": "incomplete",
+                    "slaStatus": "breached",
+                    "Count": "0",
+                    "color": "#f71717"
+                }
+            ];
+            this.datainprogress[index] = inprogressData.slice();
+        }
+        //console.log(this.data[index]);
+        //console.log(this.datainprogress[index]);
+        //console.log(this.datano,this.inprogressno)
+        //console.log(pc);
+        /* pc.map((val:any)=>{
+          val.setAttribute('transform',"translate(0,30)");
+        }); */
+    };
+    OrderStatusComponent.prototype.back = function () {
+        this.router.navigate(['/nse-sla-dashboard']);
+    };
+    OrderStatusComponent = __decorate([
+        core_1.Component({
+            selector: 'order-status',
+            template: __webpack_require__(1896),
+            styles: [__webpack_require__(1897)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, common_service_1.CommonService, common_1.DatePipe, page_view_service_1.PageViewService])
+    ], OrderStatusComponent);
+    return OrderStatusComponent;
+}());
+exports.OrderStatusComponent = OrderStatusComponent;
+
+
+/***/ }),
+
+/***/ 1896:
+/***/ (function(module, exports) {
+
+module.exports = "<!--  Section Start -->\n<section id=\"order-status\">\n<section id=\"main-content\">\n  <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li class=\"active\">Order Status</li>\n      </ol>\n    <div class=\"col-sm-12 no-padding\">\n        <div class=\"box-title box-title-tabs\">    \n        <div class=\"pull-right\" style=\"margin-top:-7px;\">\n          <ul class=\"box-title-right\" id=\"order-top\" *ngIf=\"orderLoader\">\n                <li class=\"grid-event-icon\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Reset\"  (click)=\"refreshData()\">\n              <span class=\"fa fa-refresh\"></span>\n              </li>\n              <li>\n                <a (click)=\"back()\" style=\"float: right;line-height: 30px;text-decoration: underline;font-size: 16px;cursor: pointer;\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Back</a>\n              </li>\n          </ul>\n      </div>\n      <div class=\"pull-left\">\n          <h3>Order Status</h3>\n        </div>           \n        <div class=\"clearfix\"></div>\n      </div>\n    </div>\n    <!--- <div class=\"col-md-4 col-md-offset-3\" *ngIf=\"!orderLoader\" style=\"margin-top:40px;\">\n      <div class=\"picker\">                    \n        <div class=\"input-group datetimepicker-start-end\">\n            <input bsDatepicker   type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [maxDate]=\"maxDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\"><span>to</span>\n            <input bsDatepicker   type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\" [minDate]=\"fromDate\" [maxDate]=\"maxDate\">\n           </div>\n       <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n    </div>\n    </div>\n    <div class=\"col-md-12 text-center\" *ngIf=\"!orderLoader\" style=\"margin-top:40px;\">\n        <div class=\"form-group\" style=\"text-align: center;\">\n        <span class=\"btn btn-md btn-primary\" style=\"width:150px;padding:6px;\" *ngIf=\"dateLoader\"><i class=\"fa fa-circle-o-notch fa-spin\"></i> Fetching Details...</span>\n        <button class=\"btn btn-md btn-primary\" *ngIf=\"!dateLoader\" style=\"width:150px;padding:6px;\" type=\"button\" (click)=\"getOrderDetails()\">Get Order Details</button>\n      </div>\n    </div> -->\n    <div class=\"col-md-12\" *ngIf=\"orderLoader\">\n    <div class=\"col-md-12\" style=\"padding:10px;\"></div>\n    <div class=\"col-md-12\" style=\"margin-left:-30px;\">\n    <div class=\"col-md-4  no-padding\" style=\"margin-top:10px;\" *ngFor=\"let order of orderType;let i=index;\">\n      <div class=\"col-md-12 text-center\" style=\"margin-bottom:20px;font-size:24px;\">{{order}}</div>\n    <div class=\"col-md-6 no-padding\">\n      <nvd3 [options]=\"options[i]\" [data]=\"data[i]\"  *ngIf=\"renderlLogicOnce\"></nvd3>\n      <nvd3 [options]=\"options[i]\" [data]=\"data[i]\" *ngIf=\"!renderlLogicOnce\"></nvd3>\n    </div>\n    <div class=\"col-md-6 no-padding\">\n        <nvd3 [options]=\"optionsinprogress[i+1]\" [data]=\"datainprogress[i]\" *ngIf=\"renderlLogicOnce\"></nvd3>\n        <nvd3 [options]=\"optionsinprogress[i+1]\" [data]=\"datainprogress[i]\" *ngIf=\"!renderlLogicOnce\"></nvd3>\n      </div>\n    </div>\n  </div>\n    <div class=\"col-md-12\" style=\"margin-top:10px;\">\n    <data-grid [gridobj]=\"gridDataObj\" (linkClick)=\"getLinkedData($event)\"></data-grid>\n    </div>\n  </div>\n  </section>\n</section>\n</section>\n<!--  Section End -->";
+
+/***/ }),
+
+/***/ 1897:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1898);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1898:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1899);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./order-status.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./order-status.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1899:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#order-status .nv-pie-title\r\n{\r\n\tfill:black !important;\r\n\tfont-size:18px !important;\r\n}\r\n#order-status .nv-legend\r\n{\r\ncolor:#4dc21f;\r\ncolor:#f71717;\r\n}\r\n#order-status #order-top  .grid-event-icon span {\r\n\tcolor : #a7afb8;\r\n\tfont-size : 37px;\r\n\tcursor : pointer;\r\n}\r\n#order-status #order-top .grid-event-icon.in-active span, .grid-event-icon.in-active svg{\r\n\tcursor : not-allowed;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1900:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var order_status_component_1 = __webpack_require__(1557);
+var ORDER_STATUS_ROUTER = [
+    {
+        path: '',
+        component: order_status_component_1.OrderStatusComponent,
+        pathMatch: 'full'
+    }
+];
+exports.OrderStatusRouter = router_1.RouterModule.forChild(ORDER_STATUS_ROUTER);
+//router config text
+//	{ path: '', loadChildren: function() { return new Promise(function (resolve, reject) {  (require as any).ensure([], function (require: any) {    resolve(require('.\\modules\\foldername\\.module')['Module']);  }, function() {    reject({ loadChunkError: true });  });}) }, canActivate: [AuthGuard]},
+
+
+/***/ })
+
+});]]></script>
+        <script_name>39.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>10b689cbdb3d2300429e2a9a489619a2</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.39.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_10b689cbdb3d2300429e2a9a489619a2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="db_image">
+    <db_image action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <category/>
+        <format/>
+        <height/>
+        <image>7ea1dec3db316300429e2a9a489619bc</image>
+        <name>src/assets/images/icons/ports.svg</name>
+        <size_bytes>1867</size_bytes>
+        <sys_class_name>db_image</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:30:22</sys_created_on>
+        <sys_id>af7e0e43db316300429e2a9a48961903</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>src/assets/images/icons/ports.svg</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>db_image_af7e0e43db316300429e2a9a48961903</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 13:03:05</sys_updated_on>
+        <thumbnail/>
+        <width/>
+    </db_image>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color/>
+        <chunk_size_bytes>734003</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>image/svg+xml</content_type>
+        <file_name>image</file_name>
+        <image_height/>
+        <image_width/>
+        <size_bytes>1867</size_bytes>
+        <size_compressed>880</size_compressed>
+        <state>available</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:44:14</sys_created_on>
+        <sys_id>7ea1dec3db316300429e2a9a489619bc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 12:44:14</sys_updated_on>
+        <table_name>ZZ_YYdb_image</table_name>
+        <table_sys_id>af7e0e43db316300429e2a9a48961903</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAAAA==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="image" sys_id="7ea1dec3db316300429e2a9a489619bc">7ea1dec3db316300429e2a9a489619bc</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:44:14</sys_created_on>
+        <sys_id>bea1dec3db316300429e2a9a489619bc</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>nVXvb9s2EP3Ov+KmflmB0uJPiRqiFKsTFAXWLUizDf2oyqxtTJYNWYjT/vV7Ryl1N3QD0hjhkce7d+8eSfvi5cOuo/s4HLf7vs70QmV0HJt+1XT7PtZZv89eXoqLH65+W969v7mm4/2abn5/9cubJWUyz/+0yzy/uruid3+8JqOUVpVyeX79ayYo24zj4ac8P51Oi5Nd7Id1fnebc1B+e72UyJBfMgCRA1qrxWpcZSjIdf7JCjz7Y/0NUIAoTkbJ03Y1buoMnoVKf4cxo03crjfjv73323h6tX+oM0WKzltfTYF3GOIxDvfx5+MhtuNtM273dfbwdrt6j3/axTgy110cm1UzNpdiOcRmjCv68IkO+3Fo2kh6of0LOg3bcYw9b9zEMQ70Lnbbfo0JSwAddCku8jPQxZqQ3h8/7oddnaVpB+QfH7m9ONN8Tse26XhLT1vycfY8Ex+3XVdnz+aGcLLD/q90qn1k5odm3NCqzt56Tbq0BbUSM2kCSa9IakdpXRpLHdZFYclUJK2ZjKXKGciHUSh22bRv2VcUilpFrkKexaoAnKEieMAX5EvSljwWFQLYlq5EBNYmCCTIKq3dZ9rpUDrmoGcOioM8nQ3gwbZFtvWBS/uCuKQlK7QiXTlC6cqgpqKuQjNImaA+Z/nXMlgNHbxiHSABWsRa4oamuQWjjnOtoyowRlXOSKXhXqVzgjsJXE6iUwQFciF1rrVPttOKUzi6SkmB+wR80GQKl6wOCBEGstjkQ1qJDwyOiFX0LIW3NGG1RYlRq5JcKnMOd5rH4AXCwRGsE2nLH3TR4hwt08Mq9WuT6CUZbtsWep6gI8UHYbSQSG9xlmWFs4Qp2PB5AwAwDDGPcPkEjTDHNSEPwQM9+H65IAyTxxE6djjm5gosODikkfeBxCAYAauSuoVJKnF9w50E8gKd2tSvYS3S7WSHhOeJbMW32dJ3sBX/wZa+g614krb/y1Y8TdvE1vLYmWq6uib42eBCMB08PsVPD6YA5WRkVUwvlqtMF1Wmmyr5qkr2zm9CYlmKNLNh9qiU65mHmmomg2sf+NmwWp7wxDm65GdEU+PaCDk/gk4+vrUi5TgGpHLKCV9yUixC1ZQTQkpJLQoeU9OtYbdN3zaW9dbTV0e+5gG/PpfibyvLqWNLBwAA</data>
+        <length>1160</length>
+        <position>1</position>
+        <sys_attachment display_value="image" sys_id="7ea1dec3db316300429e2a9a489619bc">7ea1dec3db316300429e2a9a489619bc</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:44:14</sys_created_on>
+        <sys_id>32a1dec3db316300429e2a9a489619bd</sys_id>
+    </sys_attachment_doc>
+</record_update>

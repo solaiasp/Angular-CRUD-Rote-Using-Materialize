@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.33.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([33],{
+
+/***/ 1275:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var source_destination_mapping_component_1 = __webpack_require__(1366);
+var source_destination_mapping_router_1 = __webpack_require__(1576);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var SourceDestinationMappingModule = /** @class */ (function () {
+    function SourceDestinationMappingModule() {
+    }
+    SourceDestinationMappingModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, source_destination_mapping_router_1.SourceDestinationMappingRouter],
+            declarations: [
+                source_destination_mapping_component_1.SourceDestinationMappingComponent,
+            ],
+        })
+    ], SourceDestinationMappingModule);
+    return SourceDestinationMappingModule;
+}());
+exports.SourceDestinationMappingModule = SourceDestinationMappingModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1366:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var SourceDestinationMappingComponent = /** @class */ (function () {
+    function SourceDestinationMappingComponent(commonServices) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    SourceDestinationMappingComponent.prototype.ngOnInit = function () {
+        this.finalmockData = [];
+        this.getIp();
+        this.data = 'yes';
+        this.message = '';
+    };
+    SourceDestinationMappingComponent.prototype.deleteMappedIp = function (sourceIp, destinationIp) {
+        var _this = this;
+        this.commonServices.postRequest('/_workflow/MultiCastDeviceDeleteRequest', { sourceIP: sourceIp, popMulticastGroup: destinationIp }).then(function (response) {
+            if (response.status == "success") {
+                _this.commonServices.success(response.message);
+                _this.getIp();
+            }
+            else {
+                _this.commonServices.success(response.message);
+            }
+        }, function (error) {
+            console.log(error);
+            _this.commonServices.error("Some problem in Back end. Contact System administrator");
+        });
+    };
+    SourceDestinationMappingComponent.prototype.getIp = function () {
+        var _this = this;
+        this.commonServices.getRequest('/_workflow/MultiCastDeviceListResponse').then(function (res) {
+            _this.finalmockData = res.items[0].MultiCastDeviceList.slice();
+        });
+    };
+    SourceDestinationMappingComponent.prototype.mapIp = function () {
+        var _this = this;
+        this.commonServices.postRequest('/_workflow/MultiCastDeviceListRequest', { "MultiCastDeviceList": [{ sourceIP: this.sourceIp, popMulticastGroup: this.destinationIp }] }).then(function (response) {
+            if (response.status == "success") {
+                _this.commonServices.success(response.message);
+                _this.getIp();
+            }
+            else {
+                _this.commonServices.success(response.message);
+            }
+        }, function (error) {
+            console.log(error);
+            _this.commonServices.error("Some problem in Back end. Contact System administrator");
+        });
+    };
+    SourceDestinationMappingComponent = __decorate([
+        core_1.Component({
+            selector: 'source-destination-mapping',
+            template: __webpack_require__(1572),
+            styles: [__webpack_require__(1573)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService])
+    ], SourceDestinationMappingComponent);
+    return SourceDestinationMappingComponent;
+}());
+exports.SourceDestinationMappingComponent = SourceDestinationMappingComponent;
+
+
+/***/ }),
+
+/***/ 1572:
+/***/ (function(module, exports) {
+
+module.exports = "<!--  Section Start -->\n<section id=\"source-destination-mapping\">\n  <section id=\"main-content\">\n    <section class=\"wrapper\">\n      <ol class=\"breadcrumb\">\n        <li>\n          <a (click)=\"goToHomePage()\">Home</a>\n        </li>\n        <li class=\"active\">SourceDestinationMapping</li>\n      </ol>\n      <div class=\"row\" style=\"margin-top:20px;\">\n          <div class=\"col-md-5 col-md-offset-1\"  *ngIf=\"data=='no'\">\n                  <div class=\"col-md-10\" style=\"padding:10px;border:1px solid #a7a2a2;margin-bottom:3px;margin-left:60px;margin-top:45px;\">\n                          {{message}}\n                          </div>\n          </div>\n          <div class=\"col-md-5 col-md-offset-1\"  *ngIf=\"data=='yes'\">\n            <div class=\"row text-center\" style=\"margin-bottom:2px;\">\n              <div class=\"col-md-6\" style=\"padding:10px;background:#dfdfde;\">Source Ip</div>\n              <div class=\"col-md-6\" style=\"padding:10px;background:#dfdfde;\">Destination Ip</div>\n            </div>\n              <div  class=\"row text-center\" *ngFor=\"let ip of finalmockData\">\n              <div class=\"col-md-12\" style=\"padding:10px;padding-left:0px;padding-right:0px;border:1px solid #a7a2a2;margin-bottom:3px;\">\n                      <div class=\"col-md-6\">{{ip.sourceIP}}</div>\n                      <div class=\"col-md-6\" style=\"padding-left:0px;padding-right:0px;\">\n                          <div class=\"col-md-11\" style=\"padding-left:0px;padding-right:0px;\">\n                        {{ip.popMulticastGroup}}\n                        </div>\n                      <div class=\"col-md-1 text-center hover-hand\" style=\"padding-left:0px;padding-right:0px;\" (click)=\"deleteMappedIp(ip.sourceIP,ip.popMulticastGroup)\">\n                          <span class=\"fa fa-fw fa-trash\"></span>\n                      </div>\n                      </div>\n                    \n              </div>\n          </div>\n        </div>\n        <div class=\"col-md-6\"  style=\"position:fixed;top:25%;left:50%;\">\n              <div class=\"row\" style=\"margin-bottom:30px;\">\n                      <div class=\"col-md-8 col-md-offset-2\">\n                              <button  type=\"submit\" class=\"border-btn-custom-ip\" [disabled]=\"true\">Source Destination Ip Mapping</button>\n                          </div>\n                  </div>\n              <div class=\"row\" style=\"margin-bottom:30px;\">\n                  <div class=\"col-md-8 col-md-offset-2\">\n                      <input [(ngModel)]=\"sourceIp\" id=\"sourceip\" type=\"text\" name=\"sourceip\" class=\"form-control\" required/>\n                      <span class=\"floating-label\">Source Ip<span>*</span></span>\n                </div>\n                </div>\n                <div class=\"row\">\n                    <div class=\"col-md-8 col-md-offset-2\">\n                        <input [(ngModel)]=\"destinationIp\" id=\"destinationip\" type=\"text\" name=\"destinationip\" class=\"form-control\" required/>\n                        <span class=\"floating-label\">Destination Ip<span>*</span></span>\n                  </div>\n                  </div>\n              <div class=\"row\" style=\"margin-top:20px;margin-bottom:200px;\">\n                  <div class=\"col-md-8 col-md-offset-2\">\n                      <button (click)=\"mapIp()\" type=\"submit\" class=\"border-btn active\" >Submit</button>\n                </div>\n                </div>\n              </div>\n        </div>\n    </section>\n  </section>\n</section>\n<!--  Section End -->";
+
+/***/ }),
+
+/***/ 1573:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1574);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1574:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1575);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./source-destination-mapping.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./source-destination-mapping.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1575:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#source-destination-mapping .floating-label\r\n{\r\n    left:20px !important;\r\n}\r\n#source-destination-mapping .hover-hand:hover\r\n{\r\n    cursor:pointer;\r\n}\r\n#source-destination-mapping .border-btn-custom-ip\r\n{\r\n    background-color: transparent;\r\n    border: 1px solid #d2d6db;\r\n    border-radius: 10px;\r\n    color: #9e9f9f;\r\n    text-transform: uppercase;\r\n    padding: 7px 16px;\r\n    font-size: 16px;\r\n    font-weight: bold;\r\n    display: inline-block;\r\n    margin: 3px 5px;\r\n    position: relative;\r\n    letter-spacing: 1px;\r\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1576:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var source_destination_mapping_component_1 = __webpack_require__(1366);
+var SOURCE_DESTINATION_MAPPING_ROUTER = [
+    {
+        path: '',
+        component: source_destination_mapping_component_1.SourceDestinationMappingComponent,
+        pathMatch: 'full'
+    }
+];
+exports.SourceDestinationMappingRouter = router_1.RouterModule.forChild(SOURCE_DESTINATION_MAPPING_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>33.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>d0b689cbdb3d2300429e2a9a489619cb</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.33.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_d0b689cbdb3d2300429e2a9a489619cb</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:03</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

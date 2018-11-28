@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.2.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([2],{
+
+/***/ 1546:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var router_1 = __webpack_require__(48);
+var modal_1 = __webpack_require__(104);
+var ngx_cookie_1 = __webpack_require__(62);
+var optical_multi_report_column_1 = __webpack_require__(1831);
+var excell_service_1 = __webpack_require__(266);
+var common_1 = __webpack_require__(6);
+var OpticalMultiReportComponent = /** @class */ (function () {
+    function OpticalMultiReportComponent(commonServices, cookies, modalService, dateFilter, excellService, router) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.modalService = modalService;
+        this.dateFilter = dateFilter;
+        this.excellService = excellService;
+        this.router = router;
+        this.loader = false;
+        this.popUploader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.pageTitle = 'Power Report Port Details';
+        this.gridDataObj = {};
+        this.isHiddenCheck = false;
+        this.options = {};
+        this.graphData = [];
+        this.data = [];
+        this.copydata = [];
+        this.popupGraph = false;
+        this.postDetails = {};
+        this.dateType = 'live';
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.excelDownloadObj = {};
+        this.from_time = '00:00:00';
+        this.to_time = '23:59:59';
+        this.checkBoxData = "getPowerReport";
+        this.setGraphLineArray = [];
+        this.setTitleLineArray = [];
+        this.setGraphLineClr = [];
+        this.setPostUrl = '';
+        this.selectedGrp = 'powergainreport';
+        this.assetSubMenus = [{ "site": "powergainreport", "viewtext": "Power & Gain Report" }, { "site": "protectpathreport", "viewtext": "Protect Path Report" }, { "site": "workpathreport", "viewtext": "Work Path Report" }];
+        this.setMinyAxis = 0;
+        this.setMaxyAxis = 30;
+        this.initCall = function () {
+            _this.loader = true;
+            console.log('router', _this.currentState);
+            _this.commonServices.getRequest("/_optical/getPowerGainReportList").then(function (res) {
+                if (res.status == 'success') {
+                    var portHardCoreArray = ["AMP-1-4-6", "AMP-1-4-8", "AMP-1-6-6", "AMP-1-6-8"];
+                    var getResponse = [];
+                    getResponse = res.items.slice();
+                    var newResponseArray = [];
+                    getResponse.map(function (data) {
+                        portHardCoreArray.map(function (coreData) {
+                            var t = {};
+                            var workStaticPort = (_this.selectedGrp == 'powergainreport') ? coreData : ((_this.selectedGrp == 'protectpathreport') ? 'OPTMON-1-5-15' : 'OPTMON-1-5-13');
+                            var setIPPort = data.ip + "_" + workStaticPort;
+                            t.ip = setIPPort;
+                            newResponseArray.push(t);
+                        });
+                    });
+                    _this.gridDataObj.data = newResponseArray.slice();
+                    _this.loader = false;
+                }
+                else {
+                    _this.loader = false;
+                    _this.commonServices.error('Some Error Occured in Report Details');
+                }
+            }, function (err) {
+                _this.loader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.getLinkedData = function (e) {
+            console.log('event', e);
+            var ipPortData = e.row.ip.split("_");
+            _this.postDetails = { "ip": ipPortData[0], "port": ipPortData[1] };
+            _this.buildOptionForGraph();
+            var fr_date;
+            var to_date;
+            fr_date = _this.dateFilter.transform(new Date(), "yyyy-MM-dd");
+            to_date = _this.dateFilter.transform(new Date(), "yyyy-MM-dd");
+            _this.bsRangeValue = [new Date(fr_date), new Date(to_date)];
+            _this.dateType = 'live';
+            _this.modalRef = _this.modalService.show(_this.opticalSpanLossTemplates, { class: 'modal-lg' });
+            var _postData = { "from": fr_date, "to": to_date, "ip": _this.postDetails.ip, "port": _this.postDetails.port };
+            _this.callGraphAPI(_postData);
+        };
+        this.modelClose = function () {
+            _this.popupGraph = false;
+            _this.modalRef.hide();
+        };
+        this.getLists = function (getfromDate, gettoDate) {
+            //console.log(e);
+            // console.log(this.proObj);
+            // this.btnStauts = {};
+            var fromDateStr = _this.dateFilter.transform(getfromDate, "yyyy-MM-dd");
+            var toDateStr = _this.dateFilter.transform(gettoDate, "yyyy-MM-dd");
+            // this.bsRangeValue = [new Date(fromDateStr), new Date(toDateStr)];   
+            // this.from_time = '00:00:00';
+            // this.to_time = '23:59:59';
+            var _postData = { "from": fromDateStr, "to": toDateStr, "ip": _this.postDetails.ip, "port": _this.postDetails.port };
+            _this.callGraphAPI(_postData);
+        };
+        this.callGraphAPI = function (_data) {
+            _this.popupGraph = true;
+            _this.popUploader = true;
+            _this.commonServices.postRequest(_this.setPostUrl, _data).then(function (res) {
+                if (res.status == 'success') {
+                    if (_this.selectedGrp == 'powergainreport') {
+                        _this.graphData = [];
+                        _this.copydata = [];
+                        if (res.items[0].PowerGainList.length > 0) {
+                            _this.copydata = res.items[0].PowerGainList.slice();
+                            _this.graphDataBuildTabOne(res.items[0].PowerGainList);
+                        }
+                        else {
+                            _this.popUploader = false;
+                        }
+                    }
+                    else {
+                        _this.graphData = [];
+                        _this.copydata = [];
+                        if (res.items[0].WorkpathProtectpathList.length > 0) {
+                            _this.copydata = res.items[0].WorkpathProtectpathList.slice();
+                            _this.graphDataBuildTabTwo(res.items[0].WorkpathProtectpathList);
+                        }
+                        else {
+                            _this.popUploader = false;
+                        }
+                    }
+                    _this.popUploader = false;
+                }
+                else {
+                    _this.popUploader = false;
+                    _this.commonServices.error('Some Error Occured in Customer Details');
+                }
+            });
+        };
+        this.graphDataBuildTabOne = function (arr) {
+            var tempArr = [];
+            var findMaxArray = [];
+            var realObj = [];
+            _this.setGraphLineArray.map(function (data, index) {
+                var filterKey = [];
+                var tempObj = {};
+                tempObj.CoreGraphDataPoints = [];
+                var keyData = data;
+                var i = _this.setGraphLineClr[index];
+                filterKey = arr.filter(function (dataElement) {
+                    findMaxArray.push(dataElement.monval);
+                    dataElement.pollTime = dataElement.pollTime.replace(' ', 'T');
+                    return dataElement.montype == keyData;
+                }).slice();
+                tempObj.keyName = keyData;
+                tempObj.keyColor = i;
+                tempObj.CoreGraphDataPoints.push(JSON.parse(JSON.stringify(filterKey)));
+                realObj.push(tempObj);
+            });
+            _this.setMaxyAxis = Math.max.apply(Math, findMaxArray);
+            _this.setMinyAxis = Math.min.apply(Math, findMaxArray);
+            _this.graphData = [];
+            realObj.forEach(function (g) {
+                var obj = {
+                    key: g.keyName,
+                    values: g.CoreGraphDataPoints[0].reverse(),
+                    color: g.keyColor
+                };
+                _this.graphData.push(obj);
+            });
+            console.log('graphData', _this.graphData);
+        };
+        this.graphDataBuildTabTwo = function (arr) {
+            var tempArr = [];
+            var findMaxArray = [];
+            var realObj = [];
+            var thresholdArr = [];
+            arr.map(function (element) {
+                var c = {};
+                c.montype = 'losThreshold';
+                c.pollTime = element.pollTime;
+                c.port = element.port;
+                c.monval = element.losThreshold;
+                thresholdArr.push(c);
+            });
+            var tdata = arr.concat(thresholdArr);
+            _this.setGraphLineArray.map(function (data, index) {
+                var filterKey = [];
+                var tempObj = {};
+                tempObj.CoreGraphDataPoints = [];
+                var keyData = data;
+                var i = _this.setGraphLineClr[index];
+                filterKey = tdata.filter(function (dataElement) {
+                    dataElement.pollTime = dataElement.pollTime.replace(' ', 'T');
+                    return dataElement.montype == keyData;
+                }).slice();
+                tempObj.keyName = keyData;
+                tempObj.keyColor = i;
+                tempObj.CoreGraphDataPoints.push(JSON.parse(JSON.stringify(filterKey)));
+                realObj.push(tempObj);
+            });
+            _this.setMaxyAxis = Math.max.apply(Math, findMaxArray);
+            _this.setMinyAxis = Math.min.apply(Math, findMaxArray);
+            _this.graphData = [];
+            realObj.forEach(function (g) {
+                var KeyNameDetails = g.keyName == 'losThreshold' ? 'OPS LOS Threshold' : g.keyName;
+                var obj = {
+                    key: KeyNameDetails,
+                    values: g.CoreGraphDataPoints[0].reverse(),
+                    color: g.keyColor
+                };
+                _this.graphData.push(obj);
+            });
+            console.log('graphData', _this.graphData);
+        };
+        this.buildOptionForGraph = function () {
+            // var maxY :any = parseInt(this.setMaxyAxis) + 2;
+            _this.options = {
+                chart: {
+                    type: 'lineWithFocusChart',
+                    height: 450,
+                    margin: {
+                        top: 20,
+                        right: 95,
+                        bottom: 60,
+                        left: 55
+                    },
+                    padding: {
+                        left: 40
+                    },
+                    x: function (d) { return new Date(d.pollTime).getTime(); },
+                    y: function (d) { return parseFloat(d.monval); },
+                    duration: 500,
+                    // color: d3.scale.category10().range(),
+                    useInteractiveGuideline: true,
+                    clipVoronoi: true,
+                    // focusShowAxisX: false,
+                    //forceX :  [this.fromDate, this.toDate],
+                    // forceY : [(parseInt(this.setMaxyAxis) + 2)],
+                    xAxis: {
+                        axisLabel: 'Date',
+                        tickFormat: function (d) {
+                            return d3.time.format('%d/%b/%y %H:%M')(new Date(d));
+                        },
+                        xScale: function (d) {
+                            return d3.time.scale.utc();
+                        },
+                        wrapLabels: true,
+                        axisLabelDistance: 15,
+                        showMaxMin: true,
+                        staggerLabels: true
+                    },
+                    x2Axis: {
+                        tickFormat: function (d) {
+                            return d3.time.format('%d/%b/%y %H:%M')(new Date(d));
+                        },
+                    },
+                    yAxis: {
+                        axisLabel: _this.graphYAxisLabel,
+                        tickFormat: function (d) {
+                            return d3.format('.2f')(d);
+                        },
+                        axisLabelDistance: 15,
+                        rotateYLabel: true,
+                        showMaxMin: true
+                    },
+                    y2Axis: {
+                        tickFormat: function (d) {
+                            return d3.format('.2f')(d);
+                        }
+                    },
+                    callback: function (chart) {
+                        setTimeout(function () {
+                            d3.selectAll('.nvtooltip').style('opacity', 0);
+                        }, 100);
+                    },
+                    interactiveLayer: {
+                        tooltip: {
+                            valueFormatter: function (d, i) {
+                                return d;
+                            }
+                        }
+                    },
+                }
+            };
+        };
+        this.dateSelect = function (dateType) {
+            var today = new Date();
+            var time = today.getTime();
+            var yesterday = time - (24 * 1 * 60 * 60 * 1000);
+            _this.dateType = dateType;
+            var fr_date;
+            var to_date;
+            if (dateType == 'month') {
+                var lastMnthTime = time - (24 * 31 * 60 * 60 * 1000);
+                _this.fromDate = new Date(lastMnthTime);
+                _this.toDate = new Date(yesterday);
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            else if (dateType == 'week') {
+                var lastWeekTime = time - (24 * 8 * 60 * 60 * 1000);
+                _this.fromDate = new Date(lastWeekTime);
+                _this.toDate = new Date(yesterday);
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            else if (dateType == 'yesterday') {
+                var yesterday = time - (24 * 1 * 60 * 60 * 1000);
+                _this.fromDate = new Date(yesterday);
+                _this.toDate = new Date(yesterday);
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            else {
+                _this.fromDate = new Date();
+                _this.toDate = new Date();
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            var _postData = { "from": fr_date, "to": to_date, "ip": _this.postDetails.ip, "port": _this.postDetails.port };
+            //console.log('ChangePostData', _postData);
+            _this.callGraphAPI(_postData);
+        };
+        this.excelDownlod = function (getArray) {
+            if (getArray.length > 0) {
+                var ipPortData = _this.postDetails.ip + "_" + _this.postDetails.port;
+                getArray.map(function (element) {
+                    element.ip_port = ipPortData;
+                });
+                _this.excelDownloadObj = {
+                    pdfName: _this.pageTitle + " " + ipPortData,
+                    pdfTitle: _this.pageTitle + " " + ipPortData,
+                    excelName: _this.pageTitle + " " + ipPortData,
+                    excelTitle: _this.pageTitle + " " + ipPortData,
+                };
+                _this.excelDownloadObj.deviceIP = ipPortData;
+                _this.excelDownloadObj.deviceName = "";
+                _this.excelDownloadObj.fromDate = _this.fromDate;
+                _this.excelDownloadObj.toDate = _this.toDate;
+                _this.excelDownloadObj.id = "optical_span_report_id";
+                if (_this.selectedGrp != 'powergainreport') {
+                    _this.excelDownloadObj.columns = [{
+                            dataKey: 'ip_port',
+                            title: 'IP/PORT',
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'port',
+                            title: "Port",
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'monval',
+                            title: "Monval",
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'montype',
+                            title: "MonType",
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'losThreshold',
+                            title: "Loss Threshold",
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'pollTime',
+                            title: "POLL TIME",
+                            hide: false,
+                            width: ''
+                        }];
+                }
+                else {
+                    _this.excelDownloadObj.columns = [{
+                            dataKey: 'ip_port',
+                            title: 'IP/PORT',
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'port',
+                            title: "Port",
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'monval',
+                            title: "Monval",
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'montype',
+                            title: "MonType",
+                            hide: false,
+                            width: ''
+                        }, {
+                            dataKey: 'pollTime',
+                            title: "POLL TIME",
+                            hide: false,
+                            width: ''
+                        }];
+                }
+                _this.excelDownloadObj.data = getArray.slice();
+                _this.excellService.generateExcell(_this.excelDownloadObj);
+            }
+        };
+        this.loadReport = function () {
+            if (_this.checkBoxData == 'getPowerReport') {
+                _this.pageTitle = 'Power Report Port Details';
+                _this.graphYAxisLabel = 'dBm';
+                _this.checkBoxData = "getPowerReport";
+                _this.setPostUrl = "/_optical/getPowerReport";
+                _this.setGraphLineArray = ['OPIN-OTS', 'OPINMAX-OTS', 'OPINAVG-OTS', 'OPOUT-OTS', 'OPOUTMIN-OTS', 'OPOUTMAX-OTS', 'OPOUTAVG-OTS'];
+                _this.setGraphLineClr = ['#ff4000', '#80ff00', '#0080ff', '#8000ff', '#ff00ff', '#ff0000', '#ffbf00'];
+                _this.graphData = [];
+                _this.initCall();
+            }
+            else if (_this.checkBoxData == 'getGainReport') {
+                _this.pageTitle = 'Gain Report Port Details';
+                _this.graphYAxisLabel = 'dB';
+                _this.checkBoxData = "getGainReport";
+                _this.setPostUrl = "/_optical/getGainReport";
+                _this.setGraphLineArray = ['ORL-OTS', 'ORLMIN-OTS', 'ORLMAX-OTS', 'ORLAVG-OTS'];
+                _this.setGraphLineClr = ['#ff4000', '#80ff00', '#0080ff', '#8000ff'];
+                _this.graphData = [];
+                _this.initCall();
+            }
+            else if (_this.checkBoxData == 'protectpathreport') {
+                _this.pageTitle = 'Protect Path Report Port Details';
+                _this.graphYAxisLabel = 'dBm';
+                _this.checkBoxData = "protectpathreport";
+                _this.setPostUrl = "/_optical/getProtectpathReport";
+                _this.setGraphLineArray = ['OPR-OTS', 'OPRMIN-OTS', 'OPRMAX-OTS', 'OPRAVG-OTS', 'losThreshold'];
+                _this.setGraphLineClr = ['#ff4000', '#80ff00', '#0080ff', '#8000ff', '#ff00ff'];
+                _this.graphData = [];
+                _this.initCall();
+            }
+            else if (_this.checkBoxData == 'workpathreport') {
+                _this.pageTitle = 'Work Path Report Port Details';
+                _this.graphYAxisLabel = 'dBm';
+                _this.checkBoxData = "workpathreport";
+                _this.setPostUrl = "/_optical/getWorkpathReport";
+                _this.setGraphLineArray = ['OPR-OTS', 'OPRMIN-OTS', 'OPRMAX-OTS', 'OPRAVG-OTS', 'losThreshold'];
+                _this.setGraphLineClr = ['#ff4000', '#80ff00', '#0080ff', '#8000ff', '#ff00ff'];
+                _this.graphData = [];
+                _this.initCall();
+            }
+            else {
+                _this.setPostUrl = "/_optical/getPowerReport";
+                _this.graphData = [];
+                _this.initCall();
+            }
+        };
+        this.changeGroup = function (tapname) {
+            _this.selectedGrp = tapname;
+            if (tapname == 'powergainreport') {
+                _this.graphYAxisLabel = 'dBm';
+                _this.checkBoxData = "getPowerReport";
+                _this.pageTitle = "Power Report Port Details";
+                _this.setPostUrl = "/_optical/getPowerReport";
+                _this.setGraphLineArray = ['OPIN-OTS', 'OPINMAX-OTS', 'OPINAVG-OTS', 'OPOUT-OTS', 'OPOUTMIN-OTS', 'OPOUTMAX-OTS', 'OPOUTAVG-OTS'];
+                _this.setGraphLineClr = ['#ff4000', '#80ff00', '#0080ff', '#8000ff', '#ff00ff', '#ff0000', '#ffbf00'];
+                _this.graphData = [];
+                _this.initCall();
+            }
+            else {
+                _this.graphYAxisLabel = 'dBm';
+                _this.checkBoxData = (_this.selectedGrp == 'protectpathreport') ? 'protectpathreport' : 'workpathreport';
+                _this.pageTitle = (_this.selectedGrp == 'protectpathreport') ? 'Protect Path Report Port Details' : 'Work Path Report Port Details';
+                _this.setPostUrl = (_this.selectedGrp == 'protectpathreport') ? "/_optical/getProtectpathReport" : "/_optical/getWorkpathReport";
+                _this.setGraphLineArray = ['OPR-OTS', 'OPRMIN-OTS', 'OPRMAX-OTS', 'OPRAVG-OTS', 'losThreshold'];
+                _this.setGraphLineClr = ['#ff4000', '#80ff00', '#0080ff', '#8000ff', '#ff00ff'];
+                _this.graphData = [];
+                _this.initCall();
+            }
+        };
+    }
+    OpticalMultiReportComponent.prototype.ngOnInit = function () {
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.loader = false;
+        this.maxDate = new Date();
+        this.maxDate.setDate(this.maxDate.getDate() - 1);
+        this.gridDataObj = optical_multi_report_column_1.opticalSpanReportColumnInfo;
+        this.setPostUrl = "/_optical/getPowerReport";
+        this.graphYAxisLabel = 'dBm';
+        this.setGraphLineArray = ['OPIN-OTS', 'OPINMAX-OTS', 'OPINAVG-OTS', 'OPOUT-OTS', 'OPOUTMIN-OTS', 'OPOUTMAX-OTS', 'OPOUTAVG-OTS'];
+        this.setGraphLineClr = ['#ff4000', '#80ff00', '#0080ff', '#8000ff', '#ff00ff', '#ff0000', '#ffbf00'];
+        this.currentState = this.router.routerState.snapshot.url.substring(1);
+        console.log('currentState', this.currentState);
+        if (this.currentState == 'optical-powergain-report') {
+            this.selectedGrp = 'powergainreport';
+            this.changeGroup(this.selectedGrp);
+        }
+        else if (this.currentState == 'optical-protectpath-report') {
+            this.selectedGrp = 'workpathreport';
+            this.changeGroup(this.selectedGrp);
+        }
+        else if (this.currentState == 'optical-workpath-report') {
+            this.selectedGrp = 'workpathreport';
+            this.changeGroup(this.selectedGrp);
+        }
+        this.initCall();
+    };
+    OpticalMultiReportComponent.prototype.ngOnDestroy = function () {
+        this.popupGraph = false;
+        if (this.modalRef) {
+            this.modalRef.hide();
+        }
+    };
+    __decorate([
+        core_1.ViewChild('opticalSpanLossTemplate'),
+        __metadata("design:type", core_1.ElementRef)
+    ], OpticalMultiReportComponent.prototype, "opticalSpanLossTemplates", void 0);
+    OpticalMultiReportComponent = __decorate([
+        core_1.Component({
+            selector: '<optical-multi-report>',
+            template: __webpack_require__(1832),
+            styles: [
+                __webpack_require__(1833),
+            ],
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, modal_1.BsModalService, common_1.DatePipe, excell_service_1.ExcellService, router_1.Router])
+    ], OpticalMultiReportComponent);
+    return OpticalMultiReportComponent;
+}());
+exports.OpticalMultiReportComponent = OpticalMultiReportComponent;
+
+
+/***/ }),
+
+/***/ 1831:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.opticalSpanReportColumnInfo = {
+    pdfName: 'Optical Span Report',
+    pdfTitle: 'Optical Span Report',
+    excelTitle: 'Optical Span Report',
+    excelName: 'Optical Span Report',
+    id: 'optical_span_report_id',
+    updateEvent: false,
+    deleteEvent: false,
+    hasCheckbox: false,
+    data: [],
+    columns: [{
+            dataKey: 'ip',
+            title: 'IP Address / Port',
+            hide: false,
+            link: true,
+            width: ''
+        }
+    ]
+};
+
+
+/***/ }),
+
+/***/ 1832:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = "<section id=\"main-content\">\n        <section class=\"wrapper\">\n        <ol class=\"breadcrumb\">\n            <li><a href=\"#dashboard\">Home</a></li>\n              <li class=\"active\">{{pageTitle}}</li>\n          </ol>\n          <!-- <div class=\"pn-ProductNav_Wrapper\">\n            <nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n               \n               <div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\">\n                  <a class=\"pn-ProductNav_Link\" [ngClass]=\"{'active' : selectedGrp == menu.site.toLowerCase()}\" (click)=\"changeGroup(menu.site.toLowerCase())\" *ngFor=\"let menu of assetSubMenus\">{{menu.viewtext}}</a>\n                  <span id=\"pnIndicator\" class=\"pn-ProductNav_Indicator\"></span>\n               </div>\n            </nav>\n            <button id=\"pnAdvancerLeft\" class=\"pn-Advancer pn-Advancer_Left\" type=\"button\">\n               <svg class=\"pn-Advancer_Icon\" xmlns=\"\" viewBox=\"0 0 551 1024\">\n                  <path d=\"M445.44 38.183L-2.53 512l447.97 473.817 85.857-81.173-409.6-433.23v81.172l409.6-433.23L445.44 38.18z\"/>\n               </svg>\n            </button>\n            <button id=\"pnAdvancerRight\" class=\"pn-Advancer pn-Advancer_Right\" type=\"button\">\n               <svg class=\"pn-Advancer_Icon\" xmlns=\"\" viewBox=\"0 0 551 1024\">\n                  <path d=\"M105.56 985.817L553.53 512 105.56 38.183l-85.857 81.173 409.6 433.23v-81.172l-409.6 433.23 85.856 81.174z\"/>\n               </svg>\n            </button>\n         </div> -->\n          <div class=\"row\">\n            <div class=\"col-md-12\">\n              <div class=\"box-title box-title-tabs\">              \n                <div class=\"pull-right\" style=\"margin-top: -2px;\">\n                  <ul *ngIf='selectedGrp ==\"powergainreport\"' class=\"box-title-right\">\n                      <li style=\"margin-top:10px;\">\n                                  <label class=\"nice-radio\">\n                                      <input type=\"radio\" value=\"getPowerReport\" [(ngModel)]=\"checkBoxData\" (change)=\"loadReport()\">\n                                      <span class=\"r\"><span></span></span>\n                                      Power Report\n                                  </label>\n                      </li>\n                      <li style=\"margin-top:10px;\">\n                              <label class=\"nice-radio\">\n                                  <input type=\"radio\" value=\"getGainReport\" [(ngModel)]=\"checkBoxData\" (change)=\"loadReport()\">\n                                  <span class=\"r\"><span></span></span>\n                                  Gain Report\n                              </label>\n                        </li>\n                  </ul>\n                  <ul *ngIf='((selectedGrp ==\"protectpathreport\") || (selectedGrp ==\"workpathreport\"))' class=\"box-title-right\">\n                     <li style=\"margin-top:10px;\">\n                          <label class=\"nice-radio\">\n                              <input type=\"radio\" value=\"workpathreport\" [(ngModel)]=\"checkBoxData\" (change)=\"loadReport()\">\n                              <span class=\"r\"><span></span></span>\n                              Work Path Report\n                          </label>\n                    </li>\n                    <li style=\"margin-top:10px;\">\n                                <label class=\"nice-radio\">\n                                    <input type=\"radio\" value=\"protectpathreport\" [(ngModel)]=\"checkBoxData\" (change)=\"loadReport()\">\n                                    <span class=\"r\"><span></span></span>\n                                    Protect Path Report\n                                </label>\n                    </li>\n                    \n                </ul>\n                </div>\n                <div class=\"pull-left\">\n                  <h3>{{pageTitle}}</h3>\n                </div>\n                <div class=\"clearfix\"></div>\n              </div>\n            </div>\n          </div>\n          <data-grid *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n          <content-loader *ngIf=\"loader\"></content-loader>  \n        </section>\n    </section>\n\n    <ng-template #opticalSpanLossTemplate>\n      <div class=\"modal-header\">\n        <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modelClose()\">&times;</button>\n        <h4 class=\"modal-title\">{{this.pageTitle}} ( {{ this.postDetails.ip +\"_\" + this.postDetails.port }} )</h4>\n      </div>\n      <div class=\"modal-body\" style=\"margin-top:20px;height: 600px;\">\n          <content-loader *ngIf=\"popUploader\"></content-loader>\n          <div class=\"row\">\n              <div class=\"col-md-12\" *ngIf=\"!popUploader\">\n                  <ul class=\"box-title-right pull-left\">\n                      <li [ngClass]=\"{'rpt-btn-active' : dateType == 'month'}\" >\n                        <button [ngClass]='{\"active\":dateType == \"month\"}'  class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('month')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> Month</button>\n                      </li>\n                      <li [ngClass]=\"{'rpt-btn-active' : dateType == 'week'}\">\n                        <button [ngClass]='{\"active\":dateType == \"week\"}' class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('week')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> Week</button>\n                      </li>\n                      <li [ngClass]=\"{'rpt-btn-active' : dateType == 'yesterday'}\">\n                        <button [ngClass]='{\"active\":dateType == \"yesterday\"}'  class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('yesterday')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> Yesterday</button>\n                      </li>\n                      <li [ngClass]=\"{'rpt-btn-active' : dateType == 'live'}\">\n                        <button [ngClass]='{\"active\":dateType == \"live\"}' class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('live')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> NRT</button>\n                      </li>\n                      <li>\n                          <div class=\"picker\">                    \n                              <div class=\"input-group datetimepicker-start-end\">\n                                  <input bsDatepicker  (ngModelChange)=\"getLists($event ,toDate)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [maxDate]=\"maxDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\"><span>to</span>\n                                  <input bsDatepicker  (ngModelChange)=\"getLists(fromDate,$event)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\" [minDate]=\"fromDate\" [maxDate]=\"maxDate\">\n                              </div>\n                              <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n                          </div>\n                      </li>\n                  </ul>\n                  <ul class=\"box-title-right pull-right\">\n                    <li>\n                      <img class=\"excell-img\" style=\"cursor: pointer;\" (click)=\"excelDownlod(copydata)\" src=\"" + __webpack_require__(500) + "\">\n                    </li>\n                  </ul>\n              </div>\n             \n              <div class=\"col-md-12\" *ngIf=\"!popUploader\">\n                <div class=\"graphdiv\">\n                  <!-- <h4 class=\"popuph4\">( {{ this.postDetails.ip +\"_\" + this.postDetails.port }} )</h4> -->\n                  <nvd3 class=\"opticalnvd3\" [hidden]=\"!popupGraph\" [options]=\"options\" [data]=\"graphData\"></nvd3>\n                </div>\n              </div>\n          </div>\n          \n\n     </div>\n    </ng-template>";
+
+/***/ }),
+
+/***/ 1833:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1834);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1834:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1835);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./optical-multi-report.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./optical-multi-report.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1835:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.rpt-btn-active .customerange{\n    color: #fff !important;\n    background: #556670 !important;\n}\n\n#opticalspanfav{\n    color: #6c6c6c;\n    font-size: 27px;\n    margin-top: 3px;\n    margin-left: -14px;\n}\n\n.bs-datepicker.theme-green{\n    margin-left: 61px !important;\n}\n\n\n.main-menu {\n    height: auto;\n}\n\n.main-menu li {\n    padding-right: 0px;\n}\n\n.main-menu li>a {\n    text-align: center;\n    font-size: 14px;\n    padding: 10px;\n    display: inline-block;\n}\n\n.excel-export {\n    color: green;\n    padding-right: 18px;\n    margin-top: 21px;\n}\n\n.excel-export i {\n    font-size: 23px;\n}\n\n.datetimepicker-start-end {\n    padding: 0 5px;\n    margin-right: 0;\n}\n\n.datetimepicker-start-end input {\n    height: 28px;\n}\n\n.datetimepicker-start-end span {\n    line-height: 28px;\n}\n\n.start-end-icon {\n    padding: 2px !important;\n\n}\n\n.sub-navigation li a {\n    cursor: pointer;\n}\n\n.pointer {\n    cursor: auto;\n}\n\n.box-title {\n    padding-bottom: 6px !important;\n}\ntable.minmaxwrapper.thresholdwrapper {\ndisplay: none !important;\n}\n.head_bold {\ntext-align: center;\ncolor: rgb(88, 77, 77);\nfont-weight: 700;\n}\n.cc-admin-circuits .orderListWrapper {\nfloat: left;\nwidth: 100%;\nborder: 1px solid #ccc;\nmargin-bottom: 20px;\n}\n.rightalgn p {\ntext-align: right !important;\n}\n.panel.panel-default.panel.panel-default.panel-open{\n  border: 1px solid #414141;\nborder-radius: 0;\n}\n\n\n.panel-default .panel-heading  h3 {\n\nfont-size: 16px !important;\n\n}\n.panel-open .panel-heading h3 {\nbackground: #414141;\n}\n.algn {\nfloat: left;\nmargin-left: 5px;\n}\n.disableClick .panel-heading {\n     pointer-events: none; \n}\n.empty-cell{\nopacity : 0;\n}\n.text-bold{\ncolor: rgb(88, 77, 77);\nfont-weight: 700;\n}\n\n.watermarkpopup{\ntop: 5px;\nopacity: 0.25;\nfont-size: 3em;\nwidth: 100%;\ntext-align: center;\nz-index: 1;\n}\n\n/* a {\ntext-decoration: none !important;\n} */\n\n\n.legend{\ndisplay: none;\n}\n.graph-header-section{ background: #f1f1f1;\n/* box-shadow: 0 8px 6px -7px #333; */\nmargin-bottom: 0;\npadding: 5px 10px;\nborder: 1px solid #f1f1f1;\n/* background-image: -webkit-gradient(linear,0 0, 0 100%, from(#e0e0e0), to(#eeeeee)); */\nborder-radius: 5px 5px 0 0; }\n.accslider{\ntransition-property: all;\ntransition-duration: .5s;\ntransition-timing-function: cubic-bezier(0, 1, 0.5, 1);\n}\n.accslider .fa-file-pdf-o {\ncolor: #fff;\nbackground: #e07c7c;\nfont-size:13px;\n}\n.control-label{ line-height: 28px!important; font-weight: normal; }\n.in-block{ display: inline-block; margin: 0 10px; font-weight: bold; color: black; text-transform: none; font-family: monospace; font-size: 14px; }\n.topotoggle .btn{ padding: 2px 5px; margin: 4px 4px; }\n.togglelegendswitch .fa{\nmargin: 11px 12px 0 0;\nfont-size: 20px;\ncolor: green;\ncursor: pointer;\n}\np {\npadding: 02px;\nfont-size: 14px;\nfont-weight: bold;\ntext-align: left;\nmargin-bottom: 2px;\n}\n.orderListWrapper .table {\ndisplay: table;\nmargin: 6px 13px;\nwidth: 98%;\n}\n.table .content:hover {\nbackground: #e0e0e0;\n}\n.orderListWrapper .table .heading, .table .content {\ndisplay: table-row;\n}\n.table .content {\ntransition: all 0.6s ease 0s;\n}\n.table .content .cell {\ndisplay: table-cell;\nvertical-align: top;\ntext-align: left;\npadding: 10px 8px;\nborder-bottom: 1px solid #ddd;\n}\n.panel-default>.panel-heading {\nfont-size: 16px !important;\ncolor: #ffffff;\nbackground-color: #3ca8b9;\nborder-color: #ddd;\nfont-weight: 700;\nheight: 33px;\npadding-top: 8px;\npadding-left: 11px;\ntext-align: left;\ntext-decoration: none;\n\n}\n.hoverdata:hover {\nbackground-color: #ddd !important;\n}\n\n.custom-header > .panel-heading{\nbackground-color: #cccccc !important;\nfont-size: 16px !important;\ncolor: black;\npadding-top: 8px;\npadding-left: 14px;\nfont-weight: 900;\n}\n.handcls{\ncursor: pointer;\n}\n.graphtitle {\npadding: 0 10px 0;\ncolor: #000000;\ntext-align: center;\nfont-weight: bold;\nfont-size: 15px;\n}\n\n.modal-lg{\n    width: 99% !important;\n   \n}\ntd > a {\n    cursor: pointer !important;\n}\n\n.accordionprg{\n    cursor: pointer !important;\n    color: #3983e2;\n    float: left;\n    text-decoration: underline;\n    text-decoration-style: dashed;\n}\n\n.accordiontblalign{\n    color: #3983e2;\n    text-decoration: underline;\n    text-decoration-style: dashed;\n}\n\n.nvtooltip {\n    \n    transition: opacity 0ms linear;\n    -moz-transition: opacity 0ms linear;\n    -webkit-transition: opacity 0ms linear;\n    \n    transition-delay: 0ms;\n    -moz-transition-delay: 0ms;\n    -webkit-transition-delay: 0ms;\n\n    }\n\n.downloadoptions > ul > li{\n    cursor: pointer !important;\n} \n\n.popuph4{\n    text-align: center;\n    font-weight: bold;\n    font-size: 25px;\n    margin-bottom: -2%;\n}\n\n.algndatapicker{\n    float: left;\nmargin-left: 5px;\nbackground: #fbfbfb;\nborder: 1px solid #e9e9e9;\npadding: 0.31em;\n}\n\n.graphdiv > svg{\n    padding-left: 35px !important;\n} \n\n.graphdiv{\n    margin-top: 22px;\n    box-shadow: 0px 0px 1px 1px #ccc;\n    padding: 10px;\n    float: left;\n    margin-bottom: 15px;\n    width: 100%;\n}\n\n.opticalnvd3 > svg{\n    padding-left: 35px !important;\n} \n\n.algn.active, .algn:active, .open>.dropdown-toggle.algn{\n    color: #fff;\n    background-color: #32515a;\n    border-color: #269abc;\n}\n\n.graphTopHeading{\n    background: #ccc;\n    padding: 5px;\n    border-radius: 8px;\n}\n\n/* .btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info {\n    color: #fff;\n    background-color: #1c6980 !important;\n    border-color: #269abc;\n}\n\n\n.panel-default>.panel-heading {\n    color: #fff;\n    background-color: #00BCD4;\n    border-color: #2196F3;\n    text-align: left;\n    font-weight: 900;\n} */\n.details-font{\n    font-weight: bold;\n    font-size: 12px;\n    font-family: Menlo, sans-serif;\n}\n.perf-graph-wrapper {\n    box-shadow: 0px 0px 1px 1px #ccc;\n    padding: 10px;\n    float: left;\n    margin-bottom: 15px;\n    width: 100%;\n    margin-top: 15px;\n}\n\n.norecordTopology{\n    padding: 22px;\n    font-size: 22px;\n    color: #777\n}\n\n.rpt-btn-active .customerange{\n    color: #fff !important;\n    background: #556670 !important;\n}\n\n#opticalspanfav{\n    color: #6c6c6c;\n    font-size: 27px;\n    margin-top: 3px;\n    margin-left: -14px;\n}\n\n.bs-datepicker.theme-green{\n    margin-left: 61px !important;\n}\n\n\n\n.nice-radio input[type=radio]:not(old){\n    width: 0;\n    margin: 0;\n    padding: 0;\n    font-size: 1em;\n    opacity: 0;\n  }\n  \n  .nice-radio > span.r {\n    display: inline-block;\n    width: 0.875em;\n    height: 0.875em;\n    margin: 0.25em .25em 0.25em 0.25em;\n    border: 0.0625em solid #aaa;\n    border-radius: 0.50em;\n    background: transparent;\n    vertical-align: bottom;\n  }\n  \n  .nice-radio input[type=radio]:not(old):checked + span.r > span {\n    display: block;\n    width: 0.5em;\n    height: 0.5em;\n    margin: 0.16em;\n    border-radius: 0.5em;\n    background: #555;\n  }\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1836:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var optical_multi_report_component_1 = __webpack_require__(1546);
+var OPTICAL_MULTI_REPORT_ROUTER = [
+    {
+        path: '',
+        component: optical_multi_report_component_1.OpticalMultiReportComponent,
+        pathMatch: 'full'
+    }
+];
+exports.opticalMultiReportRouter = router_1.RouterModule.forChild(OPTICAL_MULTI_REPORT_ROUTER);
+
+
+/***/ }),
+
+/***/ 272:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var optical_multi_report_component_1 = __webpack_require__(1546);
+var optical_multi_report_router_1 = __webpack_require__(1836);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var OpticalMultiReportModule = /** @class */ (function () {
+    function OpticalMultiReportModule() {
+    }
+    OpticalMultiReportModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, optical_multi_report_router_1.opticalMultiReportRouter],
+            declarations: [optical_multi_report_component_1.OpticalMultiReportComponent]
+        })
+    ], OpticalMultiReportModule);
+    return OpticalMultiReportModule;
+}());
+exports.OpticalMultiReportModule = OpticalMultiReportModule;
+
+
+/***/ })
+
+});]]></script>
+        <script_name>2.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>1cb6c9cbdb3d2300429e2a9a48961951</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.2.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_1cb6c9cbdb3d2300429e2a9a48961951</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:00</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

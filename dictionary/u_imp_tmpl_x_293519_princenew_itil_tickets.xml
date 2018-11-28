@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="sys_import_set_row" label="Imp Tmpl X 293519 Princenew Itil Tickets" max_length="40" name="u_imp_tmpl_x_293519_princenew_itil_tickets" type="collection">
+        <element attributes="import_attribute_name=Device IP,edge_encryption_enabled=true" label="Device IP" max_length="240" name="u_device_ip" type="string"/>
+        <element attributes="import_attribute_name=Device name,edge_encryption_enabled=true" label="Device name" max_length="240" name="u_device_name" type="string"/>
+        <element attributes="import_attribute_name=Link desc,edge_encryption_enabled=true" label="Link desc" max_length="240" name="u_link_desc" type="string"/>
+        <element attributes="import_attribute_name=Link ID,edge_encryption_enabled=true" label="Link ID" max_length="240" name="u_link_id" type="string"/>
+        <element attributes="import_attribute_name=Problem summary,edge_encryption_enabled=true" label="Problem summary" max_length="240" name="u_problem_summary" type="string"/>
+        <element attributes="import_attribute_name=Provider,edge_encryption_enabled=true" label="Provider" max_length="240" name="u_provider" type="string"/>
+        <element attributes="import_attribute_name=Raised by,edge_encryption_enabled=true" label="Raised by" max_length="240" name="u_raised_by" type="string"/>
+        <element attributes="import_attribute_name=Site name,edge_encryption_enabled=true" label="Site name" max_length="240" name="u_site_name" type="string"/>
+        <element attributes="import_attribute_name=Sr number,edge_encryption_enabled=true" label="Sr number" max_length="30" name="u_sr_number" type="string"/>
+        <element attributes="import_attribute_name=status,edge_encryption_enabled=true" label="status" max_length="240" name="u_status" type="string"/>
+    </element>
+</database>

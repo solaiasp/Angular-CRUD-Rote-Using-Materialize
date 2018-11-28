@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="db_image">
+    <db_image action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <category/>
+        <format/>
+        <height/>
+        <image>0f721e07db316300429e2a9a489619c8</image>
+        <name>src/assets/images/icons/ticket.svg</name>
+        <size_bytes>1436</size_bytes>
+        <sys_class_name>db_image</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:30:22</sys_created_on>
+        <sys_id>b77e0e43db316300429e2a9a489619ba</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>src/assets/images/icons/ticket.svg</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>db_image_b77e0e43db316300429e2a9a489619ba</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 13:06:00</sys_updated_on>
+        <thumbnail/>
+        <width/>
+    </db_image>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color/>
+        <chunk_size_bytes>734003</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>image/svg+xml</content_type>
+        <file_name>image</file_name>
+        <image_height/>
+        <image_width/>
+        <size_bytes>1436</size_bytes>
+        <size_compressed>799</size_compressed>
+        <state>available</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:47:48</sys_created_on>
+        <sys_id>0f721e07db316300429e2a9a489619c8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 12:47:48</sys_updated_on>
+        <table_name>ZZ_YYdb_image</table_name>
+        <table_sys_id>b77e0e43db316300429e2a9a489619ba</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAAAA==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="image" sys_id="0f721e07db316300429e2a9a489619c8">0f721e07db316300429e2a9a489619c8</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:47:48</sys_created_on>
+        <sys_id>4f721e07db316300429e2a9a489619c8</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>bVRdbxs3EHy/X7G9vjRAqeP3R5FLkNhGUaBpA9dNkEdBukhCZEmQDpaRX98ZnpW4RQ2TXJO7s7Oze375+vF+Kw/D8bTZ7/rWzHQrp3G+W863+93Qt7t9+/pV8/KH6z+v7j69v5HTw0re//3299+upFVd99Fddd313bX89eFXsVobXbTvups/2kba9Tgefum68/k8O7vZ/rjq7m47OnW3N1cKEepbBCA6QBs9W47LFgmZ59+swHN36v8HFCCawUh53izHdd/iZqbrz2FsZT1sVuvxv7cPm+H8dv/Yt1q0fH96ZgLvcBxOw/FheHM6DIvxdj5u9n37+G6z/IQl98MwkutKxuN8d/q8P973bTW383H46YLz83fIF3JazLd8MtOTulgv2ubzZrvt2x+fkqMLx/2X2oHdwCyH+biWZd++S1aLyS7JQvkoygQujc3Ei+WD8HBSRHnWJCpacVlU8o1JeIrYPJY1vrooxwA6OgcjGbgiyImzsIrYTFg8ESTDLdtGGW3pS0fc2BgFKZVNYiJJ5SgeaZXPRnzONIJwwXAS6g0SISw3xmRxiI9FCryTBMPfBPJWjI0VNnhmEYMsoebwVpJDUi8lioUSITSBvkUS0lh4IczCPRKtwBd3PHKCQoUsiUcNkDaAsXIJTFJolIeU3tsn2gEGLuhqdJpO8jFf5d4aOym5LaiJy6ZnWzNZJUkpaFoNN7VhGdwjm1IJmUKqIIhfpqIckFaioa8YbRqegdRzlYDueIdIBZBJIKnxAPMZalBFqoVW8090phAZfXUAiw1SQBO4o4FukgRMUE5iZzJmYUGShXGKOlhKwJlxVdpvJyus9QDX1U5RRs9R4kSSPhsYwmW46ogSzwgVQpvxYlgqRG9qHov3mKeAEicaKIGji04YbxjBurNslQVhC/qUeVq0U2NrK7AtbKyjA2kLc2nzZNjyte2ef1xGo9IS+HEZjlDdLOfc6nixQIofSqS8CsisEAcudONdEa8xMDxBU1NbDmRABRh1HrZ+nvxmWLV1Fd1NTLoVN/w7e9X8A+RcjBycBQAA</data>
+        <length>1052</length>
+        <position>1</position>
+        <sys_attachment display_value="image" sys_id="0f721e07db316300429e2a9a489619c8">0f721e07db316300429e2a9a489619c8</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:47:48</sys_created_on>
+        <sys_id>cf721e07db316300429e2a9a489619c8</sys_id>
+    </sys_attachment_doc>
+</record_update>

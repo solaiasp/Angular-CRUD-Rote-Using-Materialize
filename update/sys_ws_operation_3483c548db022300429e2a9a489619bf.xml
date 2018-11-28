@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
+        <http_method>GET</http_method>
+        <name>getNames</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+   var names = [{name : 'prince'}];
+	var target = new GlideRecord('incident'); 
+	
+	target.addQuery('priority',1);
+	target.query(); // Issue the query to the database to get relevant records 
+	while (target.next()) { 
+	  response.setBody(target);
+	}
+	//response.setBody(names);
+
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_293519_princenew/sample_api/getname</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/getname</relative_path>
+        <request_example/>
+        <requires_acl_authorization>true</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <requires_snc_internal_role>true</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-23 09:38:44</sys_created_on>
+        <sys_id>3483c548db022300429e2a9a489619bf</sys_id>
+        <sys_mod_count>7</sys_mod_count>
+        <sys_name>getNames</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ws_operation_3483c548db022300429e2a9a489619bf</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-23 10:00:54</sys_updated_on>
+        <web_service_definition display_value="sample api">32e24148db022300429e2a9a4896199b</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

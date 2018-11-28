@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.52.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([52],{
+
+/***/ 1302:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var cmd_list_component_1 = __webpack_require__(1533);
+var cmd_list_router_1 = __webpack_require__(1773);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var CmdListModule = /** @class */ (function () {
+    function CmdListModule() {
+    }
+    CmdListModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, cmd_list_router_1.cmdListRouter],
+            declarations: [cmd_list_component_1.CmdListComponent]
+        })
+    ], CmdListModule);
+    return CmdListModule;
+}());
+exports.CmdListModule = CmdListModule;
+
+
+/***/ }),
+
+/***/ 1533:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var page_view_service_1 = __webpack_require__(498);
+var router_1 = __webpack_require__(48);
+var CmdListComponent = /** @class */ (function () {
+    function CmdListComponent(router, commonServices, cookies, dateFilter, pageView) {
+        var _this = this;
+        this.router = router;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.pageView = pageView;
+        this.gridDataObj = {
+            pdfName: 'Command Lists',
+            pdfTitle: 'Command Lists',
+            excelTitle: 'Command Lists',
+            excelName: 'Command Lists',
+            id: 'commandLists',
+            data: []
+        };
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.getCmds = function () {
+            _this.loader = true;
+            _this.gridDataObj.data = [];
+            _this.commonServices.getRequest('/_commandexecuter/CommandExecuter').then(function (response) {
+                if (response.status == "success") {
+                    _this.gridDataObj.data = response.items[0].CommandExecuterList;
+                }
+                _this.loader = false;
+            }, function (err) {
+                _this.commonServices.error(err.message);
+                _this.loader = false;
+            });
+        };
+        this.getLinkedData = function (eventObj) {
+            _this.pageView.setData(eventObj.row);
+            _this.router.navigate(['/cmd-execution']);
+        };
+        this.createCmd = function () {
+            _this.router.navigate(['/command-create']);
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    CmdListComponent.prototype.ngOnInit = function () {
+        this.gridDataObj.columns = [{ dataKey: 'templateName', title: 'Template Name', hide: false, width: '', link: true },
+            { dataKey: 'type', title: 'Type', hide: false, width: '' },
+            { dataKey: 'make', title: 'Make', hide: false, width: '' },
+            { dataKey: 'model', title: 'Model', hide: false, width: '' },
+            { dataKey: 'serviceType', title: 'Service Type', hide: false, width: '' },
+            { dataKey: 'functionality', title: 'Functionality', hide: false, width: '' }];
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.getCmds();
+    };
+    CmdListComponent = __decorate([
+        core_1.Component({
+            selector: '<cmd-list>',
+            template: __webpack_require__(1769),
+            styles: [__webpack_require__(1770)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, page_view_service_1.PageViewService])
+    ], CmdListComponent);
+    return CmdListComponent;
+}());
+exports.CmdListComponent = CmdListComponent;
+
+
+/***/ }),
+
+/***/ 1769:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li class=\"active\">Command Lists</li>\n      </ol>\n      <div class=\"row\" id=\"command-lists-data\">\n        <div class=\"col-md-12\">\n            <div class=\"box-title box-title-tabs\">              \n                <div class=\"pull-right\">\n                <ul class=\"box-title-right\">\n                   <li>\n\t\t\t\t\t<button (click)=\"createCmd()\" class=\"cmd-create\">Create</button>\n\t\t\t\t   </li>\n                </ul>\n                </div>\n                <div class=\"pull-left\">\n                  <h3>Command Lists</h3>\n                </div>\n                <div class=\"clearfix\"></div>\n            </div>\n        </div>\n    </div>\n\n    <data-grid  *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n    <span *ngIf=\"loader\"><br><br><br></span>\n    <content-loader *ngIf=\"loader\"></content-loader>   \n    </section>\n</section>";
+
+/***/ }),
+
+/***/ 1770:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1771);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1771:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1772);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./cmd-list.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./cmd-list.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1772:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".cmd-create{\r\n\tpadding : 5px 14px;\r\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1773:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var cmd_list_component_1 = __webpack_require__(1533);
+var CMD_LIST_ROUTER = [
+    {
+        path: '',
+        component: cmd_list_component_1.CmdListComponent,
+        pathMatch: 'full'
+    }
+];
+exports.cmdListRouter = router_1.RouterModule.forChild(CMD_LIST_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>52.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>9cb689cbdb3d2300429e2a9a48961981</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.52.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_9cb689cbdb3d2300429e2a9a48961981</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

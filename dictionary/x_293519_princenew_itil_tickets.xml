@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="itil_tickets" max_length="40" name="x_293519_princenew_itil_tickets" type="collection">
+        <element label="Device IP" max_length="240" name="device_ip" type="string"/>
+        <element label="Device name" max_length="240" name="device_name" type="string"/>
+        <element label="Link desc" max_length="240" name="link_desc" type="string"/>
+        <element label="Link ID" max_length="240" name="link_id" type="string"/>
+        <element label="Problem summary" max_length="240" name="problem_summary" type="string"/>
+        <element label="provider" max_length="240" name="provider" type="string"/>
+        <element label="Raised by" max_length="240" name="raised_by" type="string"/>
+        <element label="Site name" max_length="240" name="site_name" type="string"/>
+        <element display="true" label="Sr number" max_length="30" name="sr_number" type="string"/>
+        <element label="status" max_length="240" name="status" type="string"/>
+    </element>
+</database>

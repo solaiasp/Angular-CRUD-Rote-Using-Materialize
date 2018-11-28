@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.36.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([36],{
+
+/***/ 1279:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var project_status_component_1 = __webpack_require__(1370);
+var project_status_router_1 = __webpack_require__(1600);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var ProjectStatusModule = /** @class */ (function () {
+    function ProjectStatusModule() {
+    }
+    ProjectStatusModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, project_status_router_1.projectStatusRouter],
+            declarations: [project_status_component_1.ProjectStatusComponent]
+        })
+    ], ProjectStatusModule);
+    return ProjectStatusModule;
+}());
+exports.ProjectStatusModule = ProjectStatusModule;
+
+
+/***/ }),
+
+/***/ 1370:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var ProjectStatusComponent = /** @class */ (function () {
+    function ProjectStatusComponent(commonServices, cookies) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.gridDataObj = {
+            pdfName: 'Project Status',
+            pdfTitle: 'Project Status',
+            excelTitle: 'Project Status',
+            excelName: 'Project Status',
+        };
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.getLinkedData = function (eventObj) {
+            console.log('eventObj', eventObj);
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    ProjectStatusComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.gridDataObj.columns = [{
+                dataKey: 'orderno',
+                title: 'Order No',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'linkid',
+                title: 'Link id',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'bookdate',
+                title: 'Booked Date',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'sitecode',
+                title: 'Site Code',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'lastmile',
+                title: 'Lastmile',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'speed',
+                title: 'Speed',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'eng',
+                title: 'Engineer',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'activity',
+                title: 'Activity',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'city',
+                title: 'City',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'status',
+                title: 'Status',
+                hide: false,
+                width: ''
+            }];
+        this.gridDataObj.id = 'project-status-grid';
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        var _post = {};
+        this.loader = true;
+        this.commonServices.getRequest('/_project/projectDetails').then(function (response) {
+            if (response.status == "success") {
+                _this.gridDataObj.data = response.items[0].ProjectStatus;
+                _this.loader = false;
+            }
+            else {
+                _this.loader = false;
+                _this.commonServices.error(response.message);
+            }
+        }, function (err) {
+            _this.loader = false;
+            _this.commonServices.error(err.message);
+        });
+    };
+    ProjectStatusComponent = __decorate([
+        core_1.Component({
+            selector: '<project-status>',
+            template: __webpack_require__(1596),
+            styles: [__webpack_require__(1597)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService])
+    ], ProjectStatusComponent);
+    return ProjectStatusComponent;
+}());
+exports.ProjectStatusComponent = ProjectStatusComponent;
+
+
+/***/ }),
+
+/***/ 1596:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li class=\"active\">Project Status</li>\n      </ol>\n      <div class=\"row\" id=\"project-status\">\n        <div class=\"col-md-12\">\n            <div class=\"box-title box-title-tabs\">              \n                <div class=\"pull-left\">\n                  <h3>Project Status</h3>\n                </div>\n                <div class=\"clearfix\"></div>\n            </div>\n        </div>\n    </div>\n    <!-- <div class=\"dashboard-txt\">\n      <h1>Project Status</h1>\n    </div> -->\n\t<data-grid  *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n    <content-loader *ngIf=\"loader\"></content-loader>   \n    </section>\n</section>";
+
+/***/ }),
+
+/***/ 1597:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1598);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1598:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1599);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./project-status.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./project-status.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1599:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "donut-chart{\r\n  width: 100%;\r\n  height: 100%;\r\n  position: absolute;\r\n}\r\nh4{\r\n    font-size: medium;\r\n    font-weight: 800;\r\n    color: #000;\r\n}\r\n.rbi-box{\r\n    padding: 0px 5px;\r\n    background: #4e81bc;\r\n    border: 1px solid #4e81bc;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.mbb-box{\r\n    padding: 0px 5px;\r\n    background: #8063a2;\r\n    border: 1px solid #8063a2;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.mbb-dc-box{\r\n    padding: 0px 5px;\r\n    background: #9bbb58;\r\n    border: 1px solid #9bbb58;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.rbi-dc-box{\r\n    padding: 0px 5px;\r\n    background: #c0504d;\r\n    border: 1px solid #c0504d;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.datetimepicker-start-end{\r\n\t\t\tpadding : 0 5px;\r\n\t\t\tmargin-right : 0;\r\n\t\t}\r\n\t\t.datetimepicker-start-end input {\r\n\t\t\theight : 30px;\r\n\t\t}\r\n\t\t.datetimepicker-start-end span {\r\n\t\t\tline-height : 30px;\r\n\t\t}\r\n\t\t.fa-calendar{\r\n\t\t\t    font-size : 22px !important;\r\n\t\t\t\t\r\n\t\t}\r\n        .dashboard-txt h1 {\r\n\r\n    margin-bottom: 0px !important;\r\n}\r\n.breadcrumb {\r\n    \r\n     margin-bottom: 0px !important; }", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1600:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var project_status_component_1 = __webpack_require__(1370);
+var PROJECT_STATUS_ROUTER = [
+    {
+        path: '',
+        component: project_status_component_1.ProjectStatusComponent,
+        pathMatch: 'full'
+    }
+];
+exports.projectStatusRouter = router_1.RouterModule.forChild(PROJECT_STATUS_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>36.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>1cb689cbdb3d2300429e2a9a489619a5</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.36.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_1cb689cbdb3d2300429e2a9a489619a5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

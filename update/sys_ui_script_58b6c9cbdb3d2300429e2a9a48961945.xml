@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.37.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([37],{
+
+/***/ 1322:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var perf_grid_component_1 = __webpack_require__(1561);
+var perf_grid_router_1 = __webpack_require__(1921);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var PerfGridModule = /** @class */ (function () {
+    function PerfGridModule() {
+    }
+    PerfGridModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, perf_grid_router_1.PerfGridRouter],
+            declarations: [perf_grid_component_1.PerfGridComponent]
+        })
+    ], PerfGridModule);
+    return PerfGridModule;
+}());
+exports.PerfGridModule = PerfGridModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1561:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var PerfGridComponent = /** @class */ (function () {
+    function PerfGridComponent(commonService, cookies, dateFilter) {
+        var _this = this;
+        this.commonService = commonService;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.loader = false;
+        /*
+      ngOnDestroy()
+      {
+        if(this.modalRef)
+        {
+          this.modalRef.hide();
+        }
+      } */
+        this.goToHomePage = function () {
+            _this.commonService.gotoDashboard();
+        };
+    }
+    PerfGridComponent.prototype.ngOnInit = function () {
+        this.loader = true;
+        this.gridDataObj = {};
+        this.currentUser = this.cookies.getObject("globals");
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.selectedTab = "Device";
+        this.error = false;
+        this.reportTabs = [
+            {
+                activeTabName: "Device"
+            },
+            {
+                activeTabName: "Link"
+            }
+        ];
+        this.deviceColumns = [
+            { dataKey: "deviceIp", title: "Device IP", hide: false, width: "" },
+            { dataKey: "linkDesc", title: "Link Desc", hide: false, width: "" },
+            { dataKey: "logicalName", title: "Logical Name", hide: false, width: "" },
+            { dataKey: "upTime", title: "Up Time", hide: false, width: "" },
+            { dataKey: "downTime", title: "Down Time", hide: false, width: "" },
+            {
+                dataKey: "availPercent",
+                title: "Avail Percent",
+                hide: false,
+                width: ""
+            },
+            { dataKey: "date", title: "Date", hide: false, width: "" },
+            { dataKey: "site", title: "Site", hide: false, width: "" },
+            { dataKey: "siteName", title: "Site Name", hide: false, width: "" },
+            { dataKey: "name", title: "Name", hide: false, width: "" }
+        ];
+        this.linkColumns = this.deviceColumns.concat([
+            {
+                dataKey: "operatorName",
+                title: "Operator Name",
+                hide: false,
+                width: ""
+            }
+        ]);
+        this.gridDataObj.columns = this.deviceColumns;
+        this.gridDataObj.id = "perf-grid-0";
+        this.getDeviceOrLinkList(this.selectedTab.toLowerCase());
+    };
+    PerfGridComponent.prototype.switchTab = function (activeTabName) {
+        this.selectedTab = activeTabName;
+        this.getDeviceOrLinkList(this.selectedTab.toLowerCase());
+    };
+    PerfGridComponent.prototype.getDeviceOrLinkList = function (deviceType) {
+        var _this = this;
+        this.loader = true;
+        var postUrl = "/_wan/wanLinkAvailabilityReports";
+        if (deviceType == undefined)
+            deviceType = this.selectedTab.toLowerCase();
+        var _postData = {
+            clientid: this.currentUser.ioni_clientid,
+            deviceips: "all",
+            from_time: this.dateFilter.transform(this.fromDate, "yyyy-MM-dd"),
+            to_time: this.dateFilter.transform(this.toDate, "yyyy-MM-dd"),
+            rptType: deviceType
+        };
+        if (deviceType == "device")
+            this.gridDataObj.columns = this.deviceColumns;
+        else if (deviceType == "link")
+            this.gridDataObj.columns = this.linkColumns;
+        this.commonService.postRequest(postUrl, _postData).then(function (res) {
+            if (res.status == "success") {
+                _this.error = false;
+                _this.gridDataObj.data = res.items[0].WANAvailabilityLinkReport;
+            }
+            else {
+                _this.commonService.error(res.message);
+                _this.error = true;
+            }
+            _this.loader = false;
+        }, function (err) {
+            _this.commonService.error(err);
+            _this.error = true;
+            _this.loader = false;
+        });
+    };
+    PerfGridComponent = __decorate([
+        core_1.Component({
+            selector: "perf-grid",
+            template: __webpack_require__(1917),
+            styles: [__webpack_require__(1918)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService,
+            ngx_cookie_1.CookieService,
+            common_1.DatePipe])
+    ], PerfGridComponent);
+    return PerfGridComponent;
+}());
+exports.PerfGridComponent = PerfGridComponent;
+
+
+/***/ }),
+
+/***/ 1917:
+/***/ (function(module, exports) {
+
+module.exports = "<!-- Section Start -->\n<section id=\"perf-grid-0\">\n  <section id=\"main-content\">\n    <section class=\"wrapper\">\n      <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n        <li class=\"active\">Perf Grid</li>\n      </ol>\n      <div class=\"pn-ProductNav_Wrapper\">\n        <nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n          <div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\">\n            <a\n              class=\"pn-ProductNav_Link\"\n              [ngClass]=\"{ active: tab.activeTabName == selectedTab }\"\n              (click)=\"switchTab(tab.activeTabName)\"\n              *ngFor=\"let tab of reportTabs\"\n            >\n              {{ tab.activeTabName }}</a\n            >\n          </div>\n        </nav>\n      </div>\n      <div class=\"col-sm-12 no-padding\">\n        <div class=\"box-title box-title-tabs\">\n          <div class=\"pull-right\">\n            <!--\n              ul class=\"box-title-right\">\n                  <li>\n                      <button type=\"button\" class=\"button-upload btn btn-primary\" style=\"padding:4px;\" (click)=\"openbulkupload(bulkUpload)\" >Bulk Upload</button>\n                    </li>\n              </ul>\n            -->\n            <ul class=\"box-title-right\">\n              <li>\n                <div class=\"picker\">\n                  <div class=\"input-group datetimepicker-start-end\">\n                    <input\n                      bsDatepicker\n                      type=\"text\"\n                      class=\"form-control\"\n                      [(ngModel)]=\"fromDate\"\n                      [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n                      id=\"datetimepicker-start\"\n                      placeholder=\"From Date\"\n                      aria-invalid=\"false\"\n                      style=\"\"\n                    /><span>to</span>\n                    <input\n                      bsDatepicker\n                      type=\"text\"\n                      class=\"form-control\"\n                      [(ngModel)]=\"toDate\"\n                      [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n                      id=\"datetimepicker-end\"\n                      placeholder=\"To Date\"\n                      aria-invalid=\"false\"\n                    />\n                  </div>\n                  <i\n                    class=\"fa fa-calendar start-end-icon\"\n                    aria-hidden=\"true\"\n                  ></i>\n                </div>\n              </li>\n              <li>\n                <button\n                  type=\"button\"\n                  class=\"button-upload btn btn-primary\"\n                  (click)=\"getDeviceOrLinkList()\"\n                >\n                  Get Data\n                </button>\n              </li>\n            </ul>\n          </div>\n          <div class=\"pull-left\"><h3>Perf Grid</h3></div>\n          <div class=\"clearfix\"></div>\n        </div>\n      </div>\n      <div class=\"col-sm-12\" style=\"padding:10px;\" *ngIf=\"loader\"></div>\n      <div class=\"col-sm-12\">\n        <content-loader *ngIf=\"loader\"></content-loader>\n        <data-grid\n          *ngIf=\"!loader && !error\"\n          [gridobj]=\"gridDataObj\"\n          (linkClick)=\"getLinkedData($event)\"\n        ></data-grid>\n      </div>\n    </section>\n  </section>\n  <!-- Section End -->\n</section>\n";
+
+/***/ }),
+
+/***/ 1918:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1919);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1919:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1920);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./perf.grid.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./perf.grid.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1920:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#perf-grid-0 .button-upload {\r\n  background-color: #0070c0 !important;\r\n}\r\n#perf-grid-0 .box-title-tabs.box-title h3 {\r\n  padding-bottom: 16px !important;\r\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1921:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var perf_grid_component_1 = __webpack_require__(1561);
+var PERF_GRID_ROUTER = [
+    {
+        path: "",
+        component: perf_grid_component_1.PerfGridComponent,
+        pathMatch: "full"
+    }
+];
+exports.PerfGridRouter = router_1.RouterModule.forChild(PERF_GRID_ROUTER);
+//router config text
+//	{ path: '', loadChildren: function() { return new Promise(function (resolve, reject) {  (require as any).ensure([], function (require: any) {    resolve(require('.\\modules\\foldername\\.module')['Module']);  }, function() {    reject({ loadChunkError: true });  });}) }, canActivate: [AuthGuard]},
+
+
+/***/ })
+
+});]]></script>
+        <script_name>37.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>58b6c9cbdb3d2300429e2a9a48961945</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.37.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_58b6c9cbdb3d2300429e2a9a48961945</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

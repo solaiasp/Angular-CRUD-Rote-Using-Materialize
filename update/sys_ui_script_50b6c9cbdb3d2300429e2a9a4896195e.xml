@@ -1,0 +1,1794 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.9.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([9],{
+
+/***/ 1294:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var syslog_component_1 = __webpack_require__(1400);
+var syslog_router_1 = __webpack_require__(1729);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var timepicker_1 = __webpack_require__(502);
+var ngx_treeview_1 = __webpack_require__(1341);
+var SyslogModule = /** @class */ (function () {
+    function SyslogModule() {
+    }
+    SyslogModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, syslog_router_1.syslogRouter, timepicker_1.TimepickerModule.forRoot(), ngx_treeview_1.TreeviewModule.forRoot()],
+            declarations: [syslog_component_1.SyslogComponent]
+        })
+    ], SyslogModule);
+    return SyslogModule;
+}());
+exports.SyslogModule = SyslogModule;
+
+
+/***/ }),
+
+/***/ 1327:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DropdownDirective; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+
+
+var DropdownDirective = (function () {
+    function DropdownDirective() {
+        // tslint:disable-next-line:no-input-rename
+        this.internalOpen = false;
+        this.openChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
+    }
+    Object.defineProperty(DropdownDirective.prototype, "isOpen", {
+        get: function () {
+            return this.internalOpen;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    DropdownDirective.prototype.onKeyupEsc = function () {
+        this.close();
+    };
+    DropdownDirective.prototype.onDocumentClick = function (event) {
+        if (event.button !== 2 && !this.isEventFromToggle(event)) {
+            this.close();
+        }
+    };
+    DropdownDirective.prototype.open = function () {
+        if (!this.internalOpen) {
+            this.internalOpen = true;
+            this.openChange.emit(true);
+        }
+    };
+    DropdownDirective.prototype.close = function () {
+        if (this.internalOpen) {
+            this.internalOpen = false;
+            this.openChange.emit(false);
+        }
+    };
+    DropdownDirective.prototype.toggle = function () {
+        if (this.isOpen) {
+            this.close();
+        }
+        else {
+            this.open();
+        }
+    };
+    DropdownDirective.prototype.isEventFromToggle = function (event) {
+        return !__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](this.toggleElement) && this.toggleElement.contains(event.target);
+    };
+    DropdownDirective.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Directive"], args: [{
+                    selector: '[ngxDropdown]',
+                    exportAs: 'ngxDropdown'
+                },] },
+    ];
+    /** @nocollapse */
+    DropdownDirective.ctorParameters = function () { return []; };
+    DropdownDirective.propDecorators = {
+        "internalOpen": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"], args: ['open',] },],
+        "openChange": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Output"] },],
+        "isOpen": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["HostBinding"], args: ['class.show',] },],
+        "onKeyupEsc": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["HostListener"], args: ['keyup.esc',] },],
+        "onDocumentClick": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["HostListener"], args: ['document:click', ['$event'],] },],
+    };
+    return DropdownDirective;
+}());
+
+//# sourceMappingURL=dropdown.directive.js.map
+
+/***/ }),
+
+/***/ 1328:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewConfig; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+
+var TreeviewConfig = (function () {
+    function TreeviewConfig() {
+        this.hasAllCheckBox = true;
+        this.hasFilter = false;
+        this.hasCollapseExpand = false;
+        this.decoupleChildFromParent = false;
+        this.maxHeight = 500;
+    }
+    Object.defineProperty(TreeviewConfig.prototype, "hasDivider", {
+        get: function () {
+            return this.hasFilter || this.hasAllCheckBox || this.hasCollapseExpand;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    TreeviewConfig.create = function (fields) {
+        var config = new TreeviewConfig();
+        Object.assign(config, fields);
+        return config;
+    };
+    TreeviewConfig.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"] },
+    ];
+    /** @nocollapse */
+    TreeviewConfig.ctorParameters = function () { return []; };
+    return TreeviewConfig;
+}());
+
+//# sourceMappingURL=treeview-config.js.map
+
+/***/ }),
+
+/***/ 1329:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewI18n; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return TreeviewI18nDefault; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+var TreeviewI18n = (function () {
+    function TreeviewI18n() {
+    }
+    TreeviewI18n.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"] },
+    ];
+    /** @nocollapse */
+    TreeviewI18n.ctorParameters = function () { return []; };
+    return TreeviewI18n;
+}());
+
+var TreeviewI18nDefault = (function (_super) {
+    __extends(TreeviewI18nDefault, _super);
+    function TreeviewI18nDefault() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    TreeviewI18nDefault.prototype.getText = function (selection) {
+        if (selection.uncheckedItems.length === 0) {
+            return this.getAllCheckboxText();
+        }
+        switch (selection.checkedItems.length) {
+            case 0:
+                return 'Select options';
+            case 1:
+                return selection.checkedItems[0].text;
+            default:
+                return selection.checkedItems.length + " options selected";
+        }
+    };
+    TreeviewI18nDefault.prototype.getAllCheckboxText = function () {
+        return 'All';
+    };
+    TreeviewI18nDefault.prototype.getFilterPlaceholder = function () {
+        return 'Filter';
+    };
+    TreeviewI18nDefault.prototype.getFilterNoItemsFoundText = function () {
+        return 'No items found';
+    };
+    TreeviewI18nDefault.prototype.getTooltipCollapseExpandText = function (isCollapse) {
+        return isCollapse ? 'Expand' : 'Collapse';
+    };
+    TreeviewI18nDefault.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"] },
+    ];
+    /** @nocollapse */
+    TreeviewI18nDefault.ctorParameters = function () { return []; };
+    return TreeviewI18nDefault;
+}(TreeviewI18n));
+
+//# sourceMappingURL=treeview-i18n.js.map
+
+/***/ }),
+
+/***/ 1330:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewItem; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+
+var TreeviewItem = (function () {
+    function TreeviewItem(item, autoCorrectChecked) {
+        if (autoCorrectChecked === void 0) { autoCorrectChecked = false; }
+        var _this = this;
+        this.internalDisabled = false;
+        this.internalChecked = true;
+        this.internalCollapsed = false;
+        if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](item)) {
+            throw new Error('Item must be defined');
+        }
+        if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isString"](item.text)) {
+            this.text = item.text;
+        }
+        else {
+            throw new Error('A text of item must be string object');
+        }
+        this.value = item.value;
+        if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isBoolean"](item.checked)) {
+            this.checked = item.checked;
+        }
+        if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isBoolean"](item.collapsed)) {
+            this.collapsed = item.collapsed;
+        }
+        if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isBoolean"](item.disabled)) {
+            this.disabled = item.disabled;
+        }
+        if (!__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](item.children) && item.children.length > 0) {
+            this.children = item.children.map(function (child) {
+                if (_this.disabled === true) {
+                    child.disabled = true;
+                }
+                return new TreeviewItem(child);
+            });
+        }
+        if (autoCorrectChecked) {
+            this.correctChecked();
+        }
+    }
+    Object.defineProperty(TreeviewItem.prototype, "checked", {
+        get: function () {
+            return this.internalChecked;
+        },
+        set: function (value) {
+            if (!this.internalDisabled) {
+                if (this.internalChecked !== value) {
+                    this.internalChecked = value;
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TreeviewItem.prototype, "indeterminate", {
+        get: function () {
+            return this.checked === undefined;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    TreeviewItem.prototype.setCheckedRecursive = function (value) {
+        if (!this.internalDisabled) {
+            this.internalChecked = value;
+            if (!__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](this.internalChildren)) {
+                this.internalChildren.forEach(function (child) { return child.setCheckedRecursive(value); });
+            }
+        }
+    };
+    Object.defineProperty(TreeviewItem.prototype, "disabled", {
+        get: function () {
+            return this.internalDisabled;
+        },
+        set: function (value) {
+            if (this.internalDisabled !== value) {
+                this.internalDisabled = value;
+                if (!__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](this.internalChildren)) {
+                    this.internalChildren.forEach(function (child) { return child.disabled = value; });
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TreeviewItem.prototype, "collapsed", {
+        get: function () {
+            return this.internalCollapsed;
+        },
+        set: function (value) {
+            if (this.internalCollapsed !== value) {
+                this.internalCollapsed = value;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    TreeviewItem.prototype.setCollapsedRecursive = function (value) {
+        this.internalCollapsed = value;
+        if (!__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](this.internalChildren)) {
+            this.internalChildren.forEach(function (child) { return child.setCollapsedRecursive(value); });
+        }
+    };
+    Object.defineProperty(TreeviewItem.prototype, "children", {
+        get: function () {
+            return this.internalChildren;
+        },
+        set: function (value) {
+            if (this.internalChildren !== value) {
+                if (!__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](value) && value.length === 0) {
+                    throw new Error('Children must be not an empty array');
+                }
+                this.internalChildren = value;
+                if (!__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](this.internalChildren)) {
+                    var checked_1 = null;
+                    this.internalChildren.forEach(function (child) {
+                        if (checked_1 === null) {
+                            checked_1 = child.checked;
+                        }
+                        else {
+                            if (child.checked !== checked_1) {
+                                checked_1 = undefined;
+                                return;
+                            }
+                        }
+                    });
+                    this.internalChecked = checked_1;
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    TreeviewItem.prototype.getSelection = function () {
+        var checkedItems = [];
+        var uncheckedItems = [];
+        if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](this.internalChildren)) {
+            if (this.internalChecked) {
+                checkedItems.push(this);
+            }
+            else {
+                uncheckedItems.push(this);
+            }
+        }
+        else {
+            for (var _i = 0, _a = this.internalChildren; _i < _a.length; _i++) {
+                var child = _a[_i];
+                var selection = child.getSelection();
+                checkedItems = __WEBPACK_IMPORTED_MODULE_0_lodash__["concat"](checkedItems, selection.checkedItems);
+                uncheckedItems = __WEBPACK_IMPORTED_MODULE_0_lodash__["concat"](uncheckedItems, selection.uncheckedItems);
+            }
+        }
+        return {
+            checkedItems: checkedItems,
+            uncheckedItems: uncheckedItems
+        };
+    };
+    TreeviewItem.prototype.correctChecked = function () {
+        this.internalChecked = this.getCorrectChecked();
+    };
+    TreeviewItem.prototype.getCorrectChecked = function () {
+        var checked = null;
+        if (!__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](this.internalChildren)) {
+            for (var _i = 0, _a = this.internalChildren; _i < _a.length; _i++) {
+                var child = _a[_i];
+                child.internalChecked = child.getCorrectChecked();
+                if (checked === null) {
+                    checked = child.internalChecked;
+                }
+                else if (checked !== child.internalChecked) {
+                    checked = undefined;
+                    break;
+                }
+            }
+        }
+        else {
+            checked = this.checked;
+        }
+        return checked;
+    };
+    return TreeviewItem;
+}());
+
+//# sourceMappingURL=treeview-item.js.map
+
+/***/ }),
+
+/***/ 1338:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__treeview_i18n__ = __webpack_require__(1329);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__treeview_item__ = __webpack_require__(1330);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__treeview_config__ = __webpack_require__(1328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__treeview_event_parser__ = __webpack_require__(1339);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+
+
+
+
+
+var FilterTreeviewItem = (function (_super) {
+    __extends(FilterTreeviewItem, _super);
+    function FilterTreeviewItem(item) {
+        var _this = _super.call(this, {
+            text: item.text,
+            value: item.value,
+            disabled: item.disabled,
+            checked: item.checked,
+            collapsed: item.collapsed,
+            children: item.children
+        }) || this;
+        _this.refItem = item;
+        return _this;
+    }
+    FilterTreeviewItem.prototype.updateRefChecked = function () {
+        this.children.forEach(function (child) {
+            if (child instanceof FilterTreeviewItem) {
+                child.updateRefChecked();
+            }
+        });
+        var refChecked = this.checked;
+        if (refChecked) {
+            for (var _i = 0, _a = this.refItem.children; _i < _a.length; _i++) {
+                var refChild = _a[_i];
+                if (!refChild.checked) {
+                    refChecked = false;
+                    break;
+                }
+            }
+        }
+        this.refItem.checked = refChecked;
+    };
+    return FilterTreeviewItem;
+}(__WEBPACK_IMPORTED_MODULE_3__treeview_item__["a" /* TreeviewItem */]));
+var TreeviewComponent = (function () {
+    function TreeviewComponent(i18n, defaultConfig, eventParser) {
+        this.i18n = i18n;
+        this.defaultConfig = defaultConfig;
+        this.eventParser = eventParser;
+        this.selectedChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
+        this.filterChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
+        this.filterText = '';
+        this.config = this.defaultConfig;
+        this.allItem = new __WEBPACK_IMPORTED_MODULE_3__treeview_item__["a" /* TreeviewItem */]({ text: 'All', value: undefined });
+        this.createHeaderTemplateContext();
+    }
+    Object.defineProperty(TreeviewComponent.prototype, "hasFilterItems", {
+        get: function () {
+            return !__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](this.filterItems) && this.filterItems.length > 0;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TreeviewComponent.prototype, "maxHeight", {
+        get: function () {
+            return "" + this.config.maxHeight;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    TreeviewComponent.prototype.ngOnChanges = function (changes) {
+        var itemsSimpleChange = changes['items'];
+        if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](itemsSimpleChange)) {
+            if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](this.items)) {
+                this.updateFilterItems();
+                this.updateCollapsedOfAll();
+                this.raiseSelectedChange();
+            }
+        }
+        this.createHeaderTemplateContext();
+    };
+    TreeviewComponent.prototype.onAllCollapseExpand = function () {
+        var _this = this;
+        this.allItem.collapsed = !this.allItem.collapsed;
+        this.filterItems.forEach(function (item) { return item.setCollapsedRecursive(_this.allItem.collapsed); });
+    };
+    TreeviewComponent.prototype.onFilterTextChange = function (text) {
+        this.filterText = text;
+        this.filterChange.emit(text);
+        this.updateFilterItems();
+    };
+    TreeviewComponent.prototype.onAllCheckedChange = function () {
+        var checked = this.allItem.checked;
+        this.filterItems.forEach(function (item) {
+            item.setCheckedRecursive(checked);
+            if (item instanceof FilterTreeviewItem) {
+                item.updateRefChecked();
+            }
+        });
+        this.raiseSelectedChange();
+    };
+    TreeviewComponent.prototype.onItemCheckedChange = function (item, checked) {
+        if (item instanceof FilterTreeviewItem) {
+            item.updateRefChecked();
+        }
+        this.updateCheckedOfAll();
+        this.raiseSelectedChange();
+    };
+    TreeviewComponent.prototype.raiseSelectedChange = function () {
+        this.generateSelection();
+        var values = this.eventParser.getSelectedChange(this);
+        this.selectedChange.emit(values);
+    };
+    TreeviewComponent.prototype.createHeaderTemplateContext = function () {
+        var _this = this;
+        this.headerTemplateContext = {
+            config: this.config,
+            item: this.allItem,
+            onCheckedChange: function () { return _this.onAllCheckedChange(); },
+            onCollapseExpand: function () { return _this.onAllCollapseExpand(); },
+            onFilterTextChange: function (text) { return _this.onFilterTextChange(text); }
+        };
+    };
+    TreeviewComponent.prototype.generateSelection = function () {
+        var checkedItems = [];
+        var uncheckedItems = [];
+        if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](this.items)) {
+            for (var _i = 0, _a = this.items; _i < _a.length; _i++) {
+                var item = _a[_i];
+                var selection = item.getSelection();
+                checkedItems = __WEBPACK_IMPORTED_MODULE_1_lodash__["concat"](checkedItems, selection.checkedItems);
+                uncheckedItems = __WEBPACK_IMPORTED_MODULE_1_lodash__["concat"](uncheckedItems, selection.uncheckedItems);
+            }
+        }
+        this.selection = {
+            checkedItems: checkedItems,
+            uncheckedItems: uncheckedItems
+        };
+    };
+    TreeviewComponent.prototype.updateFilterItems = function () {
+        var _this = this;
+        if (this.filterText !== '') {
+            var filterItems_1 = [];
+            var filterText_1 = this.filterText.toLowerCase();
+            this.items.forEach(function (item) {
+                var newItem = _this.filterItem(item, filterText_1);
+                if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](newItem)) {
+                    filterItems_1.push(newItem);
+                }
+            });
+            this.filterItems = filterItems_1;
+        }
+        else {
+            this.filterItems = this.items;
+        }
+        this.updateCheckedOfAll();
+    };
+    TreeviewComponent.prototype.filterItem = function (item, filterText) {
+        var _this = this;
+        var isMatch = __WEBPACK_IMPORTED_MODULE_1_lodash__["includes"](item.text.toLowerCase(), filterText);
+        if (isMatch) {
+            return item;
+        }
+        else {
+            if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](item.children)) {
+                var children_1 = [];
+                item.children.forEach(function (child) {
+                    var newChild = _this.filterItem(child, filterText);
+                    if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](newChild)) {
+                        children_1.push(newChild);
+                    }
+                });
+                if (children_1.length > 0) {
+                    var newItem = new FilterTreeviewItem(item);
+                    newItem.collapsed = false;
+                    newItem.children = children_1;
+                    return newItem;
+                }
+            }
+        }
+        return undefined;
+    };
+    TreeviewComponent.prototype.updateCheckedOfAll = function () {
+        var itemChecked = null;
+        for (var _i = 0, _a = this.filterItems; _i < _a.length; _i++) {
+            var filterItem = _a[_i];
+            if (itemChecked === null) {
+                itemChecked = filterItem.checked;
+            }
+            else if (itemChecked !== filterItem.checked) {
+                itemChecked = undefined;
+                break;
+            }
+        }
+        if (itemChecked === null) {
+            itemChecked = false;
+        }
+        this.allItem.checked = itemChecked;
+    };
+    TreeviewComponent.prototype.updateCollapsedOfAll = function () {
+        var hasItemExpanded = false;
+        for (var _i = 0, _a = this.filterItems; _i < _a.length; _i++) {
+            var filterItem = _a[_i];
+            if (!filterItem.collapsed) {
+                hasItemExpanded = true;
+                break;
+            }
+        }
+        this.allItem.collapsed = !hasItemExpanded;
+    };
+    TreeviewComponent.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"], args: [{
+                    selector: 'ngx-treeview',
+                    template: "\n      <ng-template #defaultItemTemplate let-item=\"item\" let-onCollapseExpand=\"onCollapseExpand\" let-onCheckedChange=\"onCheckedChange\">\n        <div class=\"form-inline row-item\">\n          <i *ngIf=\"item.children\" (click)=\"onCollapseExpand()\" aria-hidden=\"true\" class=\"fa\" [class.fa-caret-right]=\"item.collapsed\"\n            [class.fa-caret-down]=\"!item.collapsed\"></i>\n          <div class=\"form-check\">\n            <input type=\"checkbox\" class=\"form-check-input\" [(ngModel)]=\"item.checked\" (ngModelChange)=\"onCheckedChange()\" [disabled]=\"item.disabled\"\n              [indeterminate]=\"item.indeterminate\" />\n            <label class=\"form-check-label\" (click)=\"item.checked = !item.checked; onCheckedChange()\">\n              {{item.text}}\n            </label>\n          </div>\n        </div>\n      </ng-template>\n      <ng-template #defaultHeaderTemplate let-config=\"config\" let-item=\"item\" let-onCollapseExpand=\"onCollapseExpand\" let-onCheckedChange=\"onCheckedChange\"\n        let-onFilterTextChange=\"onFilterTextChange\">\n        <div *ngIf=\"config.hasFilter\" class=\"row row-filter\">\n          <div class=\"col-12\">\n            <input class=\"form-control\" type=\"text\" [placeholder]=\"i18n.getFilterPlaceholder()\" [(ngModel)]=\"filterText\" (ngModelChange)=\"onFilterTextChange($event)\"\n            />\n          </div>\n        </div>\n        <div *ngIf=\"hasFilterItems\">\n          <div *ngIf=\"config.hasAllCheckBox || config.hasCollapseExpand\" class=\"row row-all\">\n            <div class=\"col-12\">\n              <div class=\"form-check\">\n                <input type=\"checkbox\" class=\"form-check-input\" [(ngModel)]=\"item.checked\" (ngModelChange)=\"onCheckedChange()\" [indeterminate]=\"item.indeterminate\"\n                />\n                <label *ngIf=\"config.hasAllCheckBox\" class=\"form-check-label\" (click)=\"item.checked = !item.checked; onCheckedChange()\">\n                  {{i18n.getAllCheckboxText()}}\n                </label>\n                <label *ngIf=\"config.hasCollapseExpand\" class=\"pull-right form-check-label\" (click)=\"onCollapseExpand()\">\n                  <i [title]=\"i18n.getTooltipCollapseExpandText(item.collapsed)\" aria-hidden=\"true\" class=\"fa\" [class.fa-expand]=\"item.collapsed\"\n                    [class.fa-compress]=\"!item.collapsed\"></i>\n                </label>\n              </div>\n            </div>\n          </div>\n          <div *ngIf=\"config.hasDivider\" class=\"dropdown-divider\"></div>\n        </div>\n      </ng-template>\n      <div class=\"treeview-header\">\n        <ng-template [ngTemplateOutlet]=\"headerTemplate || defaultHeaderTemplate\" [ngTemplateOutletContext]=\"headerTemplateContext\">\n        </ng-template>\n      </div>\n      <div [ngSwitch]=\"hasFilterItems\">\n        <div *ngSwitchCase=\"true\" class=\"treeview-container\" [style.max-height.px]=\"maxHeight\">\n          <ngx-treeview-item *ngFor=\"let item of filterItems\" [config]=\"config\" [item]=\"item\" [template]=\"itemTemplate || defaultItemTemplate\"\n            (checkedChange)=\"onItemCheckedChange(item, $event)\">\n          </ngx-treeview-item>\n        </div>\n        <div *ngSwitchCase=\"false\" class=\"treeview-text\">\n          {{i18n.getFilterNoItemsFoundText()}}\n        </div>\n      </div>\n    ",
+                    styles: ["\n      :host /deep/ .treeview-header .row-filter {\n        margin-bottom: .5rem;\n      }\n\n      :host /deep/ .treeview-header .row-all .fa {\n        cursor: pointer;\n      }\n\n      :host /deep/ .treeview-container .row-item {\n        margin-bottom: .3rem;\n        flex-wrap: nowrap;\n      }\n\n      :host /deep/ .treeview-container .row-item .fa {\n        width: .8rem;\n        cursor: pointer;\n        margin-right: .3rem;\n      }\n\n      .treeview-container {\n        overflow-y: auto;\n        padding-right: .3rem;\n      }\n\n      .treeview-text {\n        padding: .3rem 0;\n        white-space: nowrap;\n      }\n    "]
+                },] },
+    ];
+    /** @nocollapse */
+    TreeviewComponent.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_2__treeview_i18n__["a" /* TreeviewI18n */], },
+        { type: __WEBPACK_IMPORTED_MODULE_4__treeview_config__["a" /* TreeviewConfig */], },
+        { type: __WEBPACK_IMPORTED_MODULE_5__treeview_event_parser__["d" /* TreeviewEventParser */], },
+    ]; };
+    TreeviewComponent.propDecorators = {
+        "headerTemplate": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "itemTemplate": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "items": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "config": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "selectedChange": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Output"] },],
+        "filterChange": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Output"] },],
+    };
+    return TreeviewComponent;
+}());
+
+//# sourceMappingURL=treeview.component.js.map
+
+/***/ }),
+
+/***/ 1339:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return TreeviewEventParser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DefaultTreeviewEventParser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DownlineTreeviewEventParser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return OrderDownlineTreeviewEventParser; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+
+var TreeviewEventParser = (function () {
+    function TreeviewEventParser() {
+    }
+    TreeviewEventParser.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"] },
+    ];
+    /** @nocollapse */
+    TreeviewEventParser.ctorParameters = function () { return []; };
+    return TreeviewEventParser;
+}());
+
+var DefaultTreeviewEventParser = (function (_super) {
+    __extends(DefaultTreeviewEventParser, _super);
+    function DefaultTreeviewEventParser() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    DefaultTreeviewEventParser.prototype.getSelectedChange = function (component) {
+        var checkedItems = component.selection.checkedItems;
+        if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](checkedItems)) {
+            return checkedItems.map(function (item) { return item.value; });
+        }
+        return [];
+    };
+    DefaultTreeviewEventParser.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"] },
+    ];
+    /** @nocollapse */
+    DefaultTreeviewEventParser.ctorParameters = function () { return []; };
+    return DefaultTreeviewEventParser;
+}(TreeviewEventParser));
+
+var DownlineTreeviewEventParser = (function (_super) {
+    __extends(DownlineTreeviewEventParser, _super);
+    function DownlineTreeviewEventParser() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    DownlineTreeviewEventParser.prototype.getSelectedChange = function (component) {
+        var _this = this;
+        var items = component.items;
+        if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](items)) {
+            var result_1 = [];
+            items.forEach(function (item) {
+                var links = _this.getLinks(item, null);
+                if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](links)) {
+                    result_1 = result_1.concat(links);
+                }
+            });
+            return result_1;
+        }
+        return [];
+    };
+    DownlineTreeviewEventParser.prototype.getLinks = function (item, parent) {
+        var _this = this;
+        if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](item.children)) {
+            var link_1 = {
+                item: item,
+                parent: parent
+            };
+            var result_2 = [];
+            item.children.forEach(function (child) {
+                var links = _this.getLinks(child, link_1);
+                if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](links)) {
+                    result_2 = result_2.concat(links);
+                }
+            });
+            return result_2;
+        }
+        if (item.checked) {
+            return [{
+                    item: item,
+                    parent: parent
+                }];
+        }
+        return null;
+    };
+    DownlineTreeviewEventParser.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"] },
+    ];
+    /** @nocollapse */
+    DownlineTreeviewEventParser.ctorParameters = function () { return []; };
+    return DownlineTreeviewEventParser;
+}(TreeviewEventParser));
+
+var OrderDownlineTreeviewEventParser = (function (_super) {
+    __extends(OrderDownlineTreeviewEventParser, _super);
+    function OrderDownlineTreeviewEventParser() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.currentDownlines = [];
+        _this.parser = new DownlineTreeviewEventParser();
+        return _this;
+    }
+    OrderDownlineTreeviewEventParser.prototype.getSelectedChange = function (component) {
+        var newDownlines = this.parser.getSelectedChange(component);
+        if (this.currentDownlines.length === 0) {
+            this.currentDownlines = newDownlines;
+        }
+        else {
+            var intersectDownlines_1 = [];
+            this.currentDownlines.forEach(function (downline) {
+                var foundIndex = -1;
+                var length = newDownlines.length;
+                for (var i = 0; i < length; i++) {
+                    if (downline.item.value === newDownlines[i].item.value) {
+                        foundIndex = i;
+                        break;
+                    }
+                }
+                if (foundIndex !== -1) {
+                    intersectDownlines_1.push(newDownlines[foundIndex]);
+                    newDownlines.splice(foundIndex, 1);
+                }
+            });
+            this.currentDownlines = intersectDownlines_1.concat(newDownlines);
+        }
+        return this.currentDownlines;
+    };
+    OrderDownlineTreeviewEventParser.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"] },
+    ];
+    /** @nocollapse */
+    OrderDownlineTreeviewEventParser.ctorParameters = function () { return []; };
+    return OrderDownlineTreeviewEventParser;
+}(TreeviewEventParser));
+
+//# sourceMappingURL=treeview-event-parser.js.map
+
+/***/ }),
+
+/***/ 1341:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__treeview_module__ = __webpack_require__(1345);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewModule", function() { return __WEBPACK_IMPORTED_MODULE_0__treeview_module__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__treeview_component__ = __webpack_require__(1338);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewComponent", function() { return __WEBPACK_IMPORTED_MODULE_1__treeview_component__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__treeview_pipe__ = __webpack_require__(1344);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewPipe", function() { return __WEBPACK_IMPORTED_MODULE_2__treeview_pipe__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__treeview_item__ = __webpack_require__(1330);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewItem", function() { return __WEBPACK_IMPORTED_MODULE_3__treeview_item__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__treeview_config__ = __webpack_require__(1328);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewConfig", function() { return __WEBPACK_IMPORTED_MODULE_4__treeview_config__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__treeview_i18n__ = __webpack_require__(1329);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewI18n", function() { return __WEBPACK_IMPORTED_MODULE_5__treeview_i18n__["a"]; });
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewI18nDefault", function() { return __WEBPACK_IMPORTED_MODULE_5__treeview_i18n__["b"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__treeview_event_parser__ = __webpack_require__(1339);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewEventParser", function() { return __WEBPACK_IMPORTED_MODULE_6__treeview_event_parser__["d"]; });
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "DefaultTreeviewEventParser", function() { return __WEBPACK_IMPORTED_MODULE_6__treeview_event_parser__["a"]; });
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "DownlineTreeviewEventParser", function() { return __WEBPACK_IMPORTED_MODULE_6__treeview_event_parser__["b"]; });
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "OrderDownlineTreeviewEventParser", function() { return __WEBPACK_IMPORTED_MODULE_6__treeview_event_parser__["c"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__treeview_helper__ = __webpack_require__(1348);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "TreeviewHelper", function() { return __WEBPACK_IMPORTED_MODULE_7__treeview_helper__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__dropdown_toggle_directive__ = __webpack_require__(1342);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "DropdownToggleDirective", function() { return __WEBPACK_IMPORTED_MODULE_8__dropdown_toggle_directive__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__dropdown_directive__ = __webpack_require__(1327);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "DropdownDirective", function() { return __WEBPACK_IMPORTED_MODULE_9__dropdown_directive__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__dropdown_treeview_component__ = __webpack_require__(1343);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "DropdownTreeviewComponent", function() { return __WEBPACK_IMPORTED_MODULE_10__dropdown_treeview_component__["a"]; });
+
+
+
+
+
+
+
+
+
+
+
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 1342:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DropdownToggleDirective; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dropdown_directive__ = __webpack_require__(1327);
+
+
+var DropdownToggleDirective = (function () {
+    function DropdownToggleDirective(dropdown, elementRef) {
+        this.dropdown = dropdown;
+        dropdown.toggleElement = elementRef.nativeElement;
+    }
+    DropdownToggleDirective.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Directive"], args: [{
+                    selector: '[ngxDropdownToggle]',
+                    // tslint:disable-next-line:use-host-property-decorator
+                    host: {
+                        'class': 'dropdown-toggle',
+                        'aria-haspopup': 'true',
+                        '[attr.aria-expanded]': 'dropdown.isOpen',
+                        '(click)': 'dropdown.toggle()'
+                    }
+                },] },
+    ];
+    /** @nocollapse */
+    DropdownToggleDirective.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_1__dropdown_directive__["a" /* DropdownDirective */], },
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ElementRef"], },
+    ]; };
+    return DropdownToggleDirective;
+}());
+
+//# sourceMappingURL=dropdown-toggle.directive.js.map
+
+/***/ }),
+
+/***/ 1343:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DropdownTreeviewComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__treeview_i18n__ = __webpack_require__(1329);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__treeview_config__ = __webpack_require__(1328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__treeview_component__ = __webpack_require__(1338);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dropdown_directive__ = __webpack_require__(1327);
+
+
+
+
+
+var DropdownTreeviewComponent = (function () {
+    function DropdownTreeviewComponent(i18n, defaultConfig) {
+        this.i18n = i18n;
+        this.defaultConfig = defaultConfig;
+        this.buttonClass = 'btn-outline-secondary';
+        this.selectedChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"](true);
+        this.filterChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
+        this.config = this.defaultConfig;
+    }
+    DropdownTreeviewComponent.prototype.getText = function () {
+        return this.i18n.getText(this.treeviewComponent.selection);
+    };
+    DropdownTreeviewComponent.prototype.onSelectedChange = function (values) {
+        this.selectedChange.emit(values);
+    };
+    DropdownTreeviewComponent.prototype.onFilterChange = function (text) {
+        this.filterChange.emit(text);
+    };
+    DropdownTreeviewComponent.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"], args: [{
+                    selector: 'ngx-dropdown-treeview',
+                    template: "\n      <div class=\"dropdown\" ngxDropdown>\n        <button class=\"btn\" [ngClass]=\"buttonClass\" type=\"button\" role=\"button\" ngxDropdownToggle>\n          {{getText()}}\n        </button>\n        <div ngxDropdownMenu aria-labelledby=\"dropdownMenu\" (click)=\"$event.stopPropagation()\">\n          <div class=\"dropdown-container\">\n            <ngx-treeview [config]=\"config\" [headerTemplate]=\"headerTemplate\" [items]=\"items\" [itemTemplate]=\"itemTemplate\" (selectedChange)=\"onSelectedChange($event)\"\n              (filterChange)=\"onFilterChange($event)\">\n            </ngx-treeview>\n          </div>\n        </div>\n      </div>\n    ",
+                    styles: ["\n      .dropdown {\n        width: 100%;\n        display: inline-block;\n      }\n\n      .dropdown button {\n        width: 100%;\n        margin-right: .9rem;\n        text-align: left;\n      }\n\n      .dropdown button::after {\n        position: absolute;\n        right: .6rem;\n        margin-top: .6rem;\n      }\n\n      .dropdown .dropdown-menu .dropdown-container {\n        padding: 0 .6rem;\n      }\n    "]
+                },] },
+    ];
+    /** @nocollapse */
+    DropdownTreeviewComponent.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_1__treeview_i18n__["a" /* TreeviewI18n */], },
+        { type: __WEBPACK_IMPORTED_MODULE_2__treeview_config__["a" /* TreeviewConfig */], },
+    ]; };
+    DropdownTreeviewComponent.propDecorators = {
+        "buttonClass": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "headerTemplate": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "itemTemplate": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "items": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "config": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "selectedChange": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Output"] },],
+        "filterChange": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Output"] },],
+        "treeviewComponent": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewChild"], args: [__WEBPACK_IMPORTED_MODULE_3__treeview_component__["a" /* TreeviewComponent */],] },],
+        "dropdownDirective": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewChild"], args: [__WEBPACK_IMPORTED_MODULE_4__dropdown_directive__["a" /* DropdownDirective */],] },],
+    };
+    return DropdownTreeviewComponent;
+}());
+
+//# sourceMappingURL=dropdown-treeview.component.js.map
+
+/***/ }),
+
+/***/ 1344:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewPipe; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__treeview_item__ = __webpack_require__(1330);
+
+
+
+var TreeviewPipe = (function () {
+    function TreeviewPipe() {
+    }
+    TreeviewPipe.prototype.transform = function (objects, textField) {
+        if (__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](objects)) {
+            return undefined;
+        }
+        return objects.map(function (object) { return new __WEBPACK_IMPORTED_MODULE_2__treeview_item__["a" /* TreeviewItem */]({ text: object[textField], value: object }); });
+    };
+    TreeviewPipe.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Pipe"], args: [{
+                    name: 'ngxTreeview'
+                },] },
+    ];
+    /** @nocollapse */
+    TreeviewPipe.ctorParameters = function () { return []; };
+    return TreeviewPipe;
+}());
+
+//# sourceMappingURL=treeview.pipe.js.map
+
+/***/ }),
+
+/***/ 1345:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewModule; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_common__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dropdown_directive__ = __webpack_require__(1327);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dropdown_menu_directive__ = __webpack_require__(1346);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dropdown_toggle_directive__ = __webpack_require__(1342);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__dropdown_treeview_component__ = __webpack_require__(1343);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__treeview_component__ = __webpack_require__(1338);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__treeview_item_component__ = __webpack_require__(1347);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__treeview_pipe__ = __webpack_require__(1344);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__treeview_i18n__ = __webpack_require__(1329);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__treeview_config__ = __webpack_require__(1328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__treeview_event_parser__ = __webpack_require__(1339);
+
+
+
+
+
+
+
+
+
+
+
+
+
+var TreeviewModule = (function () {
+    function TreeviewModule() {
+    }
+    TreeviewModule.forRoot = function () {
+        return {
+            ngModule: TreeviewModule,
+            providers: [
+                __WEBPACK_IMPORTED_MODULE_11__treeview_config__["a" /* TreeviewConfig */],
+                { provide: __WEBPACK_IMPORTED_MODULE_10__treeview_i18n__["a" /* TreeviewI18n */], useClass: __WEBPACK_IMPORTED_MODULE_10__treeview_i18n__["b" /* TreeviewI18nDefault */] },
+                { provide: __WEBPACK_IMPORTED_MODULE_12__treeview_event_parser__["d" /* TreeviewEventParser */], useClass: __WEBPACK_IMPORTED_MODULE_12__treeview_event_parser__["a" /* DefaultTreeviewEventParser */] }
+            ]
+        };
+    };
+    TreeviewModule.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["NgModule"], args: [{
+                    imports: [
+                        __WEBPACK_IMPORTED_MODULE_1__angular_forms__["FormsModule"],
+                        __WEBPACK_IMPORTED_MODULE_2__angular_common__["CommonModule"]
+                    ],
+                    declarations: [
+                        __WEBPACK_IMPORTED_MODULE_7__treeview_component__["a" /* TreeviewComponent */],
+                        __WEBPACK_IMPORTED_MODULE_8__treeview_item_component__["a" /* TreeviewItemComponent */],
+                        __WEBPACK_IMPORTED_MODULE_9__treeview_pipe__["a" /* TreeviewPipe */],
+                        __WEBPACK_IMPORTED_MODULE_3__dropdown_directive__["a" /* DropdownDirective */],
+                        __WEBPACK_IMPORTED_MODULE_4__dropdown_menu_directive__["a" /* DropdownMenuDirective */],
+                        __WEBPACK_IMPORTED_MODULE_5__dropdown_toggle_directive__["a" /* DropdownToggleDirective */],
+                        __WEBPACK_IMPORTED_MODULE_6__dropdown_treeview_component__["a" /* DropdownTreeviewComponent */]
+                    ], exports: [
+                        __WEBPACK_IMPORTED_MODULE_7__treeview_component__["a" /* TreeviewComponent */],
+                        __WEBPACK_IMPORTED_MODULE_9__treeview_pipe__["a" /* TreeviewPipe */],
+                        __WEBPACK_IMPORTED_MODULE_6__dropdown_treeview_component__["a" /* DropdownTreeviewComponent */]
+                    ]
+                },] },
+    ];
+    /** @nocollapse */
+    TreeviewModule.ctorParameters = function () { return []; };
+    return TreeviewModule;
+}());
+
+//# sourceMappingURL=treeview.module.js.map
+
+/***/ }),
+
+/***/ 1346:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DropdownMenuDirective; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dropdown_directive__ = __webpack_require__(1327);
+
+
+var DropdownMenuDirective = (function () {
+    function DropdownMenuDirective(dropdown) {
+        this.dropdown = dropdown;
+    }
+    DropdownMenuDirective.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Directive"], args: [{
+                    selector: '[ngxDropdownMenu]',
+                    // tslint:disable-next-line:use-host-property-decorator
+                    host: {
+                        '[class.dropdown-menu]': 'true',
+                        '[class.show]': 'dropdown.isOpen'
+                    }
+                },] },
+    ];
+    /** @nocollapse */
+    DropdownMenuDirective.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_1__dropdown_directive__["a" /* DropdownDirective */], },
+    ]; };
+    return DropdownMenuDirective;
+}());
+
+//# sourceMappingURL=dropdown-menu.directive.js.map
+
+/***/ }),
+
+/***/ 1347:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewItemComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__treeview_item__ = __webpack_require__(1330);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__treeview_config__ = __webpack_require__(1328);
+
+
+
+
+var TreeviewItemComponent = (function () {
+    function TreeviewItemComponent(defaultConfig) {
+        var _this = this;
+        this.defaultConfig = defaultConfig;
+        this.checkedChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
+        this.onCollapseExpand = function () {
+            _this.item.collapsed = !_this.item.collapsed;
+        };
+        this.onCheckedChange = function () {
+            var checked = _this.item.checked;
+            if (!__WEBPACK_IMPORTED_MODULE_1_lodash__["isNil"](_this.item.children) && !_this.config.decoupleChildFromParent) {
+                _this.item.children.forEach(function (child) { return child.setCheckedRecursive(checked); });
+            }
+            _this.checkedChange.emit(checked);
+        };
+        this.config = this.defaultConfig;
+    }
+    TreeviewItemComponent.prototype.onChildCheckedChange = function (child, checked) {
+        if (!this.config.decoupleChildFromParent) {
+            var itemChecked = null;
+            for (var _i = 0, _a = this.item.children; _i < _a.length; _i++) {
+                var childItem = _a[_i];
+                if (itemChecked === null) {
+                    itemChecked = childItem.checked;
+                }
+                else if (itemChecked !== childItem.checked) {
+                    itemChecked = undefined;
+                    break;
+                }
+            }
+            if (itemChecked === null) {
+                itemChecked = false;
+            }
+            if (this.item.checked !== itemChecked) {
+                this.item.checked = itemChecked;
+            }
+        }
+        this.checkedChange.emit(checked);
+    };
+    TreeviewItemComponent.decorators = [
+        { type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"], args: [{
+                    selector: 'ngx-treeview-item',
+                    template: "\n      <div *ngIf=\"item\" class=\"treeview-item\">\n          <ng-template [ngTemplateOutlet]=\"template\" [ngTemplateOutletContext]=\"{item: item, onCollapseExpand: onCollapseExpand, onCheckedChange: onCheckedChange}\">\n          </ng-template>\n          <div *ngIf=\"!item.collapsed\">\n              <ngx-treeview-item [config]=\"config\" *ngFor=\"let child of item.children\" [item]=\"child\" [template]=\"template\" (checkedChange)=\"onChildCheckedChange(child, $event)\">\n              </ngx-treeview-item>\n          </div>\n      </div>\n    ",
+                    styles: ["\n      :host {\n        display: block;\n      }\n\n      :host .treeview-item {\n        white-space: nowrap;\n      }\n\n      :host .treeview-item .treeview-item {\n        margin-left: 2rem;\n      }\n    "]
+                },] },
+    ];
+    /** @nocollapse */
+    TreeviewItemComponent.ctorParameters = function () { return [
+        { type: __WEBPACK_IMPORTED_MODULE_3__treeview_config__["a" /* TreeviewConfig */], },
+    ]; };
+    TreeviewItemComponent.propDecorators = {
+        "config": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "template": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "item": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"] },],
+        "checkedChange": [{ type: __WEBPACK_IMPORTED_MODULE_0__angular_core__["Output"] },],
+    };
+    return TreeviewItemComponent;
+}());
+
+//# sourceMappingURL=treeview-item.component.js.map
+
+/***/ }),
+
+/***/ 1348:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TreeviewHelper; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+
+var TreeviewHelper = {
+    findItem: findItem,
+    findItemInList: findItemInList,
+    findParent: findParent,
+    removeItem: removeItem
+};
+function findItem(root, value) {
+    if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](root)) {
+        return undefined;
+    }
+    if (root.value === value) {
+        return root;
+    }
+    if (root.children) {
+        for (var _i = 0, _a = root.children; _i < _a.length; _i++) {
+            var child = _a[_i];
+            var foundItem = findItem(child, value);
+            if (foundItem) {
+                return foundItem;
+            }
+        }
+    }
+    return undefined;
+}
+function findItemInList(list, value) {
+    if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](list)) {
+        return undefined;
+    }
+    for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+        var item = list_1[_i];
+        var foundItem = findItem(item, value);
+        if (foundItem) {
+            return foundItem;
+        }
+    }
+    return undefined;
+}
+function findParent(root, item) {
+    if (__WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](root) || __WEBPACK_IMPORTED_MODULE_0_lodash__["isNil"](root.children)) {
+        return undefined;
+    }
+    for (var _i = 0, _a = root.children; _i < _a.length; _i++) {
+        var child = _a[_i];
+        if (child === item) {
+            return root;
+        }
+        else {
+            var parent_1 = findParent(child, item);
+            if (parent_1) {
+                return parent_1;
+            }
+        }
+    }
+    return undefined;
+}
+function removeItem(root, item) {
+    var parent = findParent(root, item);
+    if (parent) {
+        __WEBPACK_IMPORTED_MODULE_0_lodash__["pull"](parent.children, item);
+        if (parent.children.length === 0) {
+            parent.children = undefined;
+        }
+        else {
+            parent.correctChecked();
+        }
+        return true;
+    }
+    return false;
+}
+//# sourceMappingURL=treeview-helper.js.map
+
+/***/ }),
+
+/***/ 1400:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var forms_1 = __webpack_require__(26);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var modal_1 = __webpack_require__(104);
+var timepicker_1 = __webpack_require__(502);
+var ngx_treeview_1 = __webpack_require__(1341);
+var menuTreeviewConfig = /** @class */ (function (_super) {
+    __extends(menuTreeviewConfig, _super);
+    function menuTreeviewConfig() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.hasAllCheckBox = true;
+        _this.hasFilter = true;
+        _this.hasCollapseExpand = true;
+        _this.maxHeight = 200;
+        return _this;
+    }
+    menuTreeviewConfig = __decorate([
+        core_1.Injectable()
+    ], menuTreeviewConfig);
+    return menuTreeviewConfig;
+}(ngx_treeview_1.TreeviewConfig));
+exports.menuTreeviewConfig = menuTreeviewConfig;
+function getTimepickerConfig() {
+    return Object.assign(new timepicker_1.TimepickerConfig(), {
+        hourStep: 1,
+        minuteStep: 1,
+        showMeridian: false,
+        readonlyInput: false,
+        mousewheel: true,
+        showMinutes: true,
+        showSeconds: false
+    });
+}
+exports.getTimepickerConfig = getTimepickerConfig;
+var SyslogComponent = /** @class */ (function () {
+    function SyslogComponent(commonServices, cookies, dateFilter, modalService) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.modalService = modalService;
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.gridDataObj = {
+            pdfName: 'Sys-Log-Details',
+            pdfTitle: 'Sys-Log-Details',
+            excelTitle: 'Sys-Log-Details',
+            excelName: 'Sys-Log-Details',
+            fromDate: new Date(),
+            toDate: new Date()
+        };
+        this.searchform = {};
+        this.isDropDownSelected = false;
+        this.optionTextField = 'name';
+        this.optionValueField = 'id';
+        this.dropdownValues = [];
+        this.fordata = {};
+        this.showMin = true;
+        this.showSec = false;
+        this.getMultpleIP = [];
+        this.ischanged = false;
+        this.isPageBeginWithAll = true;
+        this.isIPAvailable = true;
+        this.isAllIPSelected = false;
+        this.rawIPValueArray = [];
+        this.displayDateTimeData = {};
+        this.selectedApis2 = [];
+        this.setMaxToDate = function (maxDate) {
+            var fDate = maxDate.getTime() + (24 * 60 * 60 * 1000);
+            _this.searchform.toDate = new Date(fDate);
+            _this.maxToDate = new Date(fDate);
+        };
+        this.getIPAddress = function () {
+            _this.loader = true;
+            _this.dropdownValues = [];
+            _this.searchform.ipdata = [];
+            var getToday = new Date();
+            _this.displayDateTimeData.fromDatetime = _this.dateFilter.transform(getToday, "yyyy-MM-dd HH:mm:ss");
+            _this.displayDateTimeData.toDatetime = _this.dateFilter.transform(getToday, "yyyy-MM-dd HH:mm:ss");
+            _this.gridDataObj.fromDate = getToday;
+            _this.gridDataObj.toDate = getToday;
+            _this.commonServices.postRequest('/_syslog/CassandraDevices', {}).then(function (response) {
+                // console.log('resdata', response);
+                if (response.status == "success") {
+                    _this.loader = false;
+                    var getResponse = response.items[0].SyslogCassandraDevicesList;
+                    getResponse.forEach(function (ipdata) {
+                        var dummGenObj = {};
+                        var hname = ipdata.hostName.length > 0 ? ipdata.hostName + " - " : "";
+                        var sname = ipdata.site.length > 0 ? ipdata.site + " - " : "";
+                        var displayString = hname + sname + ipdata.ip.toString();
+                        dummGenObj.text = displayString;
+                        dummGenObj.value = ipdata.ip.toString();
+                        dummGenObj.checked = false;
+                        _this.rawIPValueArray.push(ipdata.ip);
+                        _this.dropdownValues.push(new ngx_treeview_1.TreeviewItem(dummGenObj));
+                    });
+                    console.log('dropdownvalues', _this.dropdownValues);
+                    if (_this.dropdownValues.length > 0) {
+                        // console.log('drop', this.dropdownValues);
+                        // this.searchform.ipdata = this.dropdownValues;
+                        _this.getMultpleIP.push(_this.dropdownValues[0].text);
+                        _this.fordata.id = _this.dropdownValues[0].text;
+                        _this.callGridDetails(_this.searchform.ipdata);
+                    }
+                    else {
+                        _this.gridDataObj.data = [];
+                        _this.isIPAvailable = false;
+                        _this.isDropDownSelected = true;
+                        _this.loader = false;
+                    }
+                }
+                else {
+                    _this.loader = false;
+                    _this.ngOnDestroy();
+                    _this.commonServices.error(response.message);
+                }
+            }), function (err) {
+                _this.loader = false;
+                _this.ngOnDestroy();
+                _this.commonServices.error(err.message);
+            };
+        };
+        this.callGridDetails = function (ip) {
+            if (ip === void 0) { ip = []; }
+            _this.setIPAddress = ip;
+            _this.isIPAvailable = true;
+            var dataIPString = ip.toString();
+            var fromDate = _this.dateFilter.transform(_this.datePickerMinDate, "yyyy-MM-dd HH:mm:ss");
+            var toDate = _this.dateFilter.transform(_this.datePickerMaxDate, "yyyy-MM-dd HH:mm:ss");
+            _this.gridDataObj.fromDate = _this.datePickerMinDate;
+            _this.gridDataObj.toDate = _this.datePickerMaxDate;
+            _this.displayDateTimeData.fromDatetime = fromDate;
+            _this.displayDateTimeData.toDatetime = toDate;
+            //var _post : any = {ip : dataIPString, from: "" ,to: ""};
+            var _post = { ip: "all", from: "", to: "" };
+            console.log("_post", _post);
+            _this.loader = true;
+            _this.commonServices.postRequest('/_syslog/SyslogBrowserResponse', _post).then(function (response) {
+                if (response.status == "success") {
+                    // if(response.items[0].SyslogBrowserList.length >= 0){
+                    // }
+                    _this.gridDataObj.data = response.items[0].SyslogBrowserList;
+                    _this.isDropDownSelected = true;
+                    _this.loader = false;
+                }
+                else {
+                    _this.loader = false;
+                    _this.ngOnDestroy();
+                    _this.commonServices.error(response.message);
+                }
+            }), function (err) {
+                _this.loader = false;
+                _this.ngOnDestroy();
+                _this.commonServices.error(err.message);
+            };
+        };
+        this.getLists = function (e) {
+            console.log(e);
+            var fromDateStr = _this.dateFilter.transform(e[0], "yyyy-MM-dd");
+            var toDateStr = _this.dateFilter.transform(e[1], "yyyy-MM-dd");
+            _this.bsRangeValue = [new Date(fromDateStr), new Date(toDateStr)];
+            var _post = { ip: _this.setIPAddress, from: fromDateStr, to: toDateStr };
+            console.log("_post", _post);
+            _this.loader = true;
+            _this.commonServices.postRequest('/_syslog/SyslogBrowserResponse', _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.gridDataObj.data = response.items[0].SyslogBrowserList;
+                    _this.isDropDownSelected = true;
+                    _this.loader = false;
+                }
+                else {
+                    _this.loader = false;
+                    _this.ngOnDestroy();
+                    _this.commonServices.error(response.message);
+                }
+            }), function (err) {
+                _this.loader = false;
+                _this.ngOnDestroy();
+                _this.commonServices.error(err.message);
+            };
+        };
+        this.resetGrid = function () {
+            _this.isPageBeginWithAll = true;
+            _this.getIPAddress();
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        this.isCheckedBox = function (e) {
+            if (e == 1) {
+                _this.isAllIPSelected = true;
+            }
+            else {
+                _this.isAllIPSelected = false;
+            }
+        };
+    }
+    SyslogComponent.prototype.ngOnInit = function () {
+        this.getMultpleIP = [];
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.loader = false;
+        this.gridDataObj.id = 'Sys-Log-Details';
+        this.yesterDay = new Date();
+        this.yesterDay.setDate(this.yesterDay.getDate() - 1);
+        this.maxToDate = new Date();
+        this.searchform.fromDate = this.dateFilter.transform(this.maxToDate, "yyyy-MM-dd");
+        this.searchform.toDate = this.dateFilter.transform(this.maxToDate, "yyyy-MM-dd");
+        this.searchform.fromTime = new Date();
+        this.searchform.toTime = new Date();
+        this.searchform.ipoption = "0";
+        // var setTimeData : any = new Date(this.yesterDay.getFullYear(), this.yesterDay.getMonth(), this.yesterDay.getDate(), 0, 0, 0);
+        // this.searchform.fromTime.setHours();
+        // this.searchform.fromTime.setMinutes();
+        // this.searchform.toTime.setHours();
+        // this.searchform.toTime.setMinutes();
+        this.gridDataObj.columns = [
+            { dataKey: 'hostName', title: 'Host Name', hide: false, width: '' },
+            { dataKey: 'site', title: 'Site', hide: false, width: '' },
+            { dataKey: 'remoteaddress', title: 'Remote Address', hide: false, width: '' },
+            { dataKey: 'severity', title: 'Severity', hide: false, width: '' },
+            { dataKey: 'facility', title: 'Facility', hide: false, width: '' },
+            { dataKey: 'curtime', title: 'Current Time', hide: false, width: '' },
+            { dataKey: 'message', title: 'Message', hide: false, width: '' }
+        ];
+        this.getIPAddress();
+    };
+    SyslogComponent.prototype.toggleMinutes = function () {
+        this.showMin = !this.showMin;
+    };
+    SyslogComponent.prototype.toggleSeconds = function () {
+        this.showSec = !this.showSec;
+    };
+    SyslogComponent.prototype.validateAllFormFields = function (formGroup) {
+        var _this = this;
+        Object.keys(formGroup.controls).forEach(function (field) {
+            console.log(field);
+            var control = formGroup.get(field);
+            if (control instanceof forms_1.FormControl) {
+                control.markAsTouched({ onlySelf: true });
+            }
+            else if (control instanceof forms_1.FormGroup) {
+                _this.validateAllFormFields(control);
+            }
+        });
+    };
+    SyslogComponent.prototype.isFieldValid = function (field) {
+        return !this.form.get(field).valid && this.form.get(field).touched;
+    };
+    SyslogComponent.prototype.displayFieldCss = function (field) {
+        return {
+            'has-error': this.isFieldValid(field),
+            'has-feedback': this.isFieldValid(field)
+        };
+    };
+    SyslogComponent.prototype.onSubmit = function (obj) {
+        var _this = this;
+        // var formData : any = new FormData(); "yyyy-MM-dd HH:mm:ss"
+        console.log("obj", this.selectedApis2);
+        if (this.selectedApis2.length > 0) {
+            this.isPageBeginWithAll = false;
+            this.ischanged = true;
+            this.getMultpleIP = [];
+            var toCommaStringData;
+            this.selectedApis2.forEach(function (api) {
+                _this.getMultpleIP.push(api.item.value);
+            });
+            toCommaStringData = this.getMultpleIP.toString();
+            if ((obj.fromDate != null) && (obj.toDate != null)) {
+                var realFromDate = this.dateFilter.transform(obj.fromDate, "yyyy-MM-dd");
+                var realToDate = this.dateFilter.transform(obj.toDate, "yyyy-MM-dd");
+                var realFromTime = "";
+                var realToTime = "";
+                var getFromMillesecond = obj.fromTime.getTime();
+                var getToMillesecond = obj.toTime.getTime();
+                // var oneDayMillesecond : any = 24*60*60*1000;
+                var isTwentyFourHrs = getToMillesecond - getFromMillesecond;
+                console.log("isTwentyFourHrs", isTwentyFourHrs);
+                if (!(getFromMillesecond <= getToMillesecond) && (realFromDate == realToDate)) {
+                    console.log('Time Err');
+                    this.commonServices.error("From Time shouldn't be grater than to time");
+                    return;
+                }
+                if (isTwentyFourHrs <= 0) {
+                    console.log('Date Err');
+                    realFromTime = this.dateFilter.transform(obj.fromTime, "HH:mm:ss");
+                    realToTime = this.dateFilter.transform(obj.toTime, "HH:mm:ss");
+                    var frDate = realFromDate + " " + realFromTime;
+                    var toDate = realToDate + " " + realToTime;
+                    this.gridDataObj.fromDate = new Date(frDate);
+                    this.gridDataObj.toDate = new Date(toDate);
+                    this.displayDateTimeData.fromDatetime = frDate;
+                    this.displayDateTimeData.toDatetime = toDate;
+                    var _post = { ip: toCommaStringData, from: frDate, to: toDate };
+                    this.loader = true;
+                    this.commonServices.postRequest('/_syslog/SyslogBrowserResponse', _post).then(function (response) {
+                        if (response.status == "success") {
+                            _this.gridDataObj.data = response.items[0].SyslogBrowserList;
+                            _this.isDropDownSelected = true;
+                            _this.loader = false;
+                            _this.modalRef.hide();
+                            _this.modalRef = null;
+                        }
+                        else {
+                            _this.loader = false;
+                            _this.modalRef.hide();
+                            _this.modalRef = null;
+                            _this.commonServices.error(response.message);
+                        }
+                    }), function (err) {
+                        _this.loader = false;
+                        _this.isPageBeginWithAll = true;
+                        _this.modalRef.hide();
+                        _this.modalRef = null;
+                        _this.commonServices.error(err.message);
+                    };
+                }
+                else {
+                    this.commonServices.error("Time Should be upto 24Hrs Only!");
+                }
+            }
+            else {
+                this.commonServices.error("Please Select From Date and To Date");
+            }
+        }
+        else {
+            this.commonServices.error("Please Select IP Details");
+        }
+    };
+    SyslogComponent.prototype.onSelectedChange2 = function (selectedApis1) {
+        console.log(selectedApis1);
+        this.selectedApis2 = selectedApis1.slice();
+    };
+    SyslogComponent.prototype.openModal = function (template) {
+        // this.form.controls['groupName'].setValue("default", { onlySelf: true });
+        this.modalRef = this.modalService.show(template, { class: 'first' });
+    };
+    SyslogComponent.prototype.ngOnDestroy = function () {
+        if (this.modalRef) {
+            this.modalRef.hide();
+        }
+    };
+    __decorate([
+        core_1.ViewChild(ngx_treeview_1.TreeviewComponent),
+        __metadata("design:type", ngx_treeview_1.TreeviewComponent)
+    ], SyslogComponent.prototype, "treeviewComponent", void 0);
+    SyslogComponent = __decorate([
+        core_1.Component({
+            selector: '<syslog>',
+            template: __webpack_require__(1725),
+            styles: [__webpack_require__(1726)],
+            providers: [{ provide: timepicker_1.TimepickerConfig, useFactory: getTimepickerConfig }, { provide: ngx_treeview_1.TreeviewEventParser, useClass: ngx_treeview_1.OrderDownlineTreeviewEventParser },
+                { provide: ngx_treeview_1.TreeviewConfig, useClass: menuTreeviewConfig }]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, modal_1.BsModalService])
+    ], SyslogComponent);
+    return SyslogComponent;
+}());
+exports.SyslogComponent = SyslogComponent;
+
+
+/***/ }),
+
+/***/ 1725:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n\t<section class=\"wrapper\">\n\t\t<ol class=\"breadcrumb\">\n\t\t\t<li>\n\t\t\t\t<a (click)=\"goToHomePage()\">Home</a>\n\t\t\t</li>\n\t\t\t<li class=\"active\">Syslog</li>\n\t\t</ol>\n\t\t<!-- <div class=\"dashboard-txt\">\n\t\t  <h1>Syslog</h1>\n        </div> -->\n\t\t<div class=\"row\" id=\"syslog-management\">\n\t\t\t<div class=\"col-md-12\">\n\t\t\t\t<div class=\"box-title box-title-tabs\">\n\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t<ul class=\"box-title-right\">\n\t\t\t\t\t\t\t<!-- <li class=\"ip-select\">\n\t\t                                    <ngx-select [items]=\"dropdownValues\" name=\"customer_id\"  [(ngModel)]=\"fordata.id\" optionTextField=\"name\" optionValueField=\"id\" placeholder=\"Select a IP Address\" (select)=\"callGridDetails($event)\"></ngx-select>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</li> -->\n\t\t\t\t\t\t\t<!--<li>\n\t\t\t\t\t\t\t\t<span>Selected IP'S</span>\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t<li id=\"iplist\" *ngIf=\"isPageBeginWithAll\">\n\t\t\t\t\t\t\t\t<span style=\"border-style: solid;padding: 5px;border-radius: 11px;color: #fff;background: #4a5255;\">ALL</span>\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t<li id=\"iplist\" *ngIf=\"!isPageBeginWithAll\">\n\t\t\t\t\t\t\t\t<span *ngFor=\"let item of getMultpleIP;let i = index\" ><span style=\"border-style: solid;padding: 5px;border-radius: 11px;color: #fff;background: #4a5255;\" *ngIf=\"i<5\">{{item}}</span></span>\n\t\t\t\t\t\t\t</li>-->\n\t\t\t\t\t\t\t<li class=\"syslog-date-show\" *ngIf=\"!isPageBeginWithAll && isIPAvailable\">\n\t\t\t\t\t\t\t\t<span style=\"color: #0aa7b3;\">From :</span> {{displayDateTimeData.fromDatetime}}\n\t\t\t\t\t\t\t\t<span style=\"color: #0aa7b3;\"> To :</span> {{displayDateTimeData.toDatetime}}\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t<li class=\"syslog-date-show\" *ngIf=\"isPageBeginWithAll && isIPAvailable\">\n\t\t\t\t\t\t\t\t<span>Last 1 Hour</span>\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t<li class=\"syslog-date-show\" *ngIf=\"!isIPAvailable\">\n\t\t\t\t\t\t\t\t<span>IP Details Not Found</span>\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t<li class=\"syslog-filter syslog-icon\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Filter\">\n\t\t\t\t\t\t\t\t<span class=\"fa fa-filter\" (click)=\"openModal(template)\"></span>\n\t\t\t\t\t\t\t\t<!--<button type=\"button\" class=\"user_create\" (click)=\"openModal(template)\" style=\"margin-right: 6px;\">Filter</button> -->\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t<li class=\"syslog-icon\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Reset\">\n\t\t\t\t\t\t\t\t<span class=\"fa fa-refresh\" (click)=\"resetGrid()\"></span>\n\t\t\t\t\t\t\t\t<!--<button type=\"button\" class=\"user_create\" (click)=\"resetGrid()\" style=\"margin-right: 6px;\">Reset</button> -->\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t<h3>Syslog</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-md-12\">\n\t\t\t\t<data-grid *ngIf=\"!loader && isDropDownSelected\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n\t\t\t\t<content-loader *ngIf=\"loader\"></content-loader>\n\t\t\t</div>\n\t\t</div>\n\n\t</section>\n</section>\n\n\n<ng-template #template>\n\t<div class=\"modal-header subusrModalHeader\">\n\t\t<h4 class=\"modal-title pull-left\" style=\"margin-top: -11px; margin-left: -16px;\">\n\t\t\t<i class=\"fa fa-fw fa-filter fa-1x\"></i> Syslog Filter</h4>\n\t\t<button type=\"button\" class=\"close pull-right syslog-popup-close\" style=\"margin-top: -10px;margin-right: -11px;\" aria-label=\"Close\"\n\t\t (click)=\"modalRef.hide()\">\n\t\t\t<span aria-hidden=\"true\">&times;</span>\n\t\t</button>\n\t</div>\n\t<div class=\"modal-body row\" style=\"padding: 35px;\">\n\t\t<div id=\"popupForm\">\n\t\t\t<div class=\"form-group\">\n\t\t\t\t\t<label for=\"email\">IP Address:</label>\n\t\t\t\t\t<div class=\"form-group\" id=\"menu-mapping\">\n\t\t\t\t\t\t\t<div class=\"d-inline-block\">\n\t\t\t\t\t\t\t\t<ngx-treeview [items]=\"dropdownValues\" [itemTemplate]=\"itemTemplate\" (selectedChange)=\"onSelectedChange2($event)\">\n\t\t\t\t\t\t\t\t</ngx-treeview>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"form-group datepick\">\n\t\t\t\t<label for=\"pwd1\">From Date/Time:</label>\n\t\t\t\t<div class=\"col-md-12\" style=\"margin-left: -33px\">\n\t\t\t\t\t<div class=\"col-md-6\">\n\t\t\t\t\t\t<input name=\"fromDate\" type=\"text\" [maxDate]=\"yesterDay\" placeholder=\"Datepicker\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n\t\t\t\t\t\t [(ngModel)]=\"searchform.fromDate\" (ngModelChange)=\"setMaxToDate($event)\" class=\"form-control\" bsDatepicker>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-2\" style=\"margin-left: -82px;\">\n\t\t\t\t\t\t<div class=\"picker\">\n\t\t\t\t\t\t\t<i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-4\">\n\t\t\t\t\t\t<timepicker [(ngModel)]=\"searchform.fromTime\"></timepicker>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t</div>\n\t\t\t<div class=\"form-group datepick\">\n\t\t\t\t<label for=\"pwd2\">To Date/Time:</label>\n\t\t\t\t<div class=\"col-md-12\" style=\"margin-left: -33px\">\n\t\t\t\t\t<div class=\"col-md-6\">\n\t\t\t\t\t\t<input name=\"toDate\" type=\"text\" [minDate]=\"searchform.fromDate\" [maxDate]=\"maxToDate\" placeholder=\"Datepicker\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n\t\t\t\t\t\t [(ngModel)]=\"searchform.toDate\" class=\"form-control\" bsDatepicker  placement=\"top\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-2\" style=\"margin-left: -82px;\">\n\t\t\t\t\t\t<div class=\"picker\">\n\t\t\t\t\t\t\t<i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-4\">\n\t\t\t\t\t\t<timepicker [(ngModel)]=\"searchform.toTime\"></timepicker>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"col-md-12\">\n\t\t\t\t<button (click)=\"onSubmit(searchform)\" type=\"submit\" class=\"user_create pull-right\" style=\"margin-right: 6px;\">Filter</button>\n\t\t\t</div>\n\t\t</div>\n\n\t</div>\n</ng-template>\n\n<ng-template #itemTemplate let-item=\"item\" let-onCollapseExpand=\"onCollapseExpand\" let-onCheckedChange=\"onCheckedChange\">\n\t\t<div class=\"form-inline row-item\">\n\t\t  <i *ngIf=\"item.children\" (click)=\"onCollapseExpand()\" aria-hidden=\"true\" class=\"fa\" [class.fa-caret-right]=\"item.collapsed\"\n\t\t\t[class.fa-caret-down]=\"!item.collapsed\"></i>\n\t\t\t  <label class=\"container\">\n\t\t\t\t\t  <input type=\"checkbox\" class=\"form-check-input\" [(ngModel)]=\"item.checked\" (ngModelChange)=\"onCheckedChange()\" [disabled]=\"item.disabled\"\n\t\t\t\t\t\t\t  [indeterminate]=\"item.indeterminate\" />\n\t\t\t\t\t  <span class=\"checkmark\"></span>\n\t\t\t\t\t  <span class=\"form-check-label\" (click)=\"item.checked = !item.checked; onCheckedChange()\">\n\t\t\t\t\t\t\t  {{item.text}}\n\t\t\t\t\t  </span>\n\t\t\t  \n\t\t\t\t  </label>\n\t\t</div>\n\t  </ng-template>\n\t";
+
+/***/ }),
+
+/***/ 1726:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1727);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1727:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1728);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./syslog.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./syslog.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1728:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#syslog-management .ngx-select__search {\n    margin-bottom: 0;\n}\n\n#syslog-management .ip-select{\n    width: 250px;\n    margin: 0px 3px;\n}\n\n#syslog-management .ngx-select__toggle {\n    background-color: transparent\n}\n\n#syslog-management .ngx-select__item{\n    padding: 3px 70px;\n}\n\n#syslog-management .bs-chevron-up{\n    display: none;\n}\n\n#syslog-management .bs-chevron-down{\n    display: none;\n}\n\n#syslog-management table td {\n    padding: 0px;\n}\n\n.listingdata{\n    border-style: solid;\n    border-color: #bed730;\n    padding: 5px;\n    border-radius: 11px;\n    color: #fff;\n    background: #4a5255;\n}\n\n#popupForm table{\n    margin-top: -24px;\n}\n\n\n#popupForm .datepick{\n    margin-bottom: 80px;\n}\n\n#popupForm td{\n    padding: 0px !important;\n}\n\n#popupForm .bs-timepicker-field{\n    margin-bottom: 5px !important;;\n    width: 70px !important;\n    padding: 0 !important;\n}\n\n\n\n#syslog-management .modal-header {\n    min-height: 55.43px;\n    padding-top: 28px;\n    border-bottom: 1px solid #e5e5e5;\n    padding-left: 12px;\n}\n.syslog-filter{\n\tmargin-right : 15px !important;\n}\n.syslog-icon span {\n\tcolor : #a7afb8;\n\tfont-size : 30px;\n\tcursor : pointer;\n}\n\n.syslog-date-show{\n\tpadding: 0px;\n    font-size: 21px;\n    margin-right: 15px !important;\n}\n\n/* #iplist{\n  \n    text-overflow: ellipsis;\n    padding: 5px;\n    overflow: hidden;\n} */\n\n.syslog-popup-close{\n    margin-top: -10px;\n    margin-right: -11px;\n}\n\n.subusrModalHeader{\n    padding: 27px !important;\n}\n\n\n.nice-radio input[type=radio]:not(old){\n    width: 0;\n    margin: 0;\n    padding: 0;\n    font-size: 1em;\n    opacity: 0;\n  }\n  \n  .nice-radio > span.r {\n    display: inline-block;\n    width: 0.875em;\n    height: 0.875em;\n    margin: 0.25em .25em 0.25em 0.25em;\n    border: 0.0625em solid #aaa;\n    border-radius: 0.50em;\n    background: transparent;\n    vertical-align: bottom;\n  }\n  \n  .nice-radio input[type=radio]:not(old):checked + span.r > span {\n    display: block;\n    width: 0.5em;\n    height: 0.5em;\n    margin: 0.16em;\n    border-radius: 0.5em;\n    background: #555;\n  }\n\n  \n#menu-mapping .form-check-input {\n    width : 17px;\n    height:17px;\n    background:rgb(44, 173, 248) !important;\n    font-size:13px;\n    border:none;\n  }\n  /* The container */\n  #menu-mapping .container {\n    display: block;\n    position: relative;\n    padding-left: 35px;\n    margin-bottom: 12px;\n    margin-left:25px;\n    cursor: pointer;\n    font-size: 13px;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n    color:black;\n  }\n  \n  /* Hide the browser's default checkbox */\n  #menu-mapping .container input {\n    position: absolute;\n    opacity: 0;\n    cursor: pointer;\n  }\n  \n  /* Create a custom checkbox */\n  #menu-mapping .checkmark {\n    position: absolute;\n    top: 0;\n    left: 0px;\n    height: 17px;\n    width: 17px;\n    border: 1px solid #a7afb8;\n  }\n  \n  /* On mouse-over, add a grey background color */\n  #menu-mapping .container:hover input ~ .checkmark {\n    background-color: rgb(170, 240, 191);\n  }\n  \n  /* When the checkbox is checked, add a blue background */\n  #menu-mapping .container input:checked ~ .checkmark {\n    background-color: #00abb6;\n    transition: 0.3s;\n  \n  }\n  \n  /* Create the checkmark/indicator (hidden when not checked) */\n  #menu-mapping .checkmark:after {\n    content: \"\";\n    position: absolute;\n    opacity:0;\n    -webkit-transform: rotate(0deg);\n    -ms-transform: rotate(0deg);\n    transform: rotate(0deg);\n  }\n  \n  /* Show the checkmark when checked */\n  #menu-mapping .container input:checked ~ .checkmark:after {\n    opacity:1;\n    -webkit-transform: rotate(405deg);\n    -ms-transform: rotate(405deg);\n    transform: rotate(405deg);\n    transition:0.3s;\n  }\n  \n  /* Style the checkmark/indicator */\n  #menu-mapping .container .checkmark:after {\n    left: 6px;\n    top: 2px;\n    width: 5px;\n    height: 10px;\n    border: solid white;\n    border-width: 0 4px 4px 0;\n    -webkit-transform: rotate(0deg);\n    -ms-transform: rotate(0deg);\n    transform: rotate(0deg);\n    transition: 0.3s;\n  }\n  #menu-mapping .form-check-label\n  {\n    float:left;\n  }\n  \n  #menu-mapping .row-all\n  {\n  margin-left:10px;\n  overflow-x:hidden;\n  }\n  #menu-mapping .treeview-container\n  {\n  margin-left:10px;\n  overflow-x:hidden;\n  padding-right:100px !important;\n  }\n  #menu-mapping .form-check-label .fa-trash\n  {\n      margin-left: 7px;\n  }\n  #menu-mapping .row-filter\n  {\n  \n    z-index:-1;\n  }\n  \n  #menu-mapping .row-filter div input\n  {\n  \n    transition:0.3s;\n  }\n  #menu-mapping #covercloud\n  {\n    position:absolute;\n    height:0px;\n    width:0px;\n    left:50%;\n    top:0%;\n    opacity:0.7;\n    z-index:-1;\n  }\n  #menu-mapping .ngx-select__toggle{\n      background : transparent !important;\n  }\n  \n  \n  #menu-mapping .menu-card{\n    border: 1px solid #dfdfde;\n      padding: 15px;\n      background: white;\n  }\n  \n  \n  .card-border-cust{\n  \n    padding-top: 30px;\n  }\n  \n  .ngx-select__selected\n  {\n   font-size:6px !important;\n  }\n  .ngx-select__toggle\n  {\n  background:#f9f9f9 !important;\n  }\n  .ngx-select__placeholder\n  {\n  color:#999;\n  }\n  \n  .ngx-select__selected-single \n  {\n  font-size:14px !important;\n  }\n  \n  \n  .treeview-container::-webkit-scrollbar {\n    width: 5px;\n    height: 5px;\n  }\n  .treeview-container::-webkit-scrollbar-button {\n    background: #eee\n  }\n  .treeview-container::-webkit-scrollbar-track-piece {\n    background: #eee\n  }\n  .treeview-container::-webkit-scrollbar-thumb {\n    background: #c1c1c1\n  }\n  \n  .treeview-container { overflow: hidden !important; }\n  \n  .treeview-container:hover { overflow:auto !important;  }\n\n\t\t\n  #popupForm{\n    padding-left: 14px;\n    padding-right: 14px;\n  }", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1729:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var syslog_component_1 = __webpack_require__(1400);
+var SYS_LOG_ROUTER = [
+    {
+        path: '',
+        component: syslog_component_1.SyslogComponent,
+        pathMatch: 'full'
+    }
+];
+exports.syslogRouter = router_1.RouterModule.forChild(SYS_LOG_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>9.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>50b6c9cbdb3d2300429e2a9a4896195e</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.9.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_50b6c9cbdb3d2300429e2a9a4896195e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:20:59</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

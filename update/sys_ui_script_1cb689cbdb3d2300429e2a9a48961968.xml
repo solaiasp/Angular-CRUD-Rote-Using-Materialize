@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.29.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([29],{
+
+/***/ 1284:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var availability_component_1 = __webpack_require__(1386);
+var availability_router_1 = __webpack_require__(1659);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var AvailabilityModule = /** @class */ (function () {
+    function AvailabilityModule() {
+    }
+    AvailabilityModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, availability_router_1.availabilityRouter],
+            declarations: [availability_component_1.AvailabilityComponent]
+        })
+    ], AvailabilityModule);
+    return AvailabilityModule;
+}());
+exports.AvailabilityModule = AvailabilityModule;
+
+
+/***/ }),
+
+/***/ 1386:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var router_1 = __webpack_require__(48);
+var availability_column_1 = __webpack_require__(1654);
+var AvailabilityComponent = /** @class */ (function () {
+    function AvailabilityComponent(router, commonServices, cookies, dateFilter, pageView) {
+        var _this = this;
+        this.router = router;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.pageView = pageView;
+        this.defaultTab = 'availablitySite';
+        this.selectedTitle = 'Devices';
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.pageViewData = {};
+        this.userData = {};
+        this.siteGrid = {};
+        this.diviceGrid = {};
+        this.dashDeviceGrid = {};
+        this.linkGrid = {};
+        this.dashLinkGrid = {};
+        this.sifyGrid = {};
+        this.dashSifyGrid = {};
+        this.rcomGrid = {};
+        this.dashRcomGrid = {};
+        this.siteLoader = false;
+        this.linkLoader = false;
+        this.deviceLoader = false;
+        this.fromDashBoard = false;
+        this.dateType = 'live';
+        this.ParentChildFlag = false;
+        this.isMemberNameDiaplay = false;
+        this.hideNseAttributes = false;
+        this.selectedMappingOption = 'parent';
+        this.dateSelect = function (dateType) {
+            _this.dateType = dateType;
+            if (dateType == 'live') {
+                _this.fromDate = new Date();
+                _this.toDate = new Date();
+            }
+            _this.getLists(_this.fromDate, _this.toDate);
+        };
+        this.mappingOption = function (mappingOption) {
+            _this.selectedMappingOption = mappingOption;
+            _this.getLists(_this.fromDate, _this.toDate);
+        };
+        this.getLists = function (fromDate, toDate) {
+            var fromDateStr = _this.dateFilter.transform(fromDate, "yyyy-MM-dd");
+            var toDateStr = _this.dateFilter.transform(toDate, "yyyy-MM-dd");
+            _this.siteGrid.data = [];
+            _this.diviceGrid.data = [];
+            _this.dashDeviceGrid.data = [];
+            _this.linkGrid.data = [];
+            _this.dashLinkGrid.data = [];
+            _this.sifyGrid.data = [];
+            _this.dashSifyGrid.data = [];
+            _this.rcomGrid.data = [];
+            _this.dashRcomGrid.data = [];
+            //if(this.pageViewData.value){
+            _this.fromDashBoard = true;
+            var devicePost = { "displayOption": _this.selectedMappingOption };
+            _this.deviceLoader = true;
+            _this.commonServices.postRequest('_asset/assetInventoryList', devicePost).then(function (response) {
+                if (response.status == 'success') {
+                    _this.dashDeviceGrid.data = response.items[0].AssetInventoryList;
+                    for (var i = 0; i < _this.dashDeviceGrid.data.length; i++) {
+                        var currentObj = _this.dashDeviceGrid.data[i];
+                        _this.dashDeviceGrid.data[i].status = (currentObj.AssetPerformaceData.deviceStatus && currentObj.AssetPerformaceData.deviceStatus == 1 ? 'UP' : 'DOWN');
+                        //this.dashDeviceGrid.data[i].s_operator = operToProviderNameMap[currentObj.Provider];
+                        _this.dashDeviceGrid.data[i].s_operator = currentObj.Provider;
+                    }
+                }
+                _this.deviceLoader = false;
+            }, function (err) {
+                _this.deviceLoader = false;
+            });
+            var link_post = { "displayOption": _this.selectedMappingOption };
+            _this.linkLoader = true;
+            _this.commonServices.postRequest('/_asset/assetInventoryLinkListStatus', link_post).then(function (response) {
+                if (response.status == 'success') {
+                    var assetLinks = response.items[0];
+                    var linkDetails = assetLinks.AssetInventoryLinkAPP.concat(assetLinks.AssetInventoryLinkCloud, assetLinks.AssetInventoryLinkLAN, assetLinks.AssetInventoryLinkWAN);
+                    for (var i = 0; i < linkDetails.length; i++) {
+                        var val = linkDetails[i];
+                        //val.s_operator = operToProviderNameMap[val.provider];
+                        val.s_operator = val.provider;
+                        val.status = (val.linkPerformaceData.linkstatus && val.linkPerformaceData.linkstatus == 1 ? 'UP' : 'DOWN');
+                        if (val.s_operator == "Sify") {
+                            _this.dashSifyGrid.data.push(val);
+                        }
+                        else if (val.s_operator == "RELIANCE") {
+                            _this.dashRcomGrid.data.push(val);
+                        }
+                        _this.dashLinkGrid.data.push(val);
+                    }
+                }
+                _this.linkLoader = false;
+            }, function (err) {
+                _this.linkLoader = false;
+            });
+            /*}else{
+                this.fromDashBoard = false;
+                
+                this.linkLoader = true;
+                var link_rep_postData = {
+                    clientid: this.userData.ioni_clientid,
+                    groupid:this.userData.group_id || 'all',
+                    location:"all",
+                    deviceips:"all",
+                    from_time:fromDateStr,
+                    to_time:toDateStr,
+                    subusergroupid:this.userData.group_id
+                };
+                
+                this.commonServices.postRequest('/IDBRT_availability_link_report',link_rep_postData).then((response : any) => {
+                    if(response.status == 'success'){
+                        for(var i=0; i<response.items.length; i++){
+                            var linkdesc : any = response.items[i].linkdesc;
+                            if(response.items[i].availpercent != 100){
+                                response.items[i].availpercent = response.items[i].availpercent.toFixed(2) + '%';
+                            }else{
+                                response.items[i].availpercent = response.items[i].availpercent + '%';
+                            }
+                            
+                            if(linkdesc.toUpperCase().indexOf('RCOM') !== -1){
+                                this.rcomGrid.data.push(response.items[i]);
+                            }else{
+                                this.sifyGrid.data.push(response.items[i]);
+                            }
+                            this.linkGrid.data.push(response.items[i]);
+                        }
+                    }
+                    this.linkLoader = false;
+                },(err : any) => {
+                    this.linkLoader = false;
+                });
+                
+                
+                var device_post = {
+                    clientid: this.userData.ioni_clientid,
+                    groupid:this.userData.group_id || 'all',
+                    location:"all",
+                    deviceips:"all",
+                    from_time:fromDateStr,
+                    to_time:toDateStr,
+                    rptType : 'device',
+                    subusergroupid:this.userData.group_id
+                }
+                this.deviceLoader = true;
+                this.commonServices.postRequest('/IDBRT_availability_link_report',device_post).then((response : any) => {
+                    if(response.status == 'success'){
+                        for(var i=0; i<response.items.length; i++){
+                            if(response.items[i].availpercent != 100){
+                                response.items[i].availpercent = response.items[i].availpercent.toFixed(2) + '%';
+                            }else{
+                                response.items[i].availpercent = response.items[i].availpercent + '%';
+                            }
+                            this.diviceGrid.data.push(response.items[i]);
+                        }
+                    }
+                    this.deviceLoader = false;
+                },(err : any) => {
+                    this.deviceLoader = false;
+                });
+            }*/
+            _this.siteLoader = true;
+            //var sitePostData : any = {"ioniClientId":this.userData.ioni_clientid, "groupId":this.userData.group_id}
+            var sitePostData = { "report_type": "sitename_availability", "displayOption": _this.selectedMappingOption };
+            _this.commonServices.postRequest('_asset/getAssetDashboardDataList', sitePostData).then(function (response) {
+                if (response.status == 'success') {
+                    var siteDetails = response.items[0].info.siteDetails;
+                    for (var i = 0; i < siteDetails.length; i++) {
+                        siteDetails[i].availpercent = (siteDetails[i].upPercentage == 100 ? siteDetails[i].upPercentage : siteDetails[i].upPercentage.toFixed(2));
+                        siteDetails[i].fromDate = fromDateStr;
+                        siteDetails[i].siteStatus = (siteDetails[i].status == 'siteUp' ? 'UP' : 'DOWN');
+                        _this.siteGrid.data.push(siteDetails[i]);
+                    }
+                }
+                _this.siteLoader = false;
+            }, function (err) {
+                _this.siteLoader = false;
+            });
+        };
+        this.getLinkedData = function (eventObj, asset) {
+            _this.pageView.setData(eventObj.row);
+            _this.router.navigate(['/assets-details']);
+        };
+        this.changeTitle = function (title) {
+            _this.selectedTitle = title;
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    AvailabilityComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.isMemberNameDiaplay = this.commonServices.checkApiAvailability('isMemberNameDiaplay');
+        this.hideNseAttributes = this.commonServices.checkApiAvailability('hideNseAttributes');
+        var today = new Date();
+        var time = today.getTime();
+        var lastWeekTime = time - (24 * 7 * 60 * 60 * 1000);
+        //this.fromDate = new Date(lastWeekTime);
+        this.pageViewData = this.pageView.getData();
+        this.siteGrid = availability_column_1.availabilitySiteGridObj;
+        this.diviceGrid = availability_column_1.availDeviceGridObj;
+        this.linkGrid = availability_column_1.availLinksGridObj;
+        this.dashDeviceGrid = availability_column_1.dashAvailDeviceGridObj;
+        this.dashLinkGrid = availability_column_1.dashAvailLinksGridObj;
+        this.sifyGrid = availability_column_1.linkSifyGridObj;
+        this.dashSifyGrid = availability_column_1.dashLinkSifyGridObj;
+        this.rcomGrid = availability_column_1.linkRcomGridObj;
+        this.dashRcomGrid = availability_column_1.dashLinkRcomGridObj;
+        if (this.isMemberNameDiaplay) {
+            //this.dashLinkGrid.columns.push({dataKey : 'customerName',title : 'Name',hide : false,width:''});
+            this.dashLinkGrid.columns.unshift({ dataKey: 'customerFullName', title: 'Name', hide: false, width: '' });
+            //this.dashDeviceGrid.columns.push({dataKey : 'customerName',title : 'Name',hide : false,width:''});
+            this.dashDeviceGrid.columns.unshift({ dataKey: 'customerFullName', title: 'Name', hide: false, width: '' });
+        }
+        if (this.hideNseAttributes) {
+            this.dashDeviceGrid.columns.forEach(function (column) {
+                if (column.dataKey == 'group') {
+                    column.hide = true;
+                }
+            });
+            this.dashLinkGrid.columns.forEach(function (column) {
+                if (column.dataKey == 'link_type') {
+                    column.hide = true;
+                }
+            });
+        }
+        if (this.pageViewData && this.pageViewData.selectedTab) {
+            this.selectedTitle = this.pageViewData.selectedTab;
+            if (this.pageViewData.status) {
+                if (this.selectedTitle == 'Sites') {
+                    this.siteGrid.defaultFilters = { siteStatus: this.pageViewData.status };
+                }
+                else if (this.selectedTitle == 'Devices') {
+                    this.dashDeviceGrid.defaultFilters = { status: this.pageViewData.status };
+                }
+                else if (this.selectedTitle == 'Links') {
+                    this.dashLinkGrid.defaultFilters = { status: this.pageViewData.status };
+                }
+            }
+        }
+        if (this.pageViewData && this.pageViewData.selectedMappingOption) {
+            this.selectedMappingOption = this.pageViewData.selectedMappingOption;
+        }
+        this.userData = this.cookies.getObject('globals');
+        var postData = { customerName: this.userData.customer_name };
+        this.commonServices.postRequest('/_core/getChildClientsDetails', postData).then(function (resDetails) {
+            if (resDetails.items.length >= 1) {
+                _this.ParentChildFlag = true;
+            }
+            else {
+                _this.ParentChildFlag = false;
+                _this.selectedMappingOption = 'all';
+            }
+            _this.getLists(_this.fromDate, _this.toDate);
+        });
+    };
+    AvailabilityComponent = __decorate([
+        core_1.Component({
+            selector: '<availability>',
+            template: __webpack_require__(1655),
+            styles: [__webpack_require__(1656)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, page_view_service_1.PageViewService])
+    ], AvailabilityComponent);
+    return AvailabilityComponent;
+}());
+exports.AvailabilityComponent = AvailabilityComponent;
+
+
+/***/ }),
+
+/***/ 1654:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/*export let availabilitySiteGridObj : any = {
+    pdfName : 'Availability Sites',
+    pdfTitle : 'Availability Sites',
+    excelTitle : 'Availability Sites',
+    excelName : 'Availability Sites',
+    id : 'availability_sites',
+    data : [],
+    columns : [{
+            dataKey : 'fromDate',
+            title : 'Order No',
+            hide : false,
+            width:''
+        },{
+            dataKey : 'sitename',
+            title : 'Site Name',
+            hide : false,
+            width:''
+        },{
+            dataKey : 'site',
+            title :  'Group',
+            hide : false,
+            width:''
+        },{
+            dataKey : 'availpercent',
+            title :  'Availability (%)',
+            hide : false,
+            width:''
+        }]
+};*/
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.availabilitySiteGridObj = {
+    pdfName: 'Availability Sites',
+    pdfTitle: 'Availability Sites',
+    excelTitle: 'Availability Sites',
+    excelName: 'Availability Sites',
+    id: 'availability_sites',
+    data: [],
+    columns: [{
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: '',
+            link: true
+        }, {
+            dataKey: 'down',
+            title: 'Down Devices',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'up',
+            title: 'Up Devices',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'availpercent',
+            title: 'Availability (%)',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'siteStatus',
+            title: 'Status',
+            hide: false,
+            width: ''
+        }
+    ]
+};
+exports.dashLinkSifyGridObj = {
+    pdfName: 'Availability Sify Links',
+    pdfTitle: 'Availability Sify Links',
+    excelTitle: 'Availability Sify Links',
+    excelName: 'Availability Sify Links',
+    id: 'availability_sify_links',
+    data: [],
+    columns: [{
+            dataKey: 'site',
+            title: 'Group',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_desc',
+            title: 'Link Description',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_type',
+            title: 'Link Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'bandwidth',
+            title: 'Bandwidth ( Kbps ) ',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'interface_name',
+            title: 'Interface',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 's_operator',
+            title: 'Provider',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'status',
+            title: 'Status',
+            hide: false,
+            width: ''
+        }]
+};
+exports.dashLinkRcomGridObj = {
+    pdfName: 'Availability Reliance Links',
+    pdfTitle: 'Availability Reliance Links',
+    excelTitle: 'Availability Reliance Links',
+    excelName: 'Availability Reliance Links',
+    id: 'availability_rcom_links',
+    data: [],
+    columns: [{
+            dataKey: 'site',
+            title: 'Group',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_desc',
+            title: 'Link Description',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_type',
+            title: 'Link Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'bandwidth',
+            title: 'Bandwidth ( Kbps ) ',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'interface_name',
+            title: 'Interface',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 's_operator',
+            title: 'Provider',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'status',
+            title: 'Status',
+            hide: false,
+            width: ''
+        }]
+};
+exports.linkSifyGridObj = {
+    pdfName: 'Availability Sify Links',
+    pdfTitle: 'Availability Sify Links',
+    excelTitle: 'Availability Sify Links',
+    excelName: 'Availability Sify Links',
+    id: 'availability_sify_links',
+    data: [],
+    columns: [{
+            dataKey: 'date',
+            title: 'Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'deviceip',
+            title: 'Device Ip',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkdesc',
+            title: 'Link Desc',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'sitename',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'site',
+            title: 'Group',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'uptime',
+            title: 'Up Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'downtime',
+            title: 'Down Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'availpercent',
+            title: 'Availability (%)',
+            hide: false,
+            width: ''
+        }]
+};
+exports.linkRcomGridObj = {
+    pdfName: 'Availability Reliance Links',
+    pdfTitle: 'Availability Reliance Links',
+    excelTitle: 'Availability Reliance Links',
+    excelName: 'Availability Reliance Links',
+    id: 'availability_rcom_links',
+    data: [],
+    columns: [{
+            dataKey: 'date',
+            title: 'Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'deviceip',
+            title: 'Device Ip',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkdesc',
+            title: 'Link Desc',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'sitename',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'site',
+            title: 'Group',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'uptime',
+            title: 'Up Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'downtime',
+            title: 'Down Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'availpercent',
+            title: 'Availability (%)',
+            hide: false,
+            width: ''
+        }]
+};
+exports.availDeviceGridObj = {
+    pdfName: 'Availability Devices',
+    pdfTitle: 'Availability Devices',
+    excelTitle: 'Availability Devices',
+    excelName: 'Availability Devices',
+    id: 'availability_device',
+    data: [],
+    columns: [{
+            dataKey: 'date',
+            title: 'Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'deviceip',
+            title: 'Device Ip',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'sitename',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'site',
+            title: 'Group',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'uptime',
+            title: 'Up Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'downtime',
+            title: 'Down Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'availpercent',
+            title: 'Availability (%)',
+            hide: false,
+            width: ''
+        }]
+};
+exports.dashAvailDeviceGridObj = {
+    pdfName: 'Availability Devices',
+    pdfTitle: 'Availability Devices',
+    excelTitle: 'Availability Devices',
+    excelName: 'Availability Devices',
+    id: 'availability_device',
+    data: [],
+    columns: [{
+            dataKey: 'group',
+            title: 'Group',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'hostname',
+            title: 'HostName',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'ip',
+            title: 'Device IP',
+            hide: false,
+            link: true,
+            width: ''
+        }, {
+            dataKey: 'make',
+            title: 'Make',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'location',
+            title: 'Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'model',
+            title: 'Model',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'serialno',
+            title: 'Serial No',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'firmware',
+            title: 'Firmware',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'status',
+            title: 'Status',
+            hide: false,
+            width: ''
+        }]
+};
+exports.dashAvailLinksGridObj = {
+    pdfName: 'Availability Links',
+    pdfTitle: 'Availability Links',
+    excelTitle: 'Availability Links',
+    excelName: 'Availability Links',
+    id: 'availability_links',
+    data: [],
+    columns: [{
+            dataKey: 'site',
+            title: 'Group',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'ip',
+            title: 'Device Ip',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_desc',
+            title: 'Link Description',
+            hide: false,
+            link: true,
+            width: ''
+        }, {
+            dataKey: 'link_type',
+            title: 'Link Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'bandwidth',
+            title: 'Bandwidth ( Kbps )',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'interface_name',
+            title: 'Interface',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 's_operator',
+            title: 'Provider',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'status',
+            title: 'Status',
+            hide: false,
+            width: ''
+        }]
+};
+exports.availLinksGridObj = {
+    pdfName: 'Availability Links',
+    pdfTitle: 'Availability Links',
+    excelTitle: 'Availability Links',
+    excelName: 'Availability Links',
+    id: 'availability_links',
+    data: [],
+    columns: [{
+            dataKey: 'date',
+            title: 'Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'deviceip',
+            title: 'Device Ip',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkdesc',
+            title: 'Link Description',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'sitename',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'site',
+            title: 'Group',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'uptime',
+            title: 'Up Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'downtime',
+            title: 'Down Time',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'availpercent',
+            title: 'Availability (%)',
+            hide: false,
+            width: ''
+        }]
+};
+exports.operToProviderNameMap = {
+    "Others": "Others",
+    "undefined": "Others",
+    "1": "Sify",
+    "2": "MTNL",
+    "3": "MTNL ISDN",
+    "4": "TULIP",
+    "5": "BSNL",
+    "6": "BSNL ISDN",
+    "7": "P2P",
+    "8": "BSNL P2P",
+    "9": "RELIANCE",
+    "10": "Airtel",
+    "11": "TATA",
+    "12": "VODAFONE",
+    "13": "Aircel"
+};
+
+
+/***/ }),
+
+/***/ 1655:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n\t<section class=\"wrapper\" id=\"availability-wrapper\">\n\t\t<ol class=\"breadcrumb\">\n\t\t  <li><a (click)=\"goToHomePage()\">Home</a></li>\n\t\t  <li class=\"active\">Availability</li>\n\t\t</ol>\n\t\t<!-- <div class=\"dashboard-txt\">\n\t\t\t<h1>Availability</h1>\n\t\t</div> -->\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-md-12\">\n\t\t\t  <div class=\"box-title box-title-tabs\">\n\t\t\t\t<div *ngIf=\"ParentChildFlag\" class=\"pull-right perf-parent-filter\">\n\t\t\t\t\t<div class=\"box-tab\">\t\t\t\n\t\t\t\t\t\t  <ul class=\"nav nav-tabs\" role=\"tablist\" >\n\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'all'}\"><a (click)=\"mappingOption('all')\" aria-controls=\"all\" role=\"tab\" data-toggle=\"tab\">ALL</a></li>\n\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'parent'}\"><a (click)=\"mappingOption('parent')\" aria-controls=\"parent\" role=\"tab\" data-toggle=\"tab\">MAIN</a></li>\n\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'child'}\"><a (click)=\"mappingOption('child')\" aria-controls=\"child\" role=\"tab\" data-toggle=\"tab\">MEMBERS</a></li>\n\t\t\t\t\t\t  </ul>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t  <ul class=\"box-title-right\">\n\t\t\t\t\t<li class=\"date-select\" [ngClass]=\"{'rpt-btn-active' : dateType == 'live'}\">\n\t\t\t\t\t\t<button (click) = \"dateSelect('live')\">Live</button>\n\t\t\t\t\t</li>\n\t\t\t\t\t<li> \n\t\t\t\t\t  <div class=\"picker\">                    \n\t\t\t\t\t\t<div class=\"input-group datetimepicker-start-end\">\n\t\t\t\t\t\t\t <input bsDatepicker  (ngModelChange)=\"dateType = '';getLists($event ,toDate)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\" style=\"\"><span>to</span>\n\t\t\t\t\t\t\t <input bsDatepicker  (ngModelChange)=\"dateType = '';getLists(fromDate,$event)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\">\n\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t   <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n\t\t\t\t\t  </div>\n\t\t\t\t\t</li>\n\t\t\t\t\t<li [ngClass]=\"{'active' : selectedTitle == 'Sites'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Sites\"><a (click)=\"changeTitle('Sites')\" data-target=\"#site-availability\" data-toggle=\"tab\"><img-icon src=\"site.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t<li [ngClass]=\"{'active' : selectedTitle == 'Devices'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Devices\"><a (click)=\"changeTitle('Devices')\" data-target=\"#device-availability\" data-toggle=\"tab\"><img-icon src=\"devise.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t<li [ngClass]=\"{'active' : selectedTitle == 'Links'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Links\"><a (click)=\"changeTitle('Links')\" data-target=\"#link-availability\" data-toggle=\"tab\"><img-icon src=\"link.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t<!--<li [ngClass]=\"{'active' : selectedTitle == 'Provider SIFY'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Provider SIFY\"><a (click)=\"changeTitle('Provider SIFY')\" data-target=\"#sify-availability\" data-toggle=\"tab\"><img-icon src=\"Provider_Sify.svg\" class=\"svg\"></img-icon></a></li>\n\t\t\t\t\t<li [ngClass]=\"{'active' : selectedTitle == 'Provider RCOM'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Provider RCOM\"><a (click)=\"changeTitle('Provider RCOM')\" data-target=\"#rcom-availability\" data-toggle=\"tab\"><img-icon src=\"Provider_Cust.svg\" class=\"svg\"></img-icon></a></li>-->\n\t\t\t\t  </ul>\n\t\t\t\t</div> \n\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t  <!-- <img class=\"svg\" src=\"images/icons/user-management.svg\"> -->\n\t\t\t\t  <h3>{{selectedTitle}}</h3>\n\t\t\t\t</div>           \n\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t  </div>\n\t\t\t</div>\n\t\t\t\n\t\t\t\n\t\t\t <div class=\"tab-content clearfix col-sm-12\">\n\t\t\t \n\t\t\t \n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"fromDashBoard && selectedTitle == 'Provider SIFY'\" [ngClass]=\"{'active' : selectedTitle == 'Provider SIFY'}\" id=\"sify-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!linkLoader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"dashSifyGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"linkLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"fromDashBoard && selectedTitle == 'Provider RCOM'\" [ngClass]=\"{'active' : selectedTitle == 'Provider RCOM'}\" id=\"rcom-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!linkLoader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"dashRcomGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"linkLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"fromDashBoard && selectedTitle == 'Links'\" [ngClass]=\"{'active' : selectedTitle == 'Links'}\" id=\"link-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!linkLoader\" (linkClick)=\"getLinkedData($event,'links')\" [gridobj]=\"dashLinkGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"linkLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"fromDashBoard && selectedTitle == 'Devices'\" [ngClass]=\"{'active' : selectedTitle == 'Devices'}\" id=\"device-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!deviceLoader\" (linkClick)=\"getLinkedData($event,'device')\" [gridobj]=\"dashDeviceGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"deviceLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"!fromDashBoard && selectedTitle == 'Provider SIFY'\" [ngClass]=\"{'active' : selectedTitle == 'Provider SIFY'}\" id=\"sify-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!linkLoader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"sifyGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"linkLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"!fromDashBoard && selectedTitle == 'Provider RCOM'\" [ngClass]=\"{'active' : selectedTitle == 'Provider RCOM'}\" id=\"rcom-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!linkLoader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"rcomGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"linkLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"!fromDashBoard && selectedTitle == 'Links'\" [ngClass]=\"{'active' : selectedTitle == 'Links'}\" id=\"link-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!linkLoader\" (linkClick)=\"getLinkedData($event,'links')\" [gridobj]=\"linkGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"linkLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"!fromDashBoard && selectedTitle == 'Devices'\" [ngClass]=\"{'active' : selectedTitle == 'Devices'}\" id=\"device-availability\">\n\t\t\t\t\t<data-grid  *ngIf=\"!deviceLoader\" (linkClick)=\"getLinkedData($event,'device')\" [gridobj]=\"diviceGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"deviceLoader\"></content-loader> \n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"tab-pane\" *ngIf=\"selectedTitle == 'Sites'\"  [ngClass]=\"{'active' : selectedTitle == 'Sites'}\" id=\"site-availability\">\n\t\t\t\t\n\t\t\t\t\t<data-grid  *ngIf=\"!siteLoader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"siteGrid\"></data-grid>\n\t\t\t\t\t<content-loader *ngIf=\"siteLoader\"></content-loader>  \n\t\t\t\t\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t </div>\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t</div>\n\t</section>\n</section>";
+
+/***/ }),
+
+/***/ 1656:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1657);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1657:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1658);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./availability.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./availability.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1658:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\r\n\t#availability-wrapper .datetimepicker-start-end{\r\n\t\tpadding : 0 5px;\r\n\t\tmargin-right : 0;\r\n\t}\r\n\t#availability-wrapper .datetimepicker-start-end input {\r\n\t\theight : 28px;\r\n\t}\r\n\t#availability-wrapper .datetimepicker-start-end span {\r\n\t\tline-height : 28px;\r\n\t}\r\n\t#availability-wrapper .start-end-icon{\r\n\t\t\tpadding : 2px !important;\r\n\t\t\t\r\n\t}\r\n\t\r\n\t#availability-wrapper .box-title{\r\n\t\tpadding-bottom : 6px !important;\r\n\t}\r\n\t#availability-wrapper .dashboard-txt h1 {\r\n\t\tmargin-bottom: 10px;\r\n\t}\r\n\t\r\n\t#availability-wrapper .rpt-btn-active button{\r\n\t\t    color: #fff;\r\n\t\t\tbackground: #556670;\r\n\t}\r\n\t#availability-wrapper .date-select button{\r\n\t\theight: 30px;\r\n\t\tpadding: 0;\r\n\t\tmargin: 0;\r\n\t\twidth: 50px;\r\n\t}\r\n\t\r\n#availability-wrapper .box-tab li.active a:after, #availability-wrapper .box-tab li a:hover:after{\r\n\tborder : none;\r\n}\r\n\r\n.perf-parent-filter .box-tab .nav-tabs{\r\n\tmargin-bottom : 0;\r\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1659:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var availability_component_1 = __webpack_require__(1386);
+var AVAILABILITY_ROUTER = [
+    {
+        path: '',
+        component: availability_component_1.AvailabilityComponent,
+        pathMatch: 'full'
+    }
+];
+exports.availabilityRouter = router_1.RouterModule.forChild(AVAILABILITY_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>29.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>1cb689cbdb3d2300429e2a9a48961968</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.29.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_1cb689cbdb3d2300429e2a9a48961968</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:00</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

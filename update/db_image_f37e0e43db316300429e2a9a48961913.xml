@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="db_image">
+    <db_image action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <category/>
+        <format/>
+        <height/>
+        <image>323fc603db316300429e2a9a48961910</image>
+        <name>src/assets/images/icons/attachment.svg</name>
+        <size_bytes>1491</size_bytes>
+        <sys_class_name>db_image</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:30:22</sys_created_on>
+        <sys_id>f37e0e43db316300429e2a9a48961913</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>src/assets/images/icons/attachment.svg</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>db_image_f37e0e43db316300429e2a9a48961913</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 12:52:04</sys_updated_on>
+        <thumbnail/>
+        <width/>
+    </db_image>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color/>
+        <chunk_size_bytes>734003</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>image/svg+xml</content_type>
+        <file_name>image</file_name>
+        <image_height/>
+        <image_width/>
+        <size_bytes>1491</size_bytes>
+        <size_compressed>821</size_compressed>
+        <state>available</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:33:35</sys_created_on>
+        <sys_id>323fc603db316300429e2a9a48961910</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 12:33:35</sys_updated_on>
+        <table_name>ZZ_YYdb_image</table_name>
+        <table_sys_id>f37e0e43db316300429e2a9a48961913</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAAAA==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="image" sys_id="323fc603db316300429e2a9a48961910">323fc603db316300429e2a9a48961910</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:33:35</sys_created_on>
+        <sys_id>723fc603db316300429e2a9a48961910</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>bVRdbxs3EHy/X7G9vjRAqePy63hFLkFjG0GBpg1ct0UeBekiCT1LgnSwjPz6zvDsuikqiCuS+zHD2YVev328H+VhOJ13h31f68LWcp6W+/VyPOyHvt4f6rdvqtffXP96dffp442cHzby8fd3P/90JbVpmj/9VdNc313Lb3+8F2et2s6Gprn5pa6k3k7T8YemuVwui4tfHE6b5u62YVBze3NlkGH+yUCJBqXVLtbTugYgcb5mBZ77c/8/RVHEMhmQl9162vY1bha2fI5TLdtht9lO/7192A2Xd4fHvrZi5cX1ry3qHU/DeTg9DD+ej8Nqul1Ou0NfP37YrT9hyf0wTOS6kem03J8/H073fV2243Iavnuu8/1LyVdyXi1HunR2mefdq7r6vBvHvv72CRxdOB3+Kh3YD0Q5LqetrPv6gzqfRdsYZQUBxbRiohPjArYqxuOsHZbHnVoekphAd7C5Mt7B6Xn0XaShQ5EUAqoojUNGi5sEoGC7eaM+UanQSQzik6sUaCPCAwo4yS3oqMBtguSMnGIdckwEgQhqSrpKYiwGw13rK6PlAWSiIfLOCklaFQ1+3nibUUqdEwcbJXgrMYIQYl3K4rtWfG6r4FpwttIm8VE0o0QGawDjDdQntdLxoXggybqYKQfuuSLQUgK31KUKofAFMoUvkyy3HljIQ1Vmeim1vQBptBJwHVth1edlQq4C9W3pBWCiYffIAYZnovMZxpVjl2dC1MmxqRpEU0T3wDCyuwnSsDPC9oITgHwQ0JaUOjyUK0oLsYKSsC+jgn461G9tlUoXOvYNowP6HJLIbnVdmSktQxS+1M1Xw+dBLc/s2T50AFNGXVKZN8duxaIUZERDcxT/NFfK6ZtVh1hgSah5CPCcMpeKAgE1Mbfw44sZ4tTgx3kFu2w5X2pdxYHXor0TSoUHKMdYA6WZ9SvIkAQSGLZF2y9yP484Rmi0hX+0lZUVWHFL5rSefwumUCoH83Q5clN81IA/4ekwR7FFxQ07Z8YCxIBIeVcvGbMt4SV6DiZIcdoKUIAAs8LJF36um8NNiQebuUHNhgb/gm+qvwEHaHDI0wUAAA==</data>
+        <length>1084</length>
+        <position>1</position>
+        <sys_attachment display_value="image" sys_id="323fc603db316300429e2a9a48961910">323fc603db316300429e2a9a48961910</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 12:33:35</sys_created_on>
+        <sys_id>be3f0683db316300429e2a9a48961974</sys_id>
+    </sys_attachment_doc>
+</record_update>

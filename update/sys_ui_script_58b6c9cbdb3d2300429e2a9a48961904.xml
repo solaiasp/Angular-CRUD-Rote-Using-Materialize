@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.46.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([46],{
+
+/***/ 1290:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var internal_request_component_1 = __webpack_require__(1396);
+var internal_request_router_1 = __webpack_require__(1704);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var InternalRequestModule = /** @class */ (function () {
+    function InternalRequestModule() {
+    }
+    InternalRequestModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, internal_request_router_1.InternalRequestRouter],
+            declarations: [
+                internal_request_component_1.InternalRequestComponent,
+            ],
+        })
+    ], InternalRequestModule);
+    return InternalRequestModule;
+}());
+exports.InternalRequestModule = InternalRequestModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1396:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var common_1 = __webpack_require__(6);
+var ngx_cookie_1 = __webpack_require__(62);
+var router_1 = __webpack_require__(48);
+var pdf_service_1 = __webpack_require__(269);
+var InternalRequestComponent = /** @class */ (function () {
+    function InternalRequestComponent(router, cookies, location, commonServices, pageViewService, pdfService) {
+        this.router = router;
+        this.cookies = cookies;
+        this.location = location;
+        this.commonServices = commonServices;
+        this.pageViewService = pageViewService;
+        this.gridDataObj = {
+            pdfName: 'Internal Request',
+            pdfTitle: 'Internal Request',
+            excelTitle: 'Internal Request',
+            excelName: 'Internal Request',
+        };
+    }
+    InternalRequestComponent.prototype.ngOnInit = function () {
+        this.gridDataObj.columns = [
+            { dataKey: 'problem_code', title: 'Problem Code', hide: false, width: '' },
+            { dataKey: 'problem_desc', title: 'Problem Desc', hide: false, width: '' },
+            { dataKey: 'asset_info', title: 'Asset Info', hide: false, width: '' },
+            { dataKey: 'requesteddate', title: 'Request Date', hide: false, width: '' },
+            { dataKey: 'task_status', title: 'Status', hide: false, width: '',
+                cell: function (cellProps) {
+                    console.log('cellProps', cellProps);
+                    if (cellProps.task_status == 0)
+                        return {
+                            click: false,
+                            html: 'Approved'
+                        };
+                    else if (cellProps.task_status == 2)
+                        return {
+                            click: false,
+                            html: 'Rejected'
+                        };
+                    else if (cellProps.task_status == 1)
+                        return {
+                            click: true,
+                            html: '<a> Approve </a> / <a> Reject </a>'
+                        };
+                }
+            }
+        ];
+        this.gridDataObj.id = 'internal-request-grid';
+        this.currentState = this.router.routerState.snapshot.url.substring(1);
+        ;
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.loader = false;
+        this.getRequestList();
+    };
+    InternalRequestComponent.prototype.goToHomePage = function () {
+        this.commonServices.gotoDashboard();
+    };
+    InternalRequestComponent.prototype.getRequestList = function () {
+        var _this = this;
+        this.loader = true;
+        var postData = { "clientId": "10122" };
+        if (this.userType == 6) {
+            postData.loggedUser = this.currentUser.user_name;
+        }
+        var postUrl = "_core/listCustomerInternalRequest";
+        this.commonServices.postRequest(postUrl, postData).then(function (response) {
+            if (response.status == "success") {
+                _this.gridDataObj.data = response.items;
+                _this.loader = false;
+            }
+            else {
+                _this.loader = false;
+                _this.commonServices.error(response.message);
+            }
+        }, function (err) {
+            console.log(err);
+        });
+    };
+    InternalRequestComponent.prototype.getRequestListNext = function (event) {
+        var _this = this;
+        console.log('approve', event);
+        //event.row.task_type=taskType;
+        event.row.taskType = "approve";
+        this.pageViewService.setData(event.row);
+        setTimeout(function () {
+            console.log(_this.pageViewService.getData());
+            _this.router.navigate(["/raise-request-list"]);
+        }, 100);
+    };
+    InternalRequestComponent = __decorate([
+        core_1.Component({
+            selector: 'internal-request',
+            template: __webpack_require__(1700),
+            styles: [__webpack_require__(1701)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, ngx_cookie_1.CookieService, common_1.Location, common_service_1.CommonService, page_view_service_1.PageViewService, pdf_service_1.PdfService])
+    ], InternalRequestComponent);
+    return InternalRequestComponent;
+}());
+exports.InternalRequestComponent = InternalRequestComponent;
+
+
+/***/ }),
+
+/***/ 1700:
+/***/ (function(module, exports) {
+
+module.exports = "<!--  Section Start -->\n  <section id=\"main-content\">\n      <section class=\"wrapper\">\n        <ol class=\"breadcrumb\">\n      <li><a ng-click=\"goToHomePage()\">Home</a></li>\n            <li class=\"active\">Change Request</li>\n        </ol>\n      <!-- <div class=\"dashboard-txt\">\n        <h1>Change Request</h1>\n      </div> -->\n      <div class=\"row\" id=\"internal-management\">\n        <div class=\"col-md-12\">\n          <div class=\"box-title box-title-tabs\">              \n            <div class=\"pull-left\">\n              <h3>Change Request</h3>\n            </div>\n            <div class=\"clearfix\"></div>\n          </div>\n        </div>\n      </div>\n      <data-grid  *ngIf=\"!loader\" (linkClick)=\"getRequestListNext($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n      <content-loader *ngIf=\"loader\"></content-loader> \n  </section>\n  </section>\n  <!--  Section End -->                  ";
+
+/***/ }),
+
+/***/ 1701:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1702);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1702:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1703);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./internal-request.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./internal-request.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1703:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1704:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var internal_request_component_1 = __webpack_require__(1396);
+var INTERNAL_REQUEST_ROUTER = [
+    {
+        path: '',
+        component: internal_request_component_1.InternalRequestComponent,
+        pathMatch: 'full'
+    }
+];
+exports.InternalRequestRouter = router_1.RouterModule.forChild(INTERNAL_REQUEST_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>46.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>58b6c9cbdb3d2300429e2a9a48961904</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.46.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_58b6c9cbdb3d2300429e2a9a48961904</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

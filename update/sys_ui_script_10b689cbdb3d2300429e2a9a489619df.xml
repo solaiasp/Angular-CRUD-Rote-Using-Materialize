@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.49.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([49],{
+
+/***/ 1283:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var consolidated_report_component_1 = __webpack_require__(1385);
+var consolidated_report_router_1 = __webpack_require__(1653);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var ConsolidatedReportModule = /** @class */ (function () {
+    function ConsolidatedReportModule() {
+    }
+    ConsolidatedReportModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, consolidated_report_router_1.consolidatedReportRouter],
+            declarations: [consolidated_report_component_1.ConsolidatedReportComponent]
+        })
+    ], ConsolidatedReportModule);
+    return ConsolidatedReportModule;
+}());
+exports.ConsolidatedReportModule = ConsolidatedReportModule;
+
+
+/***/ }),
+
+/***/ 1385:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var modal_1 = __webpack_require__(104);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var page_view_service_1 = __webpack_require__(498);
+var router_1 = __webpack_require__(48);
+var ConsolidatedReportComponent = /** @class */ (function () {
+    function ConsolidatedReportComponent(router, commonServices, cookies, dateFilter, pageView, modalService) {
+        var _this = this;
+        this.router = router;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.pageView = pageView;
+        this.modalService = modalService;
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.reportsLoader = false;
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.reportTabs = [
+            { 'activeTabName': 'consolidated-reports', 'tooltip': 'Consolidated Reports', 'reportName': 'Consolidated Reports' },
+            { 'activeTabName': 'threshold-reports', 'tooltip': 'Threshold Reports', 'reportName': 'Threshold Reports' }
+        ];
+        this.activeReport = "consolidated-reports";
+        this.activeReportName = "Consolidated Reports";
+        this.dynamicTab = [
+            { 'activeTabName': 'cpu', 'tooltip': 'Device - CPU Utilization', ' targetTab': 'cpuTab', 'tabIcon': 'cpu.svg' },
+            { 'activeTabName': 'memory', 'tooltip': 'Device - Memory Utilization', ' targetTab': 'memoryTab', 'tabIcon': 'memory.svg' },
+            { 'activeTabName': 'utilization', 'tooltip': 'Link - Utilization', ' targetTab': 'utilizationTab', 'tabIcon': 'report.svg' },
+            { 'activeTabName': 'errors', 'tooltip': 'Device - Errors', ' targetTab': 'errorTab', 'tabIcon': 'tickets.svg' }
+        ];
+        this.isIPSLAEnable = false;
+        this.activeTabName = 'cpu';
+        this.titletab = 'Device - CPU Utilization';
+        this.getLists = function (fromDate, toDate) {
+            _this.showTab(_this.activeTabName, " ", fromDate, toDate);
+        };
+        this.getGridItems = function () {
+            _this.reportsLoader = true;
+            _this.gridDataObj.data = [];
+            // console.log("getting grid again",this.reportsLoader);
+            _this.commonServices.postRequest('/_wan/wanConsolidatedReportLatest', _this._postData).then(function (response) {
+                if (response.status == "success") {
+                    //	console.log(response);
+                    var extractedResponse = response.items[0];
+                    //	console.log(response.items[0]);
+                    _this.gridDataObj.id = _this.activeTabName + "_5544";
+                    // console.log('================================','grid loaded again');
+                    if (_this.activeTabName == "cpu") {
+                        _this.gridDataObj.data = _this.gridDataObj.data.concat(_this.reportsCommon(extractedResponse, false, "cpu"));
+                        console.log('this.gridDataObj.data', _this.gridDataObj.data);
+                    }
+                    else if (_this.activeTabName == "memory") {
+                        _this.gridDataObj.data = _this.gridDataObj.data.concat(_this.reportsCommon(extractedResponse, false, "memory"));
+                    }
+                    else if (_this.activeTabName == "utilization") {
+                        _this.gridDataObj.data = _this.gridDataObj.data.concat(_this.reportsCommon(extractedResponse, true, "utilization"));
+                    }
+                    else if (_this.activeTabName == "errors") {
+                        _this.gridDataObj.data = _this.gridDataObj.data.concat(_this.reportsCommon(extractedResponse, true, "error"));
+                    }
+                    else if (_this.activeTabName == "responsetime") {
+                        _this.gridDataObj.data = _this.gridDataObj.data.concat(_this.reportsCommon(extractedResponse, false, "ipsla"));
+                    }
+                    else if (_this.activeTabName == "jitter") {
+                        _this.gridDataObj.data = _this.gridDataObj.data.concat(_this.reportsCommon(extractedResponse, false, "ipsla"));
+                    }
+                    else if (_this.activeTabName == "packetloss") {
+                        _this.gridDataObj.data = _this.gridDataObj.data.concat(_this.reportsCommon(extractedResponse, false, "ipsla"));
+                    }
+                    _this.reportsLoader = false;
+                    //console.log('finalgrd',this.gridDataObj);
+                }
+                else if (response.status == "failure") {
+                    _this.commonServices.success(response.message);
+                    _this.reportsLoader = false;
+                }
+            }, function (err) {
+                _this.commonServices.error(err);
+                _this.reportsLoader = false;
+            });
+        };
+        this.showTab = function (tabName, tooltiptext, fromDate, toDate) {
+            var fromDateStr = _this.dateFilter.transform(fromDate, "yyyy-MM-dd");
+            var toDateStr = _this.dateFilter.transform(toDate, "yyyy-MM-dd");
+            _this.activeTabName = tabName;
+            _this.gridDataObj.id = _this.activeTabName + "_5544";
+            var ranCalc = Math.floor((Math.random() * 1000) + 1);
+            var dummyId = "Report_" + ranCalc;
+            _this.gridDataObj.id = dummyId;
+            _this.gridDataObj = {
+                pdfName: _this.activeReportName + "-" + _this.activeTabName,
+                pdfTitle: _this.activeReportName + "-" + _this.activeTabName,
+                excelTitle: _this.activeReportName + "-" + _this.activeTabName,
+                excelName: _this.activeReportName + "-" + _this.activeTabName,
+            };
+            if (_this.activeReport == "threshold-reports") {
+                _this.gridDataObjThreshold.pdfName = 'Threshold-Report' + "-" + _this.activeTabName;
+                _this.gridDataObjThreshold.pdfTitle = 'Threshold-Report' + "-" + _this.activeTabName;
+                _this.gridDataObjThreshold.excelTitle = 'Threshold-Report' + "-" + _this.activeTabName;
+                _this.gridDataObjThreshold.excelName = 'Threshold-Report' + "-" + _this.activeTabName;
+            }
+            _this.gridDataObj.fromDate = fromDateStr;
+            _this.gridDataObj.toDate = toDateStr;
+            // console.log('date',fromDateStr,toDateStr);
+            if (tabName == "cpu") {
+                _this.titletab = "Device - CPU Utilization";
+                _this._postData = { "client_id": "10122", "rpttype": "cpu", "fromdate": fromDateStr, "sitename": "", "todate": toDateStr };
+                _this.gridDataObj.columns = [
+                    {
+                        /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+                      return {
+                        click:false,
+                        html:cellProps.customerId+'( '+cellProps.customerName+')'
+                      };
+                      }
+                      */
+                        dataKey: 'date', title: 'Date', hide: false, width: ''
+                    },
+                    { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+                    { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+                    { dataKey: 'ip', title: 'Device Ip', hide: false, width: '', link: false },
+                    { dataKey: 'hostname', title: 'Host Name', hide: false, width: '' }
+                ];
+                if (_this.activeReport == "consolidated-reports") {
+                    _this.gridDataObj.columns[3].link = true;
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'max_time', title: 'Max Time', hide: false, width: '' },
+                        { dataKey: 'min_time', title: 'Min Time', hide: false, width: '' },
+                        { dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'max', title: 'Max(%)', hide: false, width: '' },
+                        { dataKey: 'min', title: 'Min(%)', hide: false, width: '' },
+                        { dataKey: 'avg', title: 'Avg(%)', hide: false, width: '' }]);
+                }
+                else if (_this.activeReport == "threshold-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'thresholdVal', title: 'Threshold Value', hide: false, width: '' },
+                        {
+                            dataKey: 'thresholdCount', title: 'Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount + '</span>'
+                                    };
+                                }
+                            }
+                        },]);
+                }
+            }
+            else if (tabName == "memory") {
+                _this.titletab = "Device - Memory Utilization";
+                _this._postData = { "client_id": "10122", "rpttype": "memory", "fromdate": fromDateStr, "sitename": "", "todate": toDateStr };
+                _this.gridDataObj.columns = [
+                    {
+                        /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+                      return {
+                        click:false,
+                        html:cellProps.customerId+'( '+cellProps.customerName+')'
+                      };
+                      }
+                      */
+                        dataKey: 'date', title: 'Date', hide: false, width: ''
+                    },
+                    { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+                    { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+                    { dataKey: 'ip', title: 'Device Ip', hide: false, width: '', link: false },
+                    { dataKey: 'hostname', title: 'Host Name', hide: false, width: '' }
+                ];
+                if (_this.activeReport == "consolidated-reports") {
+                    _this.gridDataObj.columns[3].link = true;
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'max_time', title: 'Max Time', hide: false, width: '' },
+                        { dataKey: 'min_time', title: 'Min Time', hide: false, width: '' },
+                        { dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'max', title: 'Max(%)', hide: false, width: '' },
+                        { dataKey: 'min', title: 'Min(%)', hide: false, width: '' },
+                        { dataKey: 'avg', title: 'Avg(%)', hide: false, width: '' }]);
+                }
+                else if (_this.activeReport == "threshold-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'thresholdVal', title: 'Threshold Value', hide: false, width: '' },
+                        {
+                            dataKey: 'thresholdCount', title: 'Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount + '</span>'
+                                    };
+                                }
+                            }
+                        },]);
+                }
+            }
+            else if (tabName == "utilization") {
+                _this.titletab = "Link - Utilization";
+                _this._postData = { "client_id": "10122", "rpttype": "utilization", "fromdate": fromDateStr, "sitename": "", "todate": toDateStr };
+                _this.gridDataObj.columns = [
+                    { dataKey: 'date_0', title: 'Date', hide: false, width: '' },
+                    { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+                    { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+                    { dataKey: 'ip', title: 'Device Ip', hide: false, width: '', link: false },
+                    { dataKey: 'link_desc', title: 'Link Description', hide: false, width: '' },
+                    { dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' }
+                ];
+                if (_this.activeReport == "consolidated-reports") {
+                    _this.gridDataObj.columns[4].link = true;
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'max_0', title: 'Input Max(Kbps)', hide: false, width: '' },
+                        { dataKey: 'min_0', title: 'Input Min(Kbps)', hide: false, width: '' },
+                        { dataKey: 'avg_0', title: 'Input Avg(Kbps)', hide: false, width: '' },
+                        { dataKey: 'max_1', title: 'Output Max(Kbps)', hide: false, width: '' },
+                        { dataKey: 'min_1', title: 'Output Min(Kbps)', hide: false, width: '' },
+                        { dataKey: 'avg_1', title: 'Output Avg(Kbps)', hide: false, width: '' }]);
+                }
+                else if (_this.activeReport == "threshold-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'thresholdVal_0', title: 'Threshold Value', hide: false, width: '' },
+                        {
+                            dataKey: 'thresholdCount_0', title: 'In Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount_0 != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount_0
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount_0 + '</span>'
+                                    };
+                                }
+                            }
+                        },
+                        /* { dataKey: 'node_id_0', title: 'Node Id', hide: true, width: '' },
+                        { dataKey: 'param_id_0', title: 'Param Id', hide: true, width: '' },
+                        { dataKey: 'node_id_1', title: 'Node Id 1', hide: true, width: '' },
+                        { dataKey: 'param_id_1', title: 'Param Id 1', hide: true, width: '' },
+                        { dataKey: 't5Count_0', title: 'In T5 Count', hide: true, width: '' },
+                        { dataKey: 't6Count_0', title: 'In T6 Count', hide: true, width: '' },
+                        { dataKey: 't7Count_0', title: 'In T7 Count', hide: true, width: '' },
+                        { dataKey: 't8Count_0', title: 'In T8 Count', hide: true, width: '' },
+                        { dataKey: 't9Count_0', title: 'In T9 Count', hide: true, width: '' }, */
+                        {
+                            dataKey: 'thresholdCount_1', title: 'Out Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount_1 != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount_1
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount_1 + '</span>'
+                                    };
+                                }
+                            }
+                        },]);
+                }
+            }
+            else if (tabName == "errors") {
+                _this.titletab = "Errors";
+                _this._postData = { "client_id": "10122", "rpttype": "errors", "fromdate": fromDateStr, "sitename": "", "todate": toDateStr };
+                _this.gridDataObj.columns = [
+                    { dataKey: 'date_0', title: 'Date', hide: false, width: '' },
+                    { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+                    { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+                    { dataKey: 'ip', title: 'Device Ip', hide: false, width: '' },
+                    { dataKey: 'link_desc', title: 'Link Description', hide: false, width: '' },
+                    { dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' }
+                ];
+                if (_this.activeReport == "consolidated-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'sum_0', title: 'In Error', hide: false, width: '', link: true },
+                        { dataKey: 'sum_1', title: 'Out Error', hide: false, width: '', link: true },
+                        { dataKey: 'max_1', title: 'Input Max(Kbps)', hide: true, width: '' },
+                        { dataKey: 'min_1', title: 'Input Min(Kbps)', hide: true, width: '' },
+                        { dataKey: 'avg_1', title: 'Input Avg(Kbps)', hide: true, width: '' },
+                        { dataKey: 'max_0', title: 'Output Max(Kbps)', hide: true, width: '' },
+                        { dataKey: 'min_0', title: 'Output Min(Kbps)', hide: true, width: '' },
+                        { dataKey: 'avg_0', title: 'Output Avg(Kbps)', hide: true, width: '' }]);
+                }
+                else if (_this.activeReport == "threshold-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'thresholdVal_1', title: 'Threshold Value', hide: false, width: '' },
+                        {
+                            dataKey: 'thresholdCount_1', title: 'In Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount_1 != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount_1
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount_1 + '</span>'
+                                    };
+                                }
+                            }
+                        },
+                        {
+                            dataKey: 'thresholdCount_0', title: 'Out Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount_0 != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount_0
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount_0 + '</span>'
+                                    };
+                                }
+                            }
+                        },]);
+                }
+            }
+            else if (tabName == "responsetime") {
+                _this.titletab = "IPSLA - Response time";
+                _this._postData = { "client_id": "10122", "rpttype": "Latency", "fromdate": fromDateStr, "sitename": "", "todate": toDateStr };
+                _this.gridDataObj.columns = [
+                    {
+                        /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+                      return {
+                        click:false,
+                        html:cellProps.customerId+'( '+cellProps.customerName+')'
+                      };
+                      }
+                      */
+                        dataKey: 'date', title: 'Date', hide: false, width: ''
+                    },
+                    { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+                    { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+                    { dataKey: 'ip', title: 'Device Ip', hide: false, width: '', link: false },
+                    { dataKey: 'hostname', title: 'Host Name', hide: false, width: '' }
+                ];
+                if (_this.activeReport == "consolidated-reports") {
+                    _this.gridDataObj.columns[3].link = false;
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'max_time', title: 'Max Time', hide: false, width: '' },
+                        { dataKey: 'min_time', title: 'Min Time', hide: false, width: '' },
+                        { dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'max', title: 'Max(%)', hide: false, width: '' },
+                        { dataKey: 'min', title: 'Min(%)', hide: false, width: '' },
+                        { dataKey: 'avg', title: 'Avg(%)', hide: false, width: '' }]);
+                }
+                else if (_this.activeReport == "threshold-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'thresholdVal', title: 'Threshold Value', hide: false, width: '' },
+                        {
+                            dataKey: 'thresholdCount', title: 'Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount + '</span>'
+                                    };
+                                }
+                            }
+                        },]);
+                }
+            }
+            else if (tabName == "jitter") {
+                _this.titletab = "IPSLA - Jitter";
+                _this._postData = { "client_id": "10122", "rpttype": "Jitter", "fromdate": fromDateStr, "sitename": "", "todate": toDateStr };
+                _this.gridDataObj.columns = [
+                    {
+                        /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+                      return {
+                        click:false,
+                        html:cellProps.customerId+'( '+cellProps.customerName+')'
+                      };
+                      }
+                      */
+                        dataKey: 'date', title: 'Date', hide: false, width: ''
+                    },
+                    { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+                    { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+                    { dataKey: 'ip', title: 'Device Ip', hide: false, width: '', link: false },
+                    { dataKey: 'hostname', title: 'Host Name', hide: false, width: '' }
+                ];
+                if (_this.activeReport == "consolidated-reports") {
+                    _this.gridDataObj.columns[3].link = false;
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'max_time', title: 'Max Time', hide: false, width: '' },
+                        { dataKey: 'min_time', title: 'Min Time', hide: false, width: '' },
+                        { dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'max', title: 'Max(%)', hide: false, width: '' },
+                        { dataKey: 'min', title: 'Min(%)', hide: false, width: '' },
+                        { dataKey: 'avg', title: 'Avg(%)', hide: false, width: '' }]);
+                }
+                else if (_this.activeReport == "threshold-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'thresholdVal', title: 'Threshold Value', hide: false, width: '' },
+                        {
+                            dataKey: 'thresholdCount', title: 'Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount + '</span>'
+                                    };
+                                }
+                            }
+                        },]);
+                }
+            }
+            else if (tabName == "packetloss") {
+                _this.titletab = "IPSLA - Packet Loss";
+                _this._postData = { "client_id": "10122", "rpttype": "PacketLoss", "fromdate": fromDateStr, "sitename": "", "todate": toDateStr };
+                _this.gridDataObj.columns = [
+                    {
+                        /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+                      return {
+                        click:false,
+                        html:cellProps.customerId+'( '+cellProps.customerName+')'
+                      };
+                      }
+                      */
+                        dataKey: 'date', title: 'Date', hide: false, width: ''
+                    },
+                    { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+                    { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+                    { dataKey: 'ip', title: 'Device Ip', hide: false, width: '', link: false },
+                    { dataKey: 'hostname', title: 'Host Name', hide: false, width: '' }
+                ];
+                if (_this.activeReport == "consolidated-reports") {
+                    _this.gridDataObj.columns[3].link = false;
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'max_time', title: 'Max Time', hide: false, width: '' },
+                        { dataKey: 'min_time', title: 'Min Time', hide: false, width: '' },
+                        { dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'max', title: 'Max(%)', hide: false, width: '' },
+                        { dataKey: 'min', title: 'Min(%)', hide: false, width: '' },
+                        { dataKey: 'avg', title: 'Avg(%)', hide: false, width: '' }]);
+                }
+                else if (_this.activeReport == "threshold-reports") {
+                    _this.gridDataObj.columns = _this.gridDataObj.columns.concat([{ dataKey: 'businessHour', title: 'Business Hours', hide: (_this.filterType == "All" || _this.filterType == "BH") ? false : true, width: '' },
+                        { dataKey: 'thresholdVal', title: 'Threshold Value', hide: false, width: '' },
+                        {
+                            dataKey: 'thresholdCount', title: 'Threshold Count', hide: false, width: '', link: false,
+                            cell: function (row, column) {
+                                if (row.thresholdCount != 0) {
+                                    return {
+                                        click: true,
+                                        html: row.thresholdCount
+                                    };
+                                }
+                                else {
+                                    return {
+                                        click: false,
+                                        html: '<span>' + row.thresholdCount + '</span>'
+                                    };
+                                }
+                            }
+                        },]);
+                }
+            }
+            if (!(_this.filterType == "All")) {
+                _this._postData.bhType = _this.filterType;
+            }
+            _this.getGridItems();
+        };
+        this.getLinkedData = function (eventObj, thresholdTemplate) {
+            /* if(this.activeReport == "threshold-reports")
+            { */
+            if (eventObj.column.dataKey.includes("thresholdCount")) {
+                console.log('getLinkedDataeventObj', eventObj);
+                if (eventObj.column.dataKey.includes("thresholdCount_0")) {
+                    _this.node_id_threshold = eventObj.row.node_id_0;
+                    _this.param_id_threshold = eventObj.row.param_id_0;
+                }
+                else if (eventObj.column.dataKey.includes("thresholdCount_1")) {
+                    _this.node_id_threshold = eventObj.row.node_id_1;
+                    _this.param_id_threshold = eventObj.row.param_id_1;
+                }
+                else {
+                    _this.node_id_threshold = eventObj.row.node_id;
+                    _this.param_id_threshold = eventObj.row.param_id;
+                }
+                _this.threshold_count_loader = true;
+                _this.ip_threshold = eventObj.row.ip;
+                _this.sitegroup_threshold = eventObj.row.sitename;
+                //businessHour
+                _this.showThresholdDetails(thresholdTemplate);
+                var postDataThreshold = {};
+                postDataThreshold = { "fromdate": _this.fromDate, "todate": _this.toDate, "param": _this.param_id_threshold, "device": _this.node_id_threshold };
+                if (!(_this.filterType == "normal")) {
+                    postDataThreshold.businessHours = eventObj.row.businessHour;
+                }
+                _this.commonServices.postRequest('/_wan/getThresholdCrossedValues', postDataThreshold).then(function (res) {
+                    if (res.status == "success") {
+                        var thresholdPollData = res.items[0].ThresholdPollData.slice();
+                        thresholdPollData.map(function (val) {
+                            val.ip = _this.ip_threshold;
+                            val.sitename = _this.sitegroup_threshold;
+                            val.hostname = eventObj.row.hostname;
+                        });
+                        _this.gridDataObjThreshold.data = thresholdPollData.slice();
+                        //this.gridDataObjThreshold.data = [...res.items[0].ThresholdPollData];
+                        _this.threshold_count_loader = false;
+                    }
+                    else {
+                        _this.threshold_count_loader = false;
+                    }
+                }, function (err) {
+                    _this.threshold_count_loader = false;
+                    _this.commonServices.error(err);
+                });
+            }
+            else {
+                var pageData = {};
+                console.log('this.activeTabName', _this.activeTabName);
+                console.log('getLinkedDataeventObj', eventObj);
+                pageData.siteName = eventObj.row.sitename;
+                if (_this.activeTabName == 'cpu') {
+                    pageData.hostname = eventObj.row.hostname;
+                    pageData.perfType = 'cpu';
+                    pageData.date = eventObj.row.date;
+                }
+                else if (_this.activeTabName == 'memory') {
+                    pageData.hostname = eventObj.row.hostname;
+                    pageData.perfType = 'memory';
+                    pageData.date = eventObj.row.date;
+                }
+                else if (_this.activeTabName == 'utilization') {
+                    pageData.link_desc = eventObj.row.link_desc;
+                    pageData.date = eventObj.row.date_0;
+                }
+                else {
+                    pageData.link_desc = eventObj.row.link_desc;
+                    pageData.date = eventObj.row.date_0;
+                    pageData.linkGraphType = 'inErrors';
+                }
+                _this.pageView.setData(pageData);
+                _this.router.navigate(['/assets-details']);
+            }
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    ConsolidatedReportComponent.prototype.ngOnInit = function () {
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.threshold_count_loader = false;
+        this.ip_threshold = "";
+        this.sitegroup_threshold = "";
+        this.isIPSLAEnable = this.commonServices.checkApiAvailability('IPSLAConsolidatedReport');
+        if (this.isIPSLAEnable == true) {
+            var ipslaDynamicTab = [
+                { 'activeTabName': 'responsetime', 'tooltip': 'IPSLA - Response Time', 'targetTab': 'responsetimeTab', 'tabIcon': 'change_management.svg' },
+                { 'activeTabName': 'jitter', 'tooltip': 'IPSLA - Jitter', 'targetTab': 'jitterTab', 'tabIcon': 'link.svg' },
+                { 'activeTabName': 'packetloss', 'tooltip': 'IPSLA - Packet Loss', 'targetTab': 'packetlossTab', 'tabIcon': 'platform.svg' }
+            ];
+            this.dynamicTab = this.dynamicTab.concat(ipslaDynamicTab);
+        }
+        this.gridDataObjThreshold = {
+            pdfName: 'Threshold-Report' + "-" + this.activeTabName,
+            pdfTitle: 'Threshold-Report' + "-" + this.activeTabName,
+            excelTitle: 'Threshold-Report' + "-" + this.activeTabName,
+            excelName: 'Threshold-Report' + "-" + this.activeTabName
+        };
+        this.gridDataObjThreshold.data = [];
+        this.gridDataObjThreshold.id = "threshold-reports-modal-0";
+        this.gridDataObjThreshold.columns = [
+            { dataKey: 'ip', title: 'IP', hide: true, width: '' },
+            { dataKey: 'sitename', title: 'Site Name', hide: true, width: '' },
+            { dataKey: 'hostname', title: 'Host Name', hide: true, width: '' },
+            { dataKey: 'poll_time', title: 'Poll Time', hide: false, width: '' },
+            { dataKey: 'param_value', title: 'Param Value', hide: false, width: '' }
+        ];
+        this.loader = false;
+        this.gridDataObj = {
+            pdfName: 'Consolidate-Report' + "-" + this.activeTabName,
+            pdfTitle: 'Consolidate-Report' + "-" + this.activeTabName,
+            excelTitle: 'Consolidate-Report' + "-" + this.activeTabName,
+            excelName: 'Consolidate-Report' + "-" + this.activeTabName
+        };
+        this.activeTabName = "cpu";
+        this.gridDataObj.data = [];
+        this.gridDataObj.id = "consolidated-reports-0";
+        var today = new Date();
+        var time = today.getTime();
+        var lastWeekTime = time - (24 * 7 * 60 * 60 * 1000);
+        this.fromDate = new Date(lastWeekTime);
+        this.maxDate = new Date();
+        this.maxDate.setDate(this.maxDate.getDate() - 1);
+        this.yesterDay = new Date();
+        this.yesterDay.setDate(this.yesterDay.getDate() - 1);
+        this.filterType = "normal";
+        this.gridDataObj.columns = [
+            {
+                /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+              return {
+                click:false,
+                html:cellProps.customerId+'( '+cellProps.customerName+')'
+              };
+              }
+              */
+                dataKey: 'date', title: 'Date', hide: false, width: ''
+            },
+            { dataKey: 'siteGroup', title: 'Group', hide: true, width: '' },
+            { dataKey: 'sitename', title: 'Site Name', hide: false, width: '' },
+            { dataKey: 'ip', title: 'Device Ip', hide: false, width: '', link: false },
+            { dataKey: 'hostname', title: 'Host Name', hide: false, width: '' },
+            { dataKey: 'max_time', title: 'Max Time', hide: false, width: '' },
+            { dataKey: 'min_time', title: 'Min Time', hide: false, width: '' },
+            { dataKey: 'businessHour', title: 'Business Hours', hide: (this.filterType == "All" || this.filterType == "BH") ? false : true, width: '' },
+            { dataKey: 'max', title: 'Max(%)', hide: false, width: '' },
+            { dataKey: 'min', title: 'Min(%)', hide: false, width: '' },
+            { dataKey: 'avg', title: 'Avg(%)', hide: false, width: '' }
+        ];
+        this.fromDate = this.dateFilter.transform(this.yesterDay, "yyyy-MM-dd");
+        this.toDate = this.dateFilter.transform(this.maxDate, "yyyy-MM-dd");
+        this.gridDataObj.fromDate = this.fromDate;
+        this.gridDataObj.toDate = this.toDate;
+        this._postData = { "client_id": "10122", "rpttype": "cpu", "fromdate": this.fromDate, "sitename": "", "todate": this.toDate };
+        if (!(this.filterType == "All")) {
+            this._postData.bhType = this.filterType;
+        }
+        this.getGridItems();
+    };
+    ConsolidatedReportComponent.prototype.loadReport = function () {
+        console.log(this.filterType);
+        this.showTab(this.activeTabName, " ", this.fromDate, this.toDate);
+    };
+    ConsolidatedReportComponent.prototype.reportsCommon = function (extractedResponse, excludeCode, reporttype) {
+        var _this = this;
+        var customizedResponse = [];
+        console.log('excludeCode', excludeCode, " ", reporttype);
+        var _loop_1 = function (data) {
+            //	console.log('reports data',data,extractedResponse[data]);
+            extractedResponse[data].forEach(function (ipData) {
+                if ((reporttype != 'ipsla') && (excludeCode == false)) {
+                    var otherColumns_1;
+                    if (_this.activeReport == "consolidated-reports") {
+                        if (ipData.AssetsDailyHealthData && ipData.AssetsDailyHealthData.length) {
+                            ipData.AssetsDailyHealthData.forEach(function (element) {
+                                otherColumns_1 = element.AssetsParamData[0];
+                                var responseObj = {};
+                                for (var column in otherColumns_1) {
+                                    if (!responseObj[data]) {
+                                        responseObj[data] = __assign({}, ipData);
+                                    }
+                                    responseObj[data][column] = otherColumns_1[column];
+                                }
+                                customizedResponse = customizedResponse.concat([responseObj[data]]);
+                            });
+                        }
+                    }
+                    else if (_this.activeReport == "threshold-reports") {
+                        if (ipData.AssetsHealthThresholdValues && ipData.AssetsHealthThresholdValues.length > 0) {
+                            ipData.AssetsHealthThresholdValues.forEach(function (elem) {
+                                otherColumns_1 = elem.AssetsThresholdValues[0];
+                                var responseObj = {};
+                                for (var column in otherColumns_1) {
+                                    if (!responseObj[data]) {
+                                        responseObj[data] = __assign({}, ipData);
+                                    }
+                                    responseObj[data][column] = otherColumns_1[column];
+                                }
+                                customizedResponse = customizedResponse.concat([responseObj[data]]);
+                            });
+                        }
+                    }
+                }
+                else if ((reporttype == 'ipsla') && (excludeCode == false)) {
+                    var otherColumns_2;
+                    if (_this.activeReport == "consolidated-reports") {
+                        if (ipData.AssetsIPSLAData && ipData.AssetsIPSLAData.length) {
+                            ipData.AssetsIPSLAData.forEach(function (element) {
+                                otherColumns_2 = element.AssetsParamData[0];
+                                var responseObj = {};
+                                for (var column in otherColumns_2) {
+                                    if (!responseObj[data]) {
+                                        responseObj[data] = __assign({}, ipData);
+                                    }
+                                    responseObj[data][column] = otherColumns_2[column];
+                                }
+                                customizedResponse = customizedResponse.concat([responseObj[data]]);
+                            });
+                        }
+                    }
+                    else if (_this.activeReport == "threshold-reports") {
+                        if (ipData.AssetsIPSLAThresholdValues && ipData.AssetsIPSLAThresholdValues.length > 0) {
+                            ipData.AssetsIPSLAThresholdValues.forEach(function (elem) {
+                                otherColumns_2 = elem.AssetsThresholdValues[0];
+                                var responseObj = {};
+                                for (var column in otherColumns_2) {
+                                    if (!responseObj[data]) {
+                                        responseObj[data] = __assign({}, ipData);
+                                    }
+                                    responseObj[data][column] = otherColumns_2[column];
+                                }
+                                customizedResponse = customizedResponse.concat([responseObj[data]]);
+                            });
+                        }
+                    }
+                }
+                else if ((reporttype != 'ipsla') && (excludeCode == true)) {
+                    if (_this.activeReport == "consolidated-reports") {
+                        ipData.AssetsAggregatedDataLinks.map(function (aggregatedDataLinks) {
+                            ipData['link_desc'] = aggregatedDataLinks.linkDesc;
+                            if (aggregatedDataLinks.AssetsTrafficUitilisationDataValues.length) {
+                                var responseObj = {};
+                                responseObj[data] = __assign({}, ipData);
+                                aggregatedDataLinks.AssetsTrafficUitilisationDataValues.map(function (thresholdData, index) {
+                                    var inoutValues = thresholdData.AssetsParamData[0];
+                                    for (var val in inoutValues) {
+                                        responseObj[data][val + "_" + index] = inoutValues[val];
+                                    }
+                                });
+                                customizedResponse = customizedResponse.concat([responseObj[data]]);
+                            }
+                        });
+                    }
+                    else if (_this.activeReport == "threshold-reports") {
+                        ipData.AssetsAggregatedDataLinks.map(function (aggregatedDataLinks) {
+                            ipData['link_desc'] = aggregatedDataLinks.linkDesc;
+                            if (aggregatedDataLinks.AssetsTrafficUitilisationThresholdValues.length) {
+                                var responseObj = {};
+                                responseObj[data] = __assign({}, ipData);
+                                aggregatedDataLinks.AssetsTrafficUitilisationThresholdValues.map(function (thresholdData, index) {
+                                    var inoutValues = thresholdData.AssetsThresholdValues[0];
+                                    for (var val in inoutValues) {
+                                        responseObj[data][val + "_" + index] = inoutValues[val];
+                                    }
+                                });
+                                customizedResponse = customizedResponse.concat([responseObj[data]]);
+                            }
+                        });
+                    }
+                }
+            });
+        };
+        for (var data in extractedResponse) {
+            _loop_1(data);
+        }
+        console.log('customizedResponse', customizedResponse);
+        return customizedResponse;
+    };
+    ConsolidatedReportComponent.prototype.showReportTab = function (tabName, reportName) {
+        this.activeReport = tabName;
+        this.activeReportName = reportName;
+        this.activeTabName = "cpu";
+        var ranCalc = Math.floor((Math.random() * 1000) + 1);
+        this.gridDataObj.id = this.activeTabName + "_6688";
+        this.gridDataObj = {
+            pdfName: reportName + "-" + tabName,
+            pdfTitle: reportName + "-" + tabName,
+            excelTitle: reportName + "-" + tabName,
+            excelName: reportName + "-" + tabName,
+        };
+        this.showTab(this.activeTabName, " ", this.fromDate, this.toDate);
+        // console.log('reportname',reportName);
+    };
+    ConsolidatedReportComponent.prototype.showThresholdDetails = function (template) {
+        this.modalRef = this.modalService.show(template, Object.assign({}, { class: 'modal-lg' }));
+    };
+    ConsolidatedReportComponent = __decorate([
+        core_1.Component({
+            selector: '<consolidated-report>',
+            template: __webpack_require__(1649),
+            styles: [__webpack_require__(1650)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, page_view_service_1.PageViewService, modal_1.BsModalService])
+    ], ConsolidatedReportComponent);
+    return ConsolidatedReportComponent;
+}());
+exports.ConsolidatedReportComponent = ConsolidatedReportComponent;
+
+
+/***/ }),
+
+/***/ 1649:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"consolidated-report\">\n<section id=\"main-content\">\n  <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n      <li>\n        <a (click)=\"goToHomePage()\">Home</a>\n      </li>\n      <li class=\"active\">{{activeReportName}}</li>\n    </ol>\n    <div class=\"pn-ProductNav_Wrapper\">\n      <nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n         \n         <div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\">\n\n            <a class=\"pn-ProductNav_Link\" [ngClass]=\"{'active' : activeReport == tab.activeTabName}\" (click)=\"showReportTab(tab.activeTabName,tab.reportName)\" *ngFor=\"let tab of reportTabs\"> {{tab.activeTabName}}</a>\n         </div>\n      </nav>\n   </div>\n    <!-- <div class=\"dashboard-txt\">\n      <h1>{{activeReportName}}</h1>\n    </div> -->\n    <div class=\"row\">\n      <div class=\"col-md-12\">\n        <div class=\"box-title box-title-tabs box-title-tabs-sla\">\n          <div class=\"pull-right\">\n            <ul class=\"box-title-right\">\n                <li style=\"margin-top:10px;\">\n                            <label class=\"nice-radio\">\n                                <input type=\"radio\" value=\"normal\" [(ngModel)]=\"filterType\" (change)=\"loadReport()\">\n                                <span class=\"r\"><span></span></span>\n                                Normal (00:00 - 23:59)\n                            </label>\n                </li>\n                <li style=\"margin-top:10px;\">\n                        <label class=\"nice-radio\">\n                            <input type=\"radio\" value=\"BH\" [(ngModel)]=\"filterType\" (change)=\"loadReport()\">\n                            <span class=\"r\"><span></span></span>\n                            Business Hours\n                        </label>\n                  </li>\n                  <li style=\"margin-top:10px;\">\n                          <label class=\"nice-radio\">\n                              <input type=\"radio\" value=\"All\" [(ngModel)]=\"filterType\" (change)=\"loadReport()\">\n                              <span class=\"r\"><span></span></span>\n                              All\n                          </label>\n                    </li>\n                <li>\n                    <div class=\"picker\">                    \n                        <div class=\"input-group datetimepicker-start-end\">\n                            <input bsDatepicker  (ngModelChange)=\"getLists($event ,toDate)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [maxDate]=\"maxDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\"><span>to</span>\n                            <input bsDatepicker  (ngModelChange)=\"getLists(fromDate,$event)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\" [minDate]=\"fromDate\" [maxDate]=\"maxDate\">\n                           </div>\n                       <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n                    </div>\n                  </li>\n                <li *ngFor=\"let tab of dynamicTab\" [ngClass]=\"{'active' : activeTabName == tab.activeTabName}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"{{tab.tooltip}}\">\n                    <a data-target=\"#{{tab.targetTab}}\" data-toggle=\"tab\" (click)=\"showTab(tab.activeTabName, tab.tooltip, fromDate, toDate)\">\n                      <img-icon src=\"{{tab.tabIcon}}\" class=\"svg\"></img-icon>\n                    </a>\n                  </li>\n              <!-- <li [ngClass]=\"{'active' : activeTabName == 'link'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Link Utilization\">\n                <a data-target=\"#linkTab\" data-toggle=\"tab\" (click)=\"showTab('link')\">\n                  <img-icon src=\"SLA_parameters.svg\" class=\"svg\"></img-icon>\n                </a>\n              </li>\n              <li [ngClass]=\"{'active' : activeTabName == 'cpu'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"CPU Utilization\">\n                <a data-target=\"#cpuTab\" data-toggle=\"tab\" (click)=\"showTab('cpu')\">\n                  <img-icon src=\"report.svg\" class=\"svg\"></img-icon>\n                </a>\n              </li>\n              <li [ngClass]=\"{'active' : activeTabName == 'memory'}\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Memory Utilization\">\n                <a data-target=\"#memoryTab\" data-toggle=\"tab\" (click)=\"showTab('memory')\">\n                  <img-icon src=\"tickets.svg\" class=\"svg\"></img-icon>\n                </a>\n              </li> -->\n            </ul>\n          </div>\n          <div class=\"pull-left\">\n            <!-- <img class=\"svg\" src=\"images/icons/user-management.svg\"> -->\n            <h3>{{titletab}}</h3>\n          </div>\n          <div class=\"clearfix\"></div>\n        </div>\n\n        <div class=\"\">\n          <div class=\"tab-content clearfix\">\n            <div class=\"tab-pane\" class=\"active\">\n                <data-grid (linkClick)=\"getLinkedData($event,thresholdDetails)\" *ngIf=\"!reportsLoader\" [gridobj]=\"gridDataObj\"></data-grid>\n                <content-loader *ngIf=\"reportsLoader\"></content-loader>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</section>\n</section>\n<ng-template #thresholdDetails>\n        <div class=\"modal-header\">\n            <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n            <div class=\"pull-right\" style=\"padding-left:120px;padding-right:120px;\"> <span style=\"font-weight:700 !important;display:inline-block;font-size:120%;margin-right:10px;color:#00abb6;font-family:arial;\">Site Name : </span> {{sitegroup_threshold}} </div>\n            <div  class=\"pull-right\"> <span style=\"font-weight:700 !important;display:inline-block;font-size:120%;margin-right:10px;color:#00abb6;font-family:arial;\">IP : </span> {{ip_threshold}} </div>\n            <h4 class=\"modal-title\"><span class=\"float-left;\">Threshold {{this.activeTabName[0].toUpperCase()}}{{this.activeTabName.substr(1)}} Details</span></h4>\n          </div>\n          <div class=\"modal-body\">\n            <content-loader *ngIf=\"threshold_count_loader\"></content-loader>\n        <ng-container   *ngIf=\"!threshold_count_loader\">\n        <data-grid  [gridobj]=\"gridDataObjThreshold\"></data-grid>\n       </ng-container>   \n        </div>\n  </ng-template>";
+
+/***/ }),
+
+/***/ 1650:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1651);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1651:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1652);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./consolidated-report.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./consolidated-report.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1652:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".custli.active\n{\n    color: #333;\n    background-color: #cccccc;\n    border-radius: 8px;\n}\n.downtittle{\n    margin-left: 30px;\n    display: block;\n    margin-top: 5px;\n    }\n    #consolidated-report .datetimepicker-start-end{\n\t\tpadding : 0 5px;\n\t\tmargin-right : 0;\n\t}\n\t#consolidated-report  .datetimepicker-start-end input {\n\t\theight : 28px;\n\t}\n\t#consolidated-report  .datetimepicker-start-end span {\n\t\tline-height : 28px;\n\t}\n\t#consolidated-report  .start-end-icon{\n\t\t\tpadding : 2px !important;\n\t\t\t\n\t}\n\t#consolidated-report .nice-radio input[type=radio]:not(old){\n\t\twidth: 0;\n\t\tmargin: 0;\n\t\tpadding: 0;\n\t\tfont-size: 1em;\n\t\topacity: 0;\n\t  }\n\t  \n\t  #consolidated-report .nice-radio > span.r {\n\t\tdisplay: inline-block;\n\t\twidth: 0.875em;\n\t\theight: 0.875em;\n\t\tmargin: 0.25em .25em 0.25em 0.25em;\n\t\tborder: 0.0625em solid #aaa;\n\t\tborder-radius: 0.50em;\n\t\tbackground: transparent;\n\t\tvertical-align: bottom;\n\t  }\n\t  \n\t  #consolidated-report .nice-radio input[type=radio]:not(old):checked + span.r > span {\n\t\tdisplay: block;\n\t\twidth: 0.5em;\n\t\theight: 0.5em;\n\t\tmargin: 0.16em;\n\t\tborder-radius: 0.5em;\n\t\tbackground: #555;\n\t  }\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1653:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var consolidated_report_component_1 = __webpack_require__(1385);
+var CONSOLIDATED_REPORT_ROUTER = [
+    {
+        path: '',
+        component: consolidated_report_component_1.ConsolidatedReportComponent,
+        pathMatch: 'full'
+    }
+];
+exports.consolidatedReportRouter = router_1.RouterModule.forChild(CONSOLIDATED_REPORT_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>49.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>10b689cbdb3d2300429e2a9a489619df</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.49.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_10b689cbdb3d2300429e2a9a489619df</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:20:59</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

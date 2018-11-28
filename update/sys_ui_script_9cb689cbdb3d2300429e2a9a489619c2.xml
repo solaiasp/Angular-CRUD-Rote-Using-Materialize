@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.24.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([24],{
+
+/***/ 1295:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var nw_dashboard_component_1 = __webpack_require__(1401);
+var nw_dashboard_router_1 = __webpack_require__(1735);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var NwDashboardModule = /** @class */ (function () {
+    function NwDashboardModule() {
+    }
+    NwDashboardModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, nw_dashboard_router_1.nwDashboardRouter],
+            declarations: [nw_dashboard_component_1.NwDashboardComponent]
+        })
+    ], NwDashboardModule);
+    return NwDashboardModule;
+}());
+exports.NwDashboardModule = NwDashboardModule;
+
+
+/***/ }),
+
+/***/ 1401:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var page_view_service_1 = __webpack_require__(498);
+var excell_service_1 = __webpack_require__(266);
+var router_1 = __webpack_require__(48);
+var nw_dashboard_column_1 = __webpack_require__(1730);
+var NwDashboardComponent = /** @class */ (function () {
+    function NwDashboardComponent(router, commonService, cookies, pageView, excellService) {
+        var _this = this;
+        this.router = router;
+        this.commonService = commonService;
+        this.cookies = cookies;
+        this.pageView = pageView;
+        this.excellService = excellService;
+        this.dashboardWidgets = [];
+        this.selectedMappingOption = 'parent';
+        this.ParentChildFlag = false;
+        this.currentUser = {};
+        this.loadDashBoard = function () {
+            //this.selectedMappingOption = 'parent';
+            _this.currentUser = _this.cookies.getObject('globals');
+            var postData = { customerName: _this.currentUser.customer_name };
+            _this.commonService.postRequest('/_core/getChildClientsDetails', postData).then(function (resDetails) {
+                if (resDetails.items.length >= 1) {
+                    _this.ParentChildFlag = true;
+                }
+                else {
+                    _this.ParentChildFlag = false;
+                }
+            });
+            _this.dashboardWidgets = [{
+                    "tittle": "CPU utilization",
+                    "widgetType": "progressBarChart",
+                    "errorMessage": "No CPU Utilization",
+                    "labelText": "Loading...",
+                    "isReady": false,
+                    "data": [],
+                    "className": "col-md-6",
+                    icon: 'trend.svg'
+                }, {
+                    "tittle": "Memory utilization",
+                    "widgetType": "progressBarChart",
+                    "errorMessage": "No Memory  Utilization",
+                    "labelText": "Loading...",
+                    "isReady": false,
+                    "data": [],
+                    "className": "col-md-6",
+                    icon: 'trend.svg'
+                }, {
+                    "tittle": "Utilization",
+                    "widgetType": "progressBarChart",
+                    "errorMessage": "No Utilization",
+                    "labelText": "Loading...",
+                    "isReady": false,
+                    "data": [],
+                    "className": "col-md-6",
+                    icon: 'trend.svg'
+                }, {
+                    "tittle": "Errors",
+                    "widgetType": "progressBarChart",
+                    "errorMessage": "No Error Packets",
+                    "labelText": "Loading...",
+                    "isReady": false,
+                    "data": [],
+                    "className": "col-md-6",
+                    icon: 'trend.svg'
+                }];
+            _this.getCpuUtils(_this.selectedMappingOption);
+            _this.getMemoryUtils(_this.selectedMappingOption);
+            _this.getUtilization(_this.selectedMappingOption);
+            _this.getErrors(_this.selectedMappingOption);
+        };
+        this.mappingOption = function (mappingOption, index, data) {
+            _this.selectedMappingOption = mappingOption;
+            _this.loadDashBoard();
+        };
+        this.getCpuUtils = function (displayOption) {
+            var _post = {
+                report_type: "cpu",
+                displayOption: displayOption
+            };
+            nw_dashboard_column_1.cpuGridObj.data = [];
+            _this.commonService.postRequest('_asset/getAssetDashboardDataList', _post).then(function (res) {
+                if (res.status == 'success') {
+                    _this.dashboardWidgets[0].isReady = true;
+                    _this.dashboardWidgets[0].data = [];
+                    var cpuInfos = res.items[0].WidgetTypeData[0].info[0].info;
+                    var dataArr = [];
+                    cpuInfos.forEach(function (info) {
+                        if (info.AssetPerformaceData.cpu) {
+                            var toPushObj = {};
+                            toPushObj.name = info.hostname;
+                            toPushObj.value = info.AssetPerformaceData.cpu + '%';
+                            toPushObj.styleObj = {};
+                            toPushObj.countObj = {};
+                            toPushObj.info = info;
+                            dataArr.push(toPushObj);
+                            info.cpu = info.AssetPerformaceData.cpu;
+                            info.deviceStatus = (info.AssetPerformaceData.deviceStatus && info.AssetPerformaceData.deviceStatus == 1 ? 'UP' : 'DOWN');
+                            info.memory = info.AssetPerformaceData.memory;
+                            nw_dashboard_column_1.cpuGridObj.data.push(info);
+                        }
+                    });
+                    _this.dashboardWidgets[0].data = _this.buildDataArr(dataArr);
+                }
+            }, function (err) {
+            });
+        };
+        this.getMemoryUtils = function (displayOption) {
+            var _post = {
+                report_type: "memory",
+                displayOption: displayOption
+            };
+            nw_dashboard_column_1.memoryGridObj.data = [];
+            _this.commonService.postRequest('_asset/getAssetDashboardDataList', _post).then(function (res) {
+                if (res.status == 'success') {
+                    _this.dashboardWidgets[1].isReady = true;
+                    _this.dashboardWidgets[1].data = [];
+                    var memoryInfos = res.items[0].WidgetTypeData[0].info[0].info;
+                    var dataArr = [];
+                    memoryInfos.forEach(function (info) {
+                        if (info.AssetPerformaceData.memory) {
+                            info.perfType = 'memory';
+                            var toPushObj = {};
+                            toPushObj.name = info.hostname;
+                            toPushObj.value = info.AssetPerformaceData.memory + '%';
+                            toPushObj.styleObj = {};
+                            toPushObj.countObj = {};
+                            toPushObj.info = info;
+                            dataArr.push(toPushObj);
+                            info.cpu = info.AssetPerformaceData.cpu;
+                            info.deviceStatus = (info.AssetPerformaceData.deviceStatus && info.AssetPerformaceData.deviceStatus == 1 ? 'UP' : 'DOWN');
+                            info.memory = info.AssetPerformaceData.memory;
+                            nw_dashboard_column_1.memoryGridObj.data.push(info);
+                        }
+                    });
+                    _this.dashboardWidgets[1].data = _this.buildDataArr(dataArr);
+                }
+            }, function (err) {
+            });
+        };
+        this.getUtilization = function (displayOption) {
+            var _post = {
+                report_type: "utilization",
+                displayOption: displayOption
+            };
+            nw_dashboard_column_1.utilsGridObj.data = [];
+            _this.commonService.postRequest('_asset/getAssetDashboardDataList', _post).then(function (res) {
+                if (res.status == 'success') {
+                    _this.dashboardWidgets[2].isReady = true;
+                    _this.dashboardWidgets[2].data = [];
+                    var utils = res.items[0].WidgetTypeData[0].info.info;
+                    var dataArr = [];
+                    utils.forEach(function (info) {
+                        if (info.linkPerformaceData.in || info.linkPerformaceData.out) {
+                            /*var utilVal = info.linkPerformaceData.in || info.linkPerformaceData.out;
+                            if(info.linkPerformaceData.out && info.linkPerformaceData.in){
+                                if(parseInt(info.linkPerformaceData.out) > parseInt(info.linkPerformaceData.in)){
+                                    utilVal = info.linkPerformaceData.out;
+                                }else{
+                                    utilVal = info.linkPerformaceData.in;
+                                }
+                            }*/
+                            var toPushObj = {};
+                            toPushObj.name = info.link_desc || (info.device_name + ' ' + info.interface_name);
+                            toPushObj.value = info.linkPerformaceData.maxPercentage + '%';
+                            ;
+                            toPushObj.styleObj = {};
+                            toPushObj.countObj = {};
+                            toPushObj.info = info;
+                            dataArr.push(toPushObj);
+                            info.in = info.linkPerformaceData.in;
+                            info.inErrors = info.linkPerformaceData.inErrors;
+                            info.inPercentage = info.linkPerformaceData.inPercentage;
+                            info.maxPercentage = info.linkPerformaceData.maxPercentage;
+                            info.minPercentage = info.linkPerformaceData.minPercentage;
+                            info.out = info.linkPerformaceData.out;
+                            info.outErrors = info.linkPerformaceData.outErrors;
+                            info.outPercentage = info.linkPerformaceData.outPercentage;
+                            info.linkstatus = (info.linkPerformaceData.linkstatus && info.linkPerformaceData.linkstatus == 1 ? 'UP' : 'DOWN');
+                            info.devstatus = (info.linkPerformaceData.devstatus && info.linkPerformaceData.devstatus == 1 ? 'UP' : 'DOWN');
+                            nw_dashboard_column_1.utilsGridObj.data.push(info);
+                        }
+                    });
+                    _this.dashboardWidgets[2].data = _this.buildDataArr(dataArr);
+                }
+                console.log('res', res);
+            }, function (err) {
+            });
+        };
+        this.getErrors = function (displayOption) {
+            var _post = {
+                report_type: "errors",
+                displayOption: displayOption
+            };
+            nw_dashboard_column_1.errosGridObj.data = [];
+            _this.commonService.postRequest('_asset/getAssetDashboardDataList', _post).then(function (res) {
+                if (res.status == 'success') {
+                    _this.dashboardWidgets[3].isReady = true;
+                    _this.dashboardWidgets[3].data = [];
+                    var utils = res.items[0].WidgetTypeData[0].info.info;
+                    var dataArr = [];
+                    utils.forEach(function (info) {
+                        if (info.linkPerformaceData.maxError) {
+                            var toPushObj = {};
+                            toPushObj.name = info.link_desc || (info.device_name + ' ' + info.interface_name);
+                            toPushObj.value = info.linkPerformaceData.maxError;
+                            toPushObj.info = info;
+                            toPushObj.styleObj = {};
+                            toPushObj.countObj = {};
+                            dataArr.push(toPushObj);
+                            info.in = info.linkPerformaceData.in;
+                            info.inErrors = info.linkPerformaceData.inErrors;
+                            info.inPercentage = info.linkPerformaceData.inPercentage;
+                            info.maxPercentage = info.linkPerformaceData.maxPercentage;
+                            info.minPercentage = info.linkPerformaceData.minPercentage;
+                            info.out = info.linkPerformaceData.out;
+                            info.outErrors = info.linkPerformaceData.outErrors;
+                            info.outPercentage = info.linkPerformaceData.outPercentage;
+                            info.linkstatus = (info.linkPerformaceData.linkstatus && info.linkPerformaceData.linkstatus == 1 ? 'UP' : 'DOWN');
+                            info.devstatus = (info.linkPerformaceData.devstatus && info.linkPerformaceData.devstatus == 1 ? 'UP' : 'DOWN');
+                            nw_dashboard_column_1.errosGridObj.data.push(info);
+                        }
+                    });
+                    _this.dashboardWidgets[3].data = _this.buildDataArr(dataArr);
+                }
+                console.log('res', res);
+            }, function (err) {
+            });
+        };
+        this.excellDownLoad = function () {
+            var multiExcellObj = {
+                excelName: 'Network Status',
+                data: [nw_dashboard_column_1.cpuGridObj, nw_dashboard_column_1.memoryGridObj, nw_dashboard_column_1.utilsGridObj, nw_dashboard_column_1.errosGridObj]
+            };
+            _this.excellService.generateMultiExcell(multiExcellObj);
+        };
+        this.goToPerformance = function (barData, widgetData) {
+            if (widgetData.tittle == "Utilization") {
+                barData.info.linkGraphType = 'inPercentage';
+            }
+            if (widgetData.tittle == "Errors") {
+                barData.info.linkGraphType = 'inErrors';
+            }
+            _this.pageView.setData(barData.info);
+            _this.router.navigate(['/assets-details']);
+        };
+        this.buildDataArr = function (dataArr) {
+            var colorArr = ["#f12e36", "#f3595f", "#f58387", "#f7acaf", "#f7acaf", "#f7acaf", "#f7acaf", "#f7acaf", "#f7acaf", "#f7acaf", "#f7acaf"];
+            dataArr.forEach(function (val, key) {
+                val.color = '#00b050';
+                if (parseInt(val.value) > 80) {
+                    val.color = colorArr[0];
+                }
+                val.styleObj.backgroundColor = val.color;
+                val.styleObj.width = ((parseInt(val.value) / parseInt(dataArr[0].value)) * 100) + '%';
+                val.countObj.left = (((parseInt(val.value) / parseInt(dataArr[0].value)) * 100) + 10) + '%';
+            });
+            return dataArr;
+        };
+        this.goToHomePage = function () {
+            _this.commonService.gotoDashboard();
+        };
+    }
+    NwDashboardComponent.prototype.ngOnInit = function () {
+        this.loadDashBoard();
+    };
+    NwDashboardComponent = __decorate([
+        core_1.Component({
+            selector: '<nw-dashboard>',
+            template: __webpack_require__(1731),
+            styles: [__webpack_require__(1732)],
+        }),
+        __metadata("design:paramtypes", [router_1.Router, common_service_1.CommonService, ngx_cookie_1.CookieService, page_view_service_1.PageViewService, excell_service_1.ExcellService])
+    ], NwDashboardComponent);
+    return NwDashboardComponent;
+}());
+exports.NwDashboardComponent = NwDashboardComponent;
+
+
+/***/ }),
+
+/***/ 1730:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cpuGridObj = {
+    pdfName: 'CPU UTILIZATION ',
+    pdfTitle: 'CPU UTILIZATION',
+    excelTitle: 'CPU UTILIZATION',
+    excelName: 'CPU UTILIZATION',
+    id: 'CPU_UTILIZATION',
+    data: [],
+    columns: [{
+            dataKey: 'ip',
+            title: 'Device Ip',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'hostname',
+            title: 'Host Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'location',
+            title: 'Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'make',
+            title: 'Make',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'model',
+            title: 'Model',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'serialNumber',
+            title: 'Serial Number',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'firmware',
+            title: 'Firmware',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'cpu',
+            title: 'CPU Utilization',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'memory',
+            title: 'Memory Utilization',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'deviceStatus',
+            title: 'Device Status',
+            hide: false,
+            width: ''
+        }
+    ]
+};
+exports.memoryGridObj = {
+    pdfName: 'MEMORY UTILIZATION ',
+    pdfTitle: 'MEMORY UTILIZATION',
+    excelTitle: 'MEMORY UTILIZATION',
+    excelName: 'MEMORY UTILIZATION',
+    id: 'MEMORY_UTILIZATION',
+    data: [],
+    columns: [{
+            dataKey: 'ip',
+            title: 'Device Ip',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'hostname',
+            title: 'Host Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'location',
+            title: 'Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'make',
+            title: 'Make',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'model',
+            title: 'Model',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'serialNumber',
+            title: 'Serial Number',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'firmware',
+            title: 'Firmware',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'cpu',
+            title: 'CPU Utilization',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'memory',
+            title: 'Memory Utilization',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'deviceStatus',
+            title: 'Device Status',
+            hide: false,
+            width: ''
+        }
+    ]
+};
+exports.utilsGridObj = {
+    pdfName: 'UTILIZATION ',
+    pdfTitle: 'UTILIZATION',
+    excelTitle: 'UTILIZATION',
+    excelName: 'UTILIZATION',
+    id: 'UTILIZATION',
+    data: [],
+    columns: [{
+            dataKey: 'ip',
+            title: 'Device Ip',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'device_name',
+            title: 'Host Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'interface_name',
+            title: 'Interface Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_desc',
+            title: 'Link Description',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_type',
+            title: 'Link Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'location',
+            title: 'Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'make',
+            title: 'Make',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'model',
+            title: 'Model',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'in',
+            title: 'In Traffic',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'out',
+            title: 'Out Traffic',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'inErrors',
+            title: 'In Errors',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'outErrors',
+            title: 'Out Errors',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'inPercentage',
+            title: 'In Percentage',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'outPercentage',
+            title: 'Out Percentage',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'devstatus',
+            title: 'Device Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkstatus',
+            title: 'Link Status',
+            hide: false,
+            width: ''
+        }
+    ]
+};
+exports.errosGridObj = {
+    pdfName: 'ERROR UTILIZATION ',
+    pdfTitle: 'ERROR UTILIZATION',
+    excelTitle: 'ERROR UTILIZATION',
+    excelName: 'ERROR UTILIZATION',
+    id: 'ERROR_UTILIZATION',
+    data: [],
+    columns: [{
+            dataKey: 'ip',
+            title: 'Device Ip',
+            hide: false,
+            width: '',
+        }, {
+            dataKey: 'device_name',
+            title: 'Host Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'siteName',
+            title: 'Site Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'interface_name',
+            title: 'Interface Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_desc',
+            title: 'Link Description',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link_type',
+            title: 'Link Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'location',
+            title: 'Location',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'make',
+            title: 'Make',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'model',
+            title: 'Model',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'in',
+            title: 'In Traffic',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'out',
+            title: 'Out Traffic',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'inErrors',
+            title: 'In Errors',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'outErrors',
+            title: 'Out Errors',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'inPercentage',
+            title: 'In Percentage',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'outPercentage',
+            title: 'Out Percentage',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'devstatus',
+            title: 'Device Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkstatus',
+            title: 'Link Status',
+            hide: false,
+            width: ''
+        }
+    ]
+};
+
+
+/***/ }),
+
+/***/ 1731:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = "<div id=\"covercloud\">\n\n</div>\n<section id=\"main-content\">\n    <section class=\"wrapper\">\n\t\t<ol class=\"breadcrumb\">\n\t\t\t<li><a (click)=\"goToHomePage()\">Home</a></li>\n\t\t\t<li class=\"active\">Network Dashboard</li>\n\t\t</ol>\n\t\t<div class=\"row\" id=\"asset-management\">\n\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t<div class=\"box-title box-title-tabs\">\n\t\t\t\t\t\t<div class=\"pull-right custom-parent\">\n\t\t\t\t\t\t\t<div class=\"box-tab\" *ngIf=\"ParentChildFlag\">\n\t\t\t\t\t\t\t\t <ul class=\"nav nav-tabs\" role=\"tablist\">\n\t\t\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'all'}\"><a (click)=\"mappingOption('all',index,widget)\" aria-controls=\"all\" role=\"tab\" data-toggle=\"tab\">ALL</a></li>\n\t\t\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'parent'}\"><a (click)=\"mappingOption('parent',index,widget)\" aria-controls=\"parent\" role=\"tab\" data-toggle=\"tab\">MAIN</a></li>\n\t\t\t\t\t\t\t\t\t<li role=\"presentation\" [ngClass]=\"{'active' : selectedMappingOption == 'child'}\"><a (click)=\"mappingOption('child',index,widget)\" aria-controls=\"child\" role=\"tab\" data-toggle=\"tab\">MEMBERS</a></li>\n\t\t\t\t\t\t\t\t  </ul>\n\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t<ul class=\"box-title-right\">\n\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t\t<img class=\"export-nw-dash\" src=\"" + __webpack_require__(500) + "\" (click)=\"excellDownLoad()\">\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t\t<h3>Network Dashboard</h3>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t<div class=\"row\" id=\"nw-dasboard\">\n\t\t\t<div class=\"no-padding\" [ngClass]=\"widget.className\" *ngFor=\"let widget of dashboardWidgets; let index =index\">\n\t\t\t\t<div class=\"col-md-12\" *ngIf=\"widget.widgetType == 'progressBarChart'\">\n\t\t\t\t\t<div class=\"box-title\"> \n\t\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t\t<img-icon class=\"svg\" src=\"{{widget.icon}}\"></img-icon>\n\t\t\t\t\t\t\t<h3>{{widget.tittle}}</h3>\n\t\t\t\t\t\t</div>            \n\t\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"box-border\">   \n\t\t\t\t\t<div class=\"box-tab\"> \n\t\t\t\t\t\t<div style=\"min-height : 201px\" class=\"tab-content\" *ngIf= \"widget.isReady && widget.data\">\n\t\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane active\">\n\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t<div class=\"progress-container col-xs-12\" *ngFor=\"let bar of widget.data\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"col-xs-6\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"bar-title\"><b>{{bar.name}}</b></div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"col-xs-4\">\n\t\t\t\t\t\t\t\t\t\t\t<div (click)=\"goToPerformance(bar,widget)\" class=\"progress progress-chart\" [ngStyle]=\"bar.styleObj\">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"100\" aria-valuemin=\"0\" aria-valuemax=\"100\" >\n\t\t\t\t\t\t\t\t\t\t\t\t\t<span [ngStyle]=\"bar.countObj\" class=\"bar-count\"><b>{{bar.value}}</b></span>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"nw-no-data\" *ngIf=\"!widget.data.length\"> {{widget.errorMessage}} </div>\n\t\t\t\t\t\t\t\t</div>                  \n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div style=\"height : 201px\" *ngIf=\"!widget.isReady\">\n\t\t\t\t\t\tLoading...\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n    </section>\n</section>\n";
+
+/***/ }),
+
+/***/ 1732:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1733);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1733:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1734);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./nw-dashboard.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./nw-dashboard.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1734:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".progress-chart{\r\n\theight : 16px !important;\r\n\tborder-radius : 10px !important;\r\n\tcursor: pointer;\r\n}\r\n#nw-dasboard .bar-count {\r\n\t\tposition: absolute;\r\n\t\tcolor: #636363;\r\n\t\tfont-size : 16px;\r\n}\r\n#nw-dasboard .bar-title{\r\n\tfont-size : 12px;\r\n}\r\n\r\n#nw-dasboard {\r\n\tmargin-top : 20px; \r\n}\r\n\r\n.custom-parent  .box-tab {\r\n\tdisplay : inline-block;\r\n\tmargin-right : 5px;\r\n}\r\n\r\n.custom-parent  .box-tab .nav-tabs {\r\n\tmargin : 0px;\r\n}\r\n\r\n.custom-parent  .box-title-right {\r\n\tdisplay : inline-flex;\r\n}\r\n\r\n.margintop {\r\n\tmargin-top : 0px !important; \r\n}\r\n\r\n.export-nw-dash {\r\n\tcursor : pointer;\r\n}\r\n.nw-no-data{\r\n\ttext-align : center;\r\n\tmargin-top : 100px;\r\n}\r\n\r\n.custom-parent .box-tab .nav > li > a:hover: {\r\n\tborder : 0px !important;\r\n}\r\n\r\n.custom-parent .box-tab .nav > li > a:focus:after {\r\n\tborder : 0px !important;\r\n}\r\n\r\n.custom-parent .box-tab .nav > li > a:hover:after {\r\n\tborder : 0px !important;\r\n}\r\n\r\n.custom-parent .box-tab .nav-tabs > li.active > a:after {\r\n\tborder : 0px !important;\r\n}\r\n \r\n.custom-parent .box-tab .nav-tabs > li.active > a:after{\r\n\tborder : 0px !important;\r\n}\r\n\r\n \r\n\r\n\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1735:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var nw_dashboard_component_1 = __webpack_require__(1401);
+var NW_DASHBOARD_ROUTER = [
+    {
+        path: '',
+        component: nw_dashboard_component_1.NwDashboardComponent,
+        pathMatch: 'full'
+    }
+];
+exports.nwDashboardRouter = router_1.RouterModule.forChild(NW_DASHBOARD_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>24.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>9cb689cbdb3d2300429e2a9a489619c2</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.24.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_9cb689cbdb3d2300429e2a9a489619c2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:01</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

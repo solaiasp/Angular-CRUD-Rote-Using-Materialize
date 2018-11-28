@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.40.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([40],{
+
+/***/ 1320:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var nse_sla_dashboard_component_1 = __webpack_require__(1559);
+var nse_sla_dashboard_router_1 = __webpack_require__(1911);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var NseSlaDashboardModule = /** @class */ (function () {
+    function NseSlaDashboardModule() {
+    }
+    NseSlaDashboardModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, nse_sla_dashboard_router_1.NseSlaDashboardRouter],
+            declarations: [nse_sla_dashboard_component_1.NseSlaDashboardComponent]
+        })
+    ], NseSlaDashboardModule);
+    return NseSlaDashboardModule;
+}());
+exports.NseSlaDashboardModule = NseSlaDashboardModule;
+
+
+/***/ }),
+
+/***/ 1559:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var router_1 = __webpack_require__(48);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var page_view_service_1 = __webpack_require__(498);
+var NseSlaDashboardComponent = /** @class */ (function () {
+    function NseSlaDashboardComponent(router, commonServices, cookies, dateFilter, pageView) {
+        var _this = this;
+        this.router = router;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.pageView = pageView;
+        this.displayStatusDataArray = [];
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.getReports = function (fromDate, toDate) {
+            _this.loader = true;
+            _this.commonServices.postRequest('_workflow/getNSEOrdersSLADetailList', { "fromdate": fromDate, "todate": toDate }).then(function (resDetails) {
+                if (resDetails.status == "success") {
+                    _this.displayStatusDataArray = [];
+                    _this.orgData = resDetails.items[0];
+                    _this.statusData = resDetails.items[0].NSEOrdersSLAList;
+                    _this.statusData.forEach(function (value, key) {
+                        var status, percentage;
+                        var obj = {};
+                        if (value.orderType == "SCNACT") {
+                            status = 'Activation';
+                        }
+                        else if (value.orderType == "SCNSFT") {
+                            status = 'Shift';
+                        }
+                        else if (value.orderType == "SCNSUR") {
+                            status = 'Surrender';
+                        }
+                        value.NSEOrdersSLAStatusDetails.forEach(function (value, key) {
+                            if (value.StatusType == 'complete') {
+                                percentage = value.percentage;
+                            }
+                        });
+                        obj = {
+                            status: status,
+                            percentage: percentage
+                        };
+                        _this.displayStatusDataArray.push(obj);
+                    });
+                    _this.loader = false;
+                }
+            }, function (resErr) {
+                _this.loader = false;
+            });
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        this.gotoTicketSLA = function () {
+            _this.router.navigate(['/nse-sla-report']);
+        };
+        this.gotoStatusSLA = function () {
+            _this.pageView.setData({ data: _this.orgData });
+            _this.router.navigate(['/order-status']);
+        };
+    }
+    NseSlaDashboardComponent.prototype.ngOnInit = function () {
+        var today = new Date();
+        var time = today.getTime();
+        var lastWeekTime = time - (24 * 7 * 60 * 60 * 1000);
+        this.fromDate = new Date(lastWeekTime);
+        this.maxDate = new Date();
+        this.maxDate.setDate(this.maxDate.getDate());
+        this.yesterDay = new Date();
+        this.yesterDay.setDate(this.yesterDay.getDate());
+        this.fromDate = this.dateFilter.transform(this.yesterDay, "yyyy-MM-dd");
+        this.toDate = this.dateFilter.transform(this.maxDate, "yyyy-MM-dd");
+        this.getReports(this.fromDate, this.toDate);
+    };
+    NseSlaDashboardComponent = __decorate([
+        core_1.Component({
+            selector: '<nse-sla-dashboard>',
+            template: __webpack_require__(1907),
+            styles: [__webpack_require__(1908)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, page_view_service_1.PageViewService])
+    ], NseSlaDashboardComponent);
+    return NseSlaDashboardComponent;
+}());
+exports.NseSlaDashboardComponent = NseSlaDashboardComponent;
+
+
+/***/ }),
+
+/***/ 1907:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n\t<section class=\"wrapper\">\n\t\t<ol class=\"breadcrumb\">\n\t\t\t<li><a (click)=\"goToHomePage()\">Home</a></li>\n\t\t\t<li class=\"active\">NSE SLA Dashboard</li>\n\t\t</ol> \n\t\t<div class=\"col-md-12\" style=\"padding:0px;\">\n\t\t\t<div class=\"box-title box-title-tabs\">\n\t\t\t\t <div class=\"pull-right\">\n\t\t\t\t\t<li>\n\t\t\t\t\t\t<div class=\"picker\">                    \n\t\t\t\t\t\t<div class=\"input-group datetimepicker-start-end\">\n\t\t\t\t\t\t\t<input bsDatepicker  (ngModelChange)=\"getReports($event ,toDate)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [maxDate]=\"maxDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\"><span>to</span>\n                            <input bsDatepicker  (ngModelChange)=\"getReports(fromDate,$event)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\" [minDate]=\"fromDate\" [maxDate]=\"maxDate\"> \n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n\t\t\t\t\t</div>\n\t\t\t\t  </li>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t<h3>NSE SLA Dashboard</h3>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t</div>\n\t\t</div>\t\t\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-md-8 col-md-offset-2\" id=\"nse-sla-dashboard\">\t\t\t\n\t\t\t\t<content-loader *ngIf=\"loader\"></content-loader>\n\t\t\t\t<div class=\"tab-content clearfix\"  *ngIf =\"!loader\">\n\t\t\t\t\t<table class=\"table table-bordered table-responsive ng-scope\">\n\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t<tr class=\"table-heading-row\">\n\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t <div class=\"th-title\"> </div>\n\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t <div class=\"th-title\"> KPI </div>\n\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t <div class=\"th-title\"> Target KPI </div>\n\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t <div class=\"th-title\"> Agreed KPI </div>\n\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t  <th>\n\t\t\t\t\t\t\t\t <div class=\"th-title\"> Achived KPI </div>\n\t\t\t\t\t\t\t  </th>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>\t\n\t\t\t\t\t\t\t\t\t<div class=\"th-title\"> Availability </div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\t\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> POPs </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> Backbone Links </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> Member Last Mile Links </div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\t\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\">  uptime </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> uptime </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> uptime </div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> 99.99% </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> 99.99% </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> 99.99% </div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<a class=\"th-column col-md-12\" (click)=\"gotoTicketSLA()\"> value</a>\n\t\t\t\t\t\t\t\t\t\t<a class=\"th-column col-md-12\" (click)=\"gotoTicketSLA()\">  value</a>\n\t\t\t\t\t\t\t\t\t\t<a class=\"th-column col-md-12\" (click)=\"gotoTicketSLA()\">   value</a>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t<td>\t\n\t\t\t\t\t\t\t\t\t<div class=\"th-title\"> Service Request </div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<div *ngFor=\"let item of displayStatusDataArray\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> {{item.status}} </div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> uptime </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> uptime </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> uptime </div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> 14 Days </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> 5 Days </div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"th-column col-md-12\"> 7 Days </div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t<td class=\"sla-column\">\n\t\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t\t<div *ngFor=\"let item of displayStatusDataArray\">\n\t\t\t\t\t\t\t\t\t\t\t<a class=\"th-column col-md-12\" (click)=\"gotoStatusSLA()\"> {{item.percentage}} </a>\n\t\t\t\t\t\t\t\t\t\t</div> \n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t</tr> \n\t\t\t\t\t\t</tbody>\n\t\t\t\t\t</table>\t\t\t\t \n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div> \n\t</section>\n</section>";
+
+/***/ }),
+
+/***/ 1908:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1909);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1909:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1910);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./nse-sla-dashboard.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./nse-sla-dashboard.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1910:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\r\n#nse-sla-dashboard .sla-column {\r\n\tbackground-color : #fff;\r\n}\r\n\r\n#nse-sla-dashboard .tab-content {\r\n\tmargin-top: 20px;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1911:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var nse_sla_dashboard_component_1 = __webpack_require__(1559);
+var NSE_SLA_DASHBOARD_ROUTER = [
+    {
+        path: '',
+        component: nse_sla_dashboard_component_1.NseSlaDashboardComponent,
+        pathMatch: 'full'
+    }
+];
+exports.NseSlaDashboardRouter = router_1.RouterModule.forChild(NSE_SLA_DASHBOARD_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>40.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>9cb6c9cbdb3d2300429e2a9a48961910</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.40.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_9cb6c9cbdb3d2300429e2a9a48961910</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

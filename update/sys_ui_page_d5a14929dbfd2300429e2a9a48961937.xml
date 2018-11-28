@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script/>
+        <description>Index page of the angular2 SAP.</description>
+        <direct>true</direct>
+        <endpoint>x_293519_princenew_index.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+
+  <!-- Ugh...jelly...some people love it....I do not -->
+  <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+  <div style="display:none"><g:evaluate object="true">var g_ck=gs.getSession().getSessionToken();</g:evaluate></div>
+<html>
+  <head>
+    
+   <title>Customer Portal</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+	 <script>(function() { window['_g_ck']="$[g_ck]"; })()</script>
+  <link href="d1a14929dbfd2300429e2a9a48961934.cssdbx?no-cache={{styles-md5}}" rel="stylesheet" type="text/css" ></link></head>
+  <body>
+    <my-app>Loading...</my-app>
+  </body>
+</html>
+
+  <!-- 
+      ****************************************************************************
+      * BUNDLED FILES
+      ****************************************************************************
+      * We have to use jelly to include our bundled files. This tries to default
+      * to finding 4 files (inline,main,vendor,polyfill) within the same scope as the ui page
+      * if your files are named differently, then you will need to manually add them.
+      ****************************************************************************
+    <g:requires name="scope.script.jsdbx" />
+  -->
+  <g:requires name="$[this].vendor.jsdbx?no-cache=89aadbab0af4eaa7b616" />
+  <g:requires name="$[this].polyfills.jsdbx?no-cache=89aadbab0af4eaa7b616" />
+  <g:requires name="$[this].app.jsdbx?no-cache=89aadbab0af4eaa7b616" />
+  
+  <!--
+      ****************************************************************************
+      * LIVE RELOAD
+      ****************************************************************************
+      * Uncomment this to enable live reload. This requires that you have the live
+      * reload application (https://github.com/nathangrove/servicenow-livereload.git)
+      * installed on your instance. This isn't really necessary for Angular2 
+      * development. Developing locally is much better. 
+      ****************************************************************************
+      <g:requires name="x_ngrove_livereload.ui_page_livereload.jsdbx?page=$[sys_id]" />
+  -->   
+    
+</j:jelly>]]></html>
+        <name>index</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-15 15:03:43</sys_created_on>
+        <sys_id>d5a14929dbfd2300429e2a9a48961937</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>index</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_page_d5a14929dbfd2300429e2a9a48961937</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+    </sys_ui_page>
+</record_update>

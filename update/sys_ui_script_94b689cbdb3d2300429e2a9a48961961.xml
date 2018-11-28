@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.43.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([43],{
+
+/***/ 1276:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var multicast_pop_component_1 = __webpack_require__(1367);
+var multicast_pop_router_1 = __webpack_require__(1581);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var MulticastPopModule = /** @class */ (function () {
+    function MulticastPopModule() {
+    }
+    MulticastPopModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, multicast_pop_router_1.MulticastPopRouter],
+            declarations: [
+                multicast_pop_component_1.MulticastPopComponent,
+            ],
+        })
+    ], MulticastPopModule);
+    return MulticastPopModule;
+}());
+exports.MulticastPopModule = MulticastPopModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1367:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var MulticastPopComponent = /** @class */ (function () {
+    function MulticastPopComponent(commonServices) {
+        var _this = this;
+        this.commonServices = commonServices;
+        /*  removeExistingIps(existingIps:any)
+         {
+           existingIps=[
+             this.ipTemp[0],
+             this.ipTemp[1],
+             this.ipTemp[2]
+           ];
+           let originalIps=[
+             ...this.ipTemp
+           ];
+           let existingIpsObj={};
+           existingIps.map((ip:any)=>{
+             existingIpsObj[ip.deviceip]=Object.assign({},ip,{});
+           });
+           console.log(existingIpsObj);
+     let formattedIps=originalIps.filter((ip:any)=>{
+       return existingIpsObj[ip.deviceip]==undefined;
+     });
+     
+         } */
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    MulticastPopComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.ips = [];
+        this.ipGroup = [];
+        this.ipTemp = [];
+        this.ipsObj = {};
+        this.filteredIps = [];
+        this.disablePopName = false;
+        this.data = "no";
+        this.message = "Fetching Data...";
+        this.popTypes = ["DC", "DR", "Captive", "Shared"];
+        this.commonServices.postRequest(' /_workflow/NSEFlowsDetails/deviceip', { username: "ADMIN_76434" }).then(function (response) {
+            _this.ipTemp = response.items.slice();
+            console.log("ipTemp", _this.ipTemp);
+            _this.ipTemp.map(function (ipDetails) {
+                var tempIpObj = { ip: ipDetails.deviceip, ipLabel: ipDetails.deviceip + " - " + ipDetails.hostname, ipValue: ipDetails.deviceip + "," + ipDetails.hostname + "," + ipDetails.type };
+                _this.ips = _this.ips.concat([Object.assign({}, tempIpObj, {})]);
+            });
+            _this.currentPop = "Create New Pop";
+            _this.filteredIps = _this.ips.slice();
+            console.log("ipTemp", _this.ipTemp);
+            _this.refreshPopList();
+        });
+    };
+    MulticastPopComponent.prototype.selectedPopType = function (val) {
+        console.log('popType', val);
+    };
+    MulticastPopComponent.prototype.addToExistingPop = function (popName, popDevices) {
+        var _this = this;
+        this.popName = popName;
+        this.currentPop = "Add Ips";
+        popDevices.map(function (ipDetails) {
+            _this.ipsObj[ipDetails.IP] = Object.assign({}, ipDetails, {});
+        });
+        console.log("popName ", popName, "popDevices ", popDevices);
+        this.filteredIps = this.ips.filter(function (ip) {
+            return _this.ipsObj[ip.ip] == undefined;
+        });
+        this.disablePopName = true;
+    };
+    MulticastPopComponent.prototype.addNewPop = function () {
+        this.popName = "";
+        this.currentPop = "Create New Pop";
+        this.filteredIps = this.ips.slice();
+        this.disablePopName = false;
+        document.getElementById("popName").className = "form-control ng-pristine ng-invalid ng-touched";
+    };
+    MulticastPopComponent.prototype.deleteIp = function (popName, ip) {
+        var _this = this;
+        this.data = "no";
+        this.message = "Fetching data...";
+        this.commonServices.postRequest('/_optical/PopDeviceDeleteRequest', { IP: ip, popName: popName }).then(function (response) {
+            if (response.status == "success") {
+                _this.commonServices.success(response.message);
+                _this.ipGroup = [];
+                _this.popName = "";
+                _this.refreshPopList();
+            }
+            else {
+                _this.commonServices.error(response.message);
+            }
+        }, function (err) {
+            _this.commonServices.error(err);
+        });
+    };
+    MulticastPopComponent.prototype.refreshPopList = function () {
+        var _this = this;
+        this.commonServices.getRequest('/_optical/PopListResponse').then(function (response) {
+            if (response.items[0] != undefined) {
+                _this.mockPopData = response.items[0].PopList.slice();
+                _this.finalmockData = [];
+                //this.finalmockData=[...this.finalmockData,Object.assign({},this.mockPopData[0],{})];
+                _this.finalmockData = _this.mockPopData.slice();
+                console.log("mockPopData ", _this.mockPopData);
+                _this.data = "yes";
+                _this.message = "";
+            }
+            else {
+                _this.finalmockData = [];
+                _this.data = "no";
+                _this.message = "No Data Available";
+            }
+        }, function (err) {
+            _this.data = "no";
+            _this.message = err;
+        });
+    };
+    MulticastPopComponent.prototype.selectedOption = function (val) {
+        console.log(val);
+        console.log('ipgroup', this.ipGroup);
+    };
+    MulticastPopComponent.prototype.submitMulticastPop = function () {
+        var _this = this;
+        console.log(this.popName);
+        console.log('submittedvalues', this.ipGroup);
+        var constructedIpGroup = [];
+        document.getElementById("popName").className = "form-control ng-pristine ng-invalid ng-touched";
+        this.data = "no";
+        this.message = "Fetching data...";
+        this.ipGroup.map(function (val) {
+            var ipandhostname = val.split(",");
+            constructedIpGroup = constructedIpGroup.concat([{ popName: _this.popName, IP: ipandhostname[0], hostname: ipandhostname[1], type: ipandhostname[2] }]);
+        });
+        console.log('ip_hostname', constructedIpGroup);
+        var postData = {
+            "action": "create",
+            "pop_name": this.popName,
+            "ip_hostname": constructedIpGroup.slice()
+        };
+        var add = "yes";
+        if (this.currentPop == "Create New Pop") {
+            add = "yes";
+        }
+        else if (this.currentPop == "Add Ips") {
+            add = "no";
+        }
+        else {
+            add = "nil";
+        }
+        this.commonServices.postRequest('/_optical/PopListRequest', { popName: this.popName, add: add, PopList: constructedIpGroup.slice(), popType: this.popType }).then(function (response) {
+            if (response.status == "success") {
+                _this.commonServices.success(response.message);
+                _this.ipGroup = [];
+                _this.popName = "";
+                _this.refreshPopList();
+            }
+            else {
+                _this.commonServices.error(response.message);
+            }
+        }, function (err) {
+            _this.commonServices.error(err);
+        });
+    };
+    MulticastPopComponent = __decorate([
+        core_1.Component({
+            selector: 'multicast-pop',
+            template: __webpack_require__(1577),
+            styles: [__webpack_require__(1578)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService])
+    ], MulticastPopComponent);
+    return MulticastPopComponent;
+}());
+exports.MulticastPopComponent = MulticastPopComponent;
+
+
+/***/ }),
+
+/***/ 1577:
+/***/ (function(module, exports) {
+
+module.exports = "<!--  Section Start -->\n<section id=\"multicast-pop\">\n    <section id=\"main-content\">\n      <section class=\"wrapper\">\n        <ol class=\"breadcrumb\">\n          <li>\n            <a (click)=\"goToHomePage()\">Home</a>\n          </li>\n          <li class=\"active\">Multicast Pop</li>\n        </ol>\n        \n        <div class=\"row\" style=\"margin-top:20px;\">\n            <div class=\"col-md-5 col-md-offset-1\"  *ngIf=\"data=='no'\">\n                    <div class=\"col-md-10\" style=\"padding:10px;border:1px solid #a7a2a2;margin-bottom:3px;margin-left:60px;margin-top:45px;\">\n                            {{message}}\n                            </div>\n            </div>\n            <div class=\"col-md-5 col-md-offset-1\"  *ngIf=\"data=='yes'\">\n                <div  class=\"row\" *ngFor=\"let pop of finalmockData\">\n                <div class=\"col-md-12\" style=\"padding:10px;background:#dfdfde;\">\n                        <div class=\"col-md-6\">{{pop.popName}}</div>\n                        <div class=\"col-md-3\"></div>\n                        <div class=\"col-md-1 hover-hand text-center\" style=\"float:right;\" (click)=\"deleteIp(pop.popName,'')\">\n                                <span class=\"fa fa-fw fa-trash\"></span>\n                        </div>\n                        <div class=\"col-md-1 hover-hand text-center\" style=\"float:right;\" (click)=\"addToExistingPop(pop.popName,pop.PopDevices)\">\n                                <span class=\"fa fa-fw fa-plus-square\"></span>\n                            </div>\n                      \n                </div>\n                <div class=\"col-md-12\" style=\"padding:10px;\">\n                   <div *ngFor=\"let ipDetail of pop.PopDevices\" style=\"padding:10px;border:1px solid #a7a2a2;margin-bottom:3px;margin-left:60px;\">\n                            <span style=\"margin-left:10px;\">\n                                {{ipDetail.IP}}\n                            </span>\n                            <span style=\"margin-left:10px;\">\n                                 - ( {{ipDetail.hostname}} \n                                </span>\n                                <span style=\"margin-left:10px;\">\n                                        - {{ipDetail.type}} )\n                                       </span>\n                                       <span class=\"hover-hand text-center\" style=\"float:right;\" (click)=\"deleteIp(pop.popName,ipDetail.IP)\">\n                                            <span  class=\" fa fa-fw fa-trash\"></span>\n                                       </span>\n                   </div>\n                </div>\n            </div>\n          </div>\n          <div class=\"col-md-6\"  style=\"position:fixed;top:25%;left:50%;\">\n                <div class=\"row\">\n                <div class=\"col-md-9\"></div>\n                <div class=\"col-md-1 hover-hand text-center\" (click)=\"addNewPop()\">\n                        <span class=\"fa fa-fw fa-plus-square\"></span>\n                    </div>\n                    </div>\n                <div class=\"row\" style=\"margin-bottom:30px;\">\n                        <div class=\"col-md-8 col-md-offset-2\">\n                                <button  type=\"submit\" class=\"border-btn-custom-ip\" [disabled]=\"true\">{{currentPop}}</button>\n                            </div>\n                    </div>\n                <div class=\"row\">\n                    <div class=\"col-md-8 col-md-offset-2\">\n                        <input [(ngModel)]=\"popName\" id=\"popName\" type=\"text\" name=\"popname\" class=\"form-control\" required [disabled]=\"disablePopName\"/>\n                        <span class=\"floating-label\">Pop Name <span>*</span></span>\n                  </div>\n                  </div>\n                <div class=\"row\" style=\"margin-top:30px;\">\n                  <div class=\"col-md-8 col-md-offset-2\">\n                    <ngx-select [multiple]=\"true\" [items]=\"filteredIps\" optionValueField=\"ipValue\" optionTextField=\"ipLabel\" [(ngModel)]=\"ipGroup\" name=\"ip\" (select)=\"selectedOption($event)\" placeholder=\"Select Ips\"></ngx-select>\n                    <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Ips <span>*</span></span>\n                </div>\n                </div>\n                <div class=\"row\" style=\"margin-top:40px;\">\n                        <div class=\"col-md-8 col-md-offset-2\">\n                          <ngx-select  [items]=\"popTypes\"  [(ngModel)]=\"popType\" name=\"popType\" (select)=\"selectedPopType($event)\" placeholder=\"Select Pop Type\"></ngx-select>\n                          <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Pop Type <span>*</span></span>\n                      </div>\n                      </div>\n                <div class=\"row\" style=\"margin-top:20px;margin-bottom:200px;\">\n                    <div class=\"col-md-8 col-md-offset-2\">\n                        <button (click)=\"submitMulticastPop()\" type=\"submit\" class=\"border-btn active\" >Submit</button>\n                  </div>\n                  </div>\n                </div>\n          </div>\n      </section>\n    </section>\n    </section>\n    <!--  Section End -->";
+
+/***/ }),
+
+/***/ 1578:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1579);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1579:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1580);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./multicast-pop.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./multicast-pop.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1580:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#multicast-pop .floating-label\r\n{\r\n    left:20px !important;\r\n}\r\n#multicast-pop .hover-hand:hover\r\n{\r\n    cursor:pointer;\r\n}\r\n#multicast-pop .border-btn-custom-ip\r\n{\r\n    background-color: transparent;\r\n    border: 1px solid #d2d6db;\r\n    border-radius: 10px;\r\n    color: #9e9f9f;\r\n    text-transform: uppercase;\r\n    padding: 7px 16px;\r\n    font-size: 16px;\r\n    font-weight: bold;\r\n    display: inline-block;\r\n    margin: 3px 5px;\r\n    position: relative;\r\n    letter-spacing: 1px;\r\n}\r\n\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1581:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var multicast_pop_component_1 = __webpack_require__(1367);
+var MULTICAST_POP_ROUTER = [
+    {
+        path: '',
+        component: multicast_pop_component_1.MulticastPopComponent,
+        pathMatch: 'full'
+    }
+];
+exports.MulticastPopRouter = router_1.RouterModule.forChild(MULTICAST_POP_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>43.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>94b689cbdb3d2300429e2a9a48961961</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.43.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_94b689cbdb3d2300429e2a9a48961961</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

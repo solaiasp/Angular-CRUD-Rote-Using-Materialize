@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.45.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([45],{
+
+/***/ 1317:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var ipsla_matrix_component_1 = __webpack_require__(1556);
+var ipsla_matrix_router_1 = __webpack_require__(1895);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var IpslaMatrixModule = /** @class */ (function () {
+    function IpslaMatrixModule() {
+    }
+    IpslaMatrixModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, ipsla_matrix_router_1.IpslaMatrixRouter],
+            declarations: [
+                ipsla_matrix_component_1.IpslaMatrixComponent,
+            ],
+        })
+    ], IpslaMatrixModule);
+    return IpslaMatrixModule;
+}());
+exports.IpslaMatrixModule = IpslaMatrixModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1556:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var modal_1 = __webpack_require__(104);
+var common_service_1 = __webpack_require__(61);
+var excell_service_1 = __webpack_require__(266);
+var common_1 = __webpack_require__(6);
+var IpslaMatrixComponent = /** @class */ (function () {
+    function IpslaMatrixComponent(modalService, commonService, excellService, dateFilter) {
+        var _this = this;
+        this.modalService = modalService;
+        this.commonService = commonService;
+        this.excellService = excellService;
+        this.dateFilter = dateFilter;
+        this.goToHomePage = function () {
+            _this.commonService.gotoDashboard();
+        };
+    }
+    IpslaMatrixComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.loader = false;
+        this.loadGraph = false;
+        this.popHtml = "";
+        this.dateType = "live";
+        this.showGraph = false;
+        this._postData = {};
+        this.gridLoader = false;
+        this.packetLossGraphOptions = {
+            chart: {
+                type: "lineWithFocusChart",
+                height: 450,
+                margin: {
+                    top: 20,
+                    right: 20,
+                    bottom: 60,
+                    left: 85
+                },
+                x: function (d) {
+                    if (d) {
+                        return new Date(d.TIMESTAMP).getTime();
+                    }
+                },
+                y: function (d) {
+                    if (d) {
+                        // console.log("dy", d);
+                        if (d.PACKETSLOSSSD || d.PACKETSLOSSSD == 0) {
+                            //console.log("d.PACKETSLOSSSD", d.PACKETSLOSSSD);
+                            return d.PACKETSLOSSSD;
+                        }
+                        else if (d.PACKETSLOSSDS || d.PACKETSLOSSDS == 0) {
+                            // console.log("d.PACKETSLOSSDS", d.PACKETSLOSSDS);
+                            return d.PACKETSLOSSDS;
+                        }
+                    }
+                },
+                interactiveLayer: {
+                    tooltip: {
+                        valueFormatter: function (d, i) {
+                            //console.log("d", d);
+                            return d + " Packets";
+                        }
+                    }
+                },
+                color: d3.scale.category10().range(),
+                duration: 300,
+                useInteractiveGuideline: true,
+                clipVoronoi: false,
+                focusShowAxisX: false,
+                xAxis: {
+                    axisLabel: "Date",
+                    tickFormat: function (d) {
+                        return d3.time.format("%d/%b/%y %H:%M")(new Date(d));
+                    },
+                    wrapLabels: true,
+                    axisLabelDistance: 15,
+                    showMaxMin: false,
+                    staggerLabels: true
+                },
+                yAxis: {
+                    axisLabel: "Percentage",
+                    tickFormat: function (d) {
+                        return d3.format(".02f")(d);
+                    },
+                    axisLabelDistance: 15,
+                    rotateYLabel: true,
+                    showMaxMin: true
+                },
+                x2Axis: {
+                    tickFormat: function (d) {
+                        return d3.time.format("%d/%b/%y %H:%M")(new Date(d));
+                    }
+                },
+                y2Axis: {
+                    tickFormat: function (d) {
+                        return d3.format(".02f")(d);
+                    }
+                },
+                callback: function (chart) { }
+            }
+        };
+        // this.packetLossGraphOptions.chart.;
+        this.ipslaGraphOptions = {
+            chart: {
+                type: "lineWithFocusChart",
+                height: 450,
+                margin: {
+                    top: 20,
+                    right: 20,
+                    bottom: 60,
+                    left: 85
+                },
+                x: function (d) {
+                    if (d) {
+                        return new Date(d.TIMESTAMP).getTime();
+                    }
+                },
+                y: function (d) {
+                    if (d) {
+                        return d.AVGRESPTIME;
+                    }
+                },
+                color: d3.scale.category10().range(),
+                duration: 300,
+                useInteractiveGuideline: true,
+                clipVoronoi: false,
+                focusShowAxisX: false,
+                xAxis: {
+                    axisLabel: "Date",
+                    tickFormat: function (d) {
+                        return d3.time.format("%d/%b/%y %H:%M")(new Date(d));
+                    },
+                    wrapLabels: true,
+                    axisLabelDistance: 15,
+                    showMaxMin: false,
+                    staggerLabels: true
+                },
+                yAxis: {
+                    axisLabel: "ms",
+                    tickFormat: function (d) {
+                        return d3.format(".02f")(d);
+                    },
+                    axisLabelDistance: 15,
+                    rotateYLabel: true,
+                    showMaxMin: true
+                },
+                x2Axis: {
+                    tickFormat: function (d) {
+                        return d3.time.format("%d/%b/%y %H:%M")(new Date(d));
+                    }
+                },
+                y2Axis: {
+                    tickFormat: function (d) {
+                        return d3.format(".02f")(d);
+                    }
+                },
+                callback: function (chart) { }
+            }
+        };
+        this.ipslaGraphOptions.chart.interactiveLayer = {
+            tooltip: {
+                valueFormatter: function (d, i) {
+                    return d;
+                }
+            }
+        };
+        this.gridDataObj = {
+            itemsPerPage: 10,
+            hideIndex: true,
+            id: "ipsla-matrix-1",
+            data: [],
+            columns: [],
+            pdfName: "IpSla Matrix",
+            pdfTitle: "IpSla Matrix",
+            excelTitle: "IpSla Matrix",
+            excelName: "IpSla Matrix"
+        };
+        /* let dop:any={
+        "status": "success",
+        "message": "",
+        "totalItems": 1,
+        "start": 0,
+        "end": 0,
+        "items": [
+            {
+                "IPSLAMatrixList": [
+                    {
+                        "name": "IPLC"
+                    },
+                    {
+                        "name": "TIER1"
+                    },
+                    {
+                        "name": "TIRE2"
+                    },
+                    {
+                        "name": "Nuthan"
+                    },
+                    {
+                        "name": "'TIER1'"
+                    }
+                ]
+            }
+        ]
+    }; */
+        this.commonService
+            .postRequest("/api/metro_matrix_list", { otype: "r2" })
+            .then(function (res) {
+            _this.matrixnames = [];
+            res.items[0].IPSLAMatrixList.map(function (val) {
+                _this.matrixnames.push(val.name);
+            });
+            var minutes = 5 * 60 * 1000;
+            setInterval(function () {
+                if (_this.selectedMatrixOption) {
+                    _this.selectedMatrixName(_this.selectedMatrixOption);
+                }
+            }, minutes);
+            /* this.gridDataObj.columns = [
+          { */
+            /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+          return {
+            click:false,
+            html:cellProps.customerId+'( '+cellProps.customerName+')'
+          };
+          }
+          */
+            /*  dataKey : '',	title : '',		hide : false,width:''
+            },
+            {	dataKey : '',	title : '',		hide : false,width:''	},
+            {	dataKey : '',	title : '',		hide : false,width:''	},
+          {	dataKey : '',	title : '',		hide : false,width:''	},
+            {	dataKey : '',	title : '',		hide : false,width:''	},
+            {	dataKey : '',	title : '',		hide : false,width:''	},
+            {	dataKey : '',	title : '',		hide : false,width:''	}
+        ]; */
+        });
+        this.dateSelect("live");
+        this.loadGraph = true;
+    };
+    IpslaMatrixComponent.prototype.toggleFullscreen = function (elem) {
+        console.log("toggleFullscreen", elem);
+        var document1 = document;
+        elem = elem || document1.documentElement;
+        if (!document1.fullscreenElement &&
+            !document1.mozFullScreenElement &&
+            !document1.webkitFullscreenElement &&
+            !document1.msFullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            }
+            else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+            else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            }
+            else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            }
+        }
+        else {
+            if (document1.exitFullscreen) {
+                document1.exitFullscreen();
+            }
+            else if (document1.msExitFullscreen) {
+                document1.msExitFullscreen();
+            }
+            else if (document1.mozCancelFullScreen) {
+                document1.mozCancelFullScreen();
+            }
+            else if (document1.webkitExitFullscreen) {
+                document1.webkitExitFullscreen();
+            }
+        }
+    };
+    IpslaMatrixComponent.prototype.selectedMatrixName = function (value) {
+        var _this = this;
+        console.log(value);
+        var date = new Date();
+        this.gridLoader = true;
+        this.lastRefreshTime =
+            date.toLocaleDateString() +
+                " " +
+                date.getHours() +
+                ":" +
+                date.getMinutes() +
+                ":" +
+                date.getSeconds();
+        this.showGraph = false;
+        this.selectedMatrixOption = value;
+        var dest = [];
+        var source = [];
+        var sourceObj = [];
+        var destObj = [];
+        var resp; //={"status":"success","message":"","totalItems":1,"start":0,"end":0,"items":[{"IPSLAMatrixData":[{"sourceName":"AIR","sourceIP":"1.7.0.161","DestinationData":[{"destName":"AIR-NDA-DC-5G-AIRT-NLD","eHealthIP":"223.30.77.239","elementID":"1222350","timestamp":"-","avgResTime":"10","packetsLossDS":"0","packetsLossSD":"0","sampleTimestamp":"-","thresholdValueRt":"35","thresholdValuePl":"35","destDevName":"MUM-AIR-T1-C9006-CBB-R-1-100.65.159.49-Jitter-101-TOS-0-AP"}]},{"sourceName":"ENT","sourceIP":"1.7.0.130","DestinationData":[{"destName":"ENT-HYD-SS-5G-AIRT-NLD","eHealthIP":"223.30.77.239","elementID":"1222405","timestamp":"-","avgResTime":"15","packetsLossDS":"6","packetsLossSD":"6","sampleTimestamp":"-","thresholdValueRt":"14","thresholdValuePl":"14","destDevName":"MUM-ENT-T1-C9006-CBB-R-2-100.65.179.178-Jitter-100-TOS-0-AP"}]},{"sourceName":"OKH","sourceIP":"1.7.0.66","DestinationData":[{"destName":"OKH-KAN-100MB-TATA-NLD","eHealthIP":"223.30.77.239","elementID":"1223843","timestamp":"-","avgResTime":"-","packetsLossDS":"-","packetsLossSD":"-","sampleTimestamp":"-","thresholdValueRt":"20","thresholdValuePl":"20","destDevName":"DEL-OKHLA-T1-C9006-CBB-R-2-100.65.191.77-Jitter-100-TOS-0-AP"}]},{"sourceName":"TDL","sourceIP":"1.7.0.1","DestinationData":[{"destName":"TDL-CCU-STM4-PGCI-NLD","eHealthIP":"223.30.77.239","elementID":"1223838","timestamp":"-","avgResTime":"-","packetsLossDS":"-","packetsLossSD":"-","sampleTimestamp":"-","thresholdValueRt":"31","thresholdValuePl":"31","destDevName":"TN-MAA-TDL-T1-ST-xxC9006-CBB-R1-100.66.1.85-ICMP-210-TOS-0-AP"}]},{"sourceName":"VEL","sourceIP":"1.7.0.34","DestinationData":[{"destName":"VEL-NDA-DC-5G-TATA-NLD","eHealthIP":"223.30.77.239","elementID":"1222500","timestamp":"-","avgResTime":"-","packetsLossDS":"-","packetsLossSD":"-","sampleTimestamp":"-","thresholdValueRt":"38","thresholdValuePl":"38","destDevName":"TN-MAA-VEL-T1-ST-xxC9006-CBB-R2-100.65.161.153-Jitter-201-TOS-0"}]}]}]}
+        this.commonService
+            .postRequest("/api/MatrixDetailsRecentdata", {
+            otype: "matrix_details",
+            matrixname: value,
+            ehealthip: "",
+            elementid: ""
+        })
+            .then(function (res1) {
+            console.log(resp);
+            resp = res1;
+            if (resp.status == "failure") {
+                _this.gridLoader = false;
+                _this.selectedMatrixOption = undefined;
+                _this.commonService.success(resp.message);
+                return;
+            }
+            dest.push({ dataKey: value, title: value, hide: false, width: "" });
+            var matrix = resp.items[0].IPSLAMatrixData;
+            //let matrix: any = resp[0].IPSLAMatrixData;
+            matrix.map(function (data) {
+                var tempObj = {};
+                data.DestinationData.map(function (val) {
+                    // console.log('val.avgrestime destdata',val.avgrestime,destObj.indexOf(data.sourcename+"-"+val.destname));
+                    if (destObj.indexOf(data.sourceName + "-" + val.destName) == -1) {
+                        _this.loader = false;
+                        // console.log('data.destdata');
+                        var locObj = {
+                            dataKey: data.sourceName + "-" + val.destName,
+                            title: val.destName,
+                            hide: false,
+                            width: "",
+                            cell: function (row, col) {
+                                //   if(row[col.dataKey] > 0){
+                                // console.log(row);
+                                if (!(parseInt(row[col.dataKey]).toString() == "NaN")) {
+                                    var color = "red";
+                                    if (parseInt(row[col.dataKey]) <
+                                        parseInt(row[col.dataKey + "thresholdValueRt"]))
+                                        color = "green";
+                                    var table = " <table class='table-black'>" +
+                                        "<tr>" +
+                                        " <th></th>" +
+                                        "  <th>Value</th>" +
+                                        " <th>Threshold</th>" +
+                                        " </tr>" +
+                                        " <tr>" +
+                                        "  <td>RT(ms)</td>" +
+                                        " <td class='" +
+                                        color +
+                                        "'>" +
+                                        row[col.dataKey] +
+                                        "</td>" +
+                                        "  <td>" +
+                                        row[col.dataKey + "thresholdValueRt"] +
+                                        "</td>" +
+                                        " </tr>" +
+                                        " <tr>" +
+                                        " <td>SD(%)</td>" +
+                                        "  <td>" +
+                                        row[col.dataKey + "PACKETSLOSSSD"] +
+                                        "</td>" +
+                                        "  <td>" +
+                                        row[col.dataKey + "thresholdValuePl"] +
+                                        "</td>" +
+                                        "  </tr>" +
+                                        " <tr>" +
+                                        " <td>DS(%)</td>" +
+                                        " <td>" +
+                                        row[col.dataKey + "PACKETSLOSSDS"] +
+                                        "</td>" +
+                                        " <td>" +
+                                        row[col.dataKey + "thresholdValuePl"] +
+                                        "</td>" +
+                                        "  </tr>" +
+                                        " </table>";
+                                    _this.popHtml = table;
+                                    return {
+                                        click: true,
+                                        tooltip: _this.nameInputRef,
+                                        html: "<span class='" +
+                                            color +
+                                            "'>" +
+                                            row[col.dataKey] +
+                                            "</span>"
+                                    };
+                                }
+                                else {
+                                    return {
+                                        html: "<span>" + row[col.dataKey] + "</span>"
+                                    };
+                                }
+                            }
+                        };
+                        //console.log('val.avgrestime',val.avgrestime);
+                        /* console.log(parseInt(val.avgrestime).toString());
+                    if(!(parseInt(val.avgrestime).toString()=="NaN"))
+                    locObj.link=true; */
+                        dest.push(locObj);
+                        destObj.push(data.sourceName + "-" + val.destName);
+                    }
+                    tempObj[data.sourceName + "-" + val.destName] = val.avgResTime;
+                    tempObj[data.sourceName + "-" + val.destName + "thresholdValuePl"] = val.thresholdValuePl;
+                    tempObj[data.sourceName + "-" + val.destName + "thresholdValueRt"] = val.thresholdValueRt;
+                    tempObj[data.sourceName + "-" + val.destName + "PACKETSLOSSSD"] =
+                        val.packetsLossSD;
+                    tempObj[data.sourceName + "-" + val.destName + "PACKETSLOSSDS"] =
+                        val.packetsLossDS;
+                    tempObj[data.sourceName + "-" + val.destName + "eHealthIP"] =
+                        val.eHealthIP;
+                    tempObj[data.sourceName + "-" + val.destName + "elementID"] =
+                        val.elementID;
+                });
+                tempObj[value] = data.sourceName;
+                source.push(tempObj);
+            });
+            source.map(function (val) {
+                destObj.map(function (val1) {
+                    if (!val[val1]) {
+                        if (val[val1] == 0)
+                            val[val1] = "0";
+                        else
+                            val[val1] = "X";
+                    }
+                });
+            });
+            console.log(source);
+            console.log(dest);
+            console.log(destObj);
+            _this.gridDataObj.columns = dest;
+            _this.gridDataObj.data = source;
+            _this.gridLoader = false;
+            /* let dataGridAnchor:any=document.getElementById('ipsla-matrix').getElementsByTagName("data-grid")[0].getElementsByTagName("a");
+  console.log('dataGridAnchor',dataGridAnchor.length); */
+            document.getElementById("tooltip").innerHTML =
+                "<a tooltip='Hi Angular6 ...'></a>";
+        }, function (err) {
+            _this.commonService.error(err);
+            _this.gridLoader = false;
+        });
+    };
+    /*
+  ngOnDestroy()
+  {
+    if(this.modalRef)
+    {
+      this.modalRef.hide();
+    }
+  } */
+    IpslaMatrixComponent.prototype.getReport = function () {
+        var _this = this;
+        this.showGraph = false;
+        this.loader = true;
+        this._postData = Object.assign({}, this._postData, {
+            fromDate: this.dateFilter.transform(this.fromDate, "yyyy-MM-dd"),
+            toDate: this.dateFilter.transform(this.toDate, "yyyy-MM-dd")
+        });
+        this.commonService
+            .postRequest("api/MatrixDetailsRecentdata", __assign({}, this._postData))
+            .then(function (res) {
+            _this.ipslaGraphData = [
+                {
+                    key: "AVGRESPONSETIME",
+                    values: res.items[0].IPSLAMatrixGraphData.reverse(),
+                    seriesIndex: 0
+                }
+            ];
+            var packetlossData = res.items[0].IPSLAMatrixGraphData.reverse();
+            _this.packetLossGraphData = [
+                { key: "PACKETSLOSSSD", values: [], seriesIndex: 0 },
+                { key: "PACKETSLOSSDS", values: [], seriesIndex: 1 }
+            ];
+            console.log("this.packetLossGraphData", JSON.stringify(_this.packetLossGraphData));
+            packetlossData.reverse().map(function (val) {
+                var PACKETSLOSSDS = val.PACKETSLOSSDS, packetlosssd = __rest(val, ["PACKETSLOSSDS"]);
+                var PACKETSLOSSSD = val.PACKETSLOSSSD, packetlossds = __rest(val, ["PACKETSLOSSSD"]);
+                _this.packetLossGraphData[0].values.push(Object.assign({}, packetlosssd, { series: 0 }));
+                _this.packetLossGraphData[1].values.push(Object.assign({}, packetlossds, { series: 1 }));
+            });
+            console.log("this.packetLossGraphData", _this.packetLossGraphData);
+            _this.showGraph = true;
+            _this.loader = false;
+            var element = document.getElementById("responsetime");
+            element.scrollIntoView();
+        }, function (err) {
+            _this.commonService.error(err);
+        });
+    };
+    IpslaMatrixComponent.prototype.getLinkedData = function (data) {
+        console.log("data", data);
+        this.showGraph = true;
+        this._postData = {};
+        this._postData.eHealthIP = data["row"][data.column.dataKey + "eHealthIP"];
+        this._postData.elementID = data["row"][data.column.dataKey + "elementID"];
+        this._postData.fromDate = this.dateFilter.transform(this.fromDate, "yyyy-MM-dd");
+        this._postData.toDate = this.dateFilter.transform(this.toDate, "yyyy-MM-dd");
+        this._postData.matrixname = this.matrixname;
+        this._postData.otype = "graph";
+        console.log("_postData", this._postData);
+        this.getReport();
+    };
+    IpslaMatrixComponent.prototype.dateSelect = function (selecteddate) {
+        var today = new Date();
+        var time = today.getTime();
+        var yesterday = time - 24 * 1 * 60 * 60 * 1000;
+        this.dateType = selecteddate;
+        if (selecteddate == "month") {
+            var lastMnthTime = time - 24 * 31 * 60 * 60 * 1000;
+            this.fromDate = new Date(lastMnthTime);
+            this.toDate = new Date(yesterday);
+        }
+        else if (selecteddate == "week") {
+            var lastWeekTime = time - 24 * 8 * 60 * 60 * 1000;
+            this.fromDate = new Date(lastWeekTime);
+            this.toDate = new Date(yesterday);
+        }
+        else if (selecteddate == "yesterday") {
+            var yesterday = time - 24 * 1 * 60 * 60 * 1000;
+            this.fromDate = new Date(yesterday);
+            this.toDate = new Date(yesterday);
+        }
+        else {
+            this.fromDate = new Date();
+            this.toDate = new Date();
+        }
+        this.fromDate.setHours(0);
+        this.fromDate.setMinutes(0);
+        this.fromDate.setSeconds(0);
+        this.toDate.setHours(23);
+        this.toDate.setMinutes(59);
+        this.toDate.setSeconds(59);
+    };
+    IpslaMatrixComponent.prototype.excelDownlod = function () {
+        this.graphGridDataObj = {
+            pdfName: "Response Time Ipsla Matrix",
+            pdfTitle: "Response Time Ipsla Matrix",
+            excelName: "Response Time Ipsla Matrix",
+            excelTitle: "Response Time Ipsla Matrix"
+        };
+        this.gridDataObj.fromDate = this.fromDate;
+        this.gridDataObj.toDate = this.toDate;
+        this.gridDataObj.id = "ipsla-matrix-response-time-graph";
+        this.gridDataObj.columns = [
+            {
+                dataKey: "AVGRESPTIME",
+                title: "AVGRESPTIME",
+                hide: false,
+                width: ""
+            },
+            {
+                dataKey: "TIMESTAMP",
+                title: "TIMESTAMP",
+                hide: false,
+                width: ""
+            },
+            {
+                dataKey: "PACKETSLOSSSD",
+                title: "PACKETSLOSSSD",
+                hide: false,
+                width: ""
+            },
+            {
+                dataKey: "PACKETSLOSSDS",
+                title: "PACKETSLOSSDS",
+                hide: false,
+                width: ""
+            }
+        ];
+        this.gridDataObj.data = this.ipslaGraphData[0].values;
+        this.excellService.generateExcell(this.gridDataObj);
+    };
+    __decorate([
+        core_1.ViewChild("popTemplate"),
+        __metadata("design:type", core_1.ElementRef)
+    ], IpslaMatrixComponent.prototype, "nameInputRef", void 0);
+    IpslaMatrixComponent = __decorate([
+        core_1.Component({
+            selector: "ipsla-matrix",
+            template: __webpack_require__(1891),
+            styles: [__webpack_require__(1892)]
+        }),
+        __metadata("design:paramtypes", [modal_1.BsModalService,
+            common_service_1.CommonService,
+            excell_service_1.ExcellService,
+            common_1.DatePipe])
+    ], IpslaMatrixComponent);
+    return IpslaMatrixComponent;
+}());
+exports.IpslaMatrixComponent = IpslaMatrixComponent;
+
+
+/***/ }),
+
+/***/ 1891:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = "<!-- Section Start -->\n<section id=\"ipsla-matrix\">\n  <section id=\"main-content\">\n    <section class=\"wrapper\">\n      <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n        <li class=\"active\">Ipsla Matrix</li>\n      </ol>\n      <div class=\"col-sm-12 no-padding\">\n        <div class=\"box-title box-title-tabs\">\n          <div class=\"pull-right col-md-6\">\n            <!--\n              ul class=\"box-title-right\">\n                  <li>\n                      <button type=\"button\" class=\"button-upload btn btn-primary\" style=\"padding:4px;\" (click)=\"openbulkupload(bulkUpload)\" >Bulk Upload</button>\n                    </li>\n              </ul>\n            -->\n            <div\n              class=\"col-md-6\"\n              style=\"margin-top:10px;\"\n              *ngIf=\"lastRefreshTime\"\n            >\n              Last Refresh Time: {{ lastRefreshTime }}\n            </div>\n            <div class=\"col-md-6\" *ngIf=\"lastRefreshTime == undefined\"></div>\n            <div class=\"col-md-4\" style=\"position:absolute;left:50%;\">\n              <ngx-select\n                [items]=\"matrixnames\"\n                [(ngModel)]=\"matrixname\"\n                [placeholder]=\"'Select Matrix Name'\"\n                (select)=\"selectedMatrixName($event, popTemplate)\"\n              ></ngx-select>\n            </div>\n            <div\n              class=\"col-md-2\"\n              style=\"margin-top:10px;position:absolute;left:83%;\"\n              id=\"full-screen-img\"\n            >\n              <i class=\"fa fa-expand\" (click)=\"toggleFullscreen(undefined)\"></i>\n            </div>\n          </div>\n          <div class=\"pull-left\"><h3>Ipsla Matrix</h3></div>\n          <div class=\"clearfix\"></div>\n        </div>\n      </div>\n      <div class=\"col-sm-12\" style=\"padding:10px;\" *ngIf=\"loader\"></div>\n      <div class=\"col-sm-12\">\n        <data-grid\n          *ngIf=\"!gridLoader && selectedMatrixOption\"\n          [gridobj]=\"gridDataObj\"\n          (linkClick)=\"getLinkedData($event)\"\n        ></data-grid>\n      </div>\n      <div class=\"col-sm-12\" *ngIf=\"showGraph\">\n        <!--\n          <nvd3 [options]=\"ipslaGraphOptions\" [data]=\"ipslaGraphData\"></nvd3>\n        -->\n        <div class=\"col-md-12 reports-chart\" id=\"reports\">\n          <div class=\"reports-chart-title\">\n            <span class=\"text-center\">Response Time</span>\n          </div>\n          <div class=\"col-md-12\">\n            <ul class=\"box-title-right pull-right\">\n              <li [ngClass]=\"{ 'rpt-btn-active': dateType == 'month' }\">\n                <button (click)=\"dateSelect('month')\">Month</button>\n              </li>\n              <li [ngClass]=\"{ 'rpt-btn-active': dateType == 'week' }\">\n                <button (click)=\"dateSelect('week')\">Week</button>\n              </li>\n              <li [ngClass]=\"{ 'rpt-btn-active': dateType == 'yesterday' }\">\n                <button (click)=\"dateSelect('yesterday')\">Yesterday</button>\n              </li>\n              <li [ngClass]=\"{ 'rpt-btn-active': dateType == 'live' }\">\n                <button (click)=\"dateSelect('live')\">NRT</button>\n              </li>\n              <li>\n                <div class=\"picker\">\n                  <div class=\"input-group datetimepicker-start-end\">\n                    <input\n                      bsDatepicker\n                      type=\"text\"\n                      class=\"form-control\"\n                      [(ngModel)]=\"fromDate\"\n                      [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n                      id=\"datetimepicker-start\"\n                      placeholder=\"From Date\"\n                      aria-invalid=\"false\"\n                      style=\"\"\n                    /><span>to</span>\n                    <input\n                      bsDatepicker\n                      type=\"text\"\n                      class=\"form-control\"\n                      [(ngModel)]=\"toDate\"\n                      [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n                      id=\"datetimepicker-end\"\n                      placeholder=\"To Date\"\n                      aria-invalid=\"false\"\n                    />\n                  </div>\n                  <i\n                    class=\"fa fa-calendar start-end-icon\"\n                    aria-hidden=\"true\"\n                  ></i>\n                </div>\n              </li>\n              <li>\n                <button (click)=\"dateType = ''; getReport()\">Get Report</button>\n              </li>\n              <li>\n                <img\n                  class=\"excell-img\"\n                  (click)=\"excelDownlod()\"\n                  src=\"" + __webpack_require__(500) + "\"\n                />\n              </li>\n            </ul>\n          </div>\n          <div class=\"reports-chart-content container-fluid\" id=\"responsetime\">\n            <div class=\"perf-graph-wrapper\">\n              <nvd3\n                [options]=\"ipslaGraphOptions\"\n                [data]=\"ipslaGraphData\"\n              ></nvd3>\n            </div>\n          </div>\n          <div class=\"reports-chart-title\">\n            <span class=\"text-center\">Packet Loss</span>\n          </div>\n          <div class=\"reports-chart-content container-fluid\">\n            <div class=\"perf-graph-wrapper\">\n              <nvd3\n                [options]=\"packetLossGraphOptions\"\n                [data]=\"packetLossGraphData\"\n              ></nvd3>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div\n        class=\"col-sm-12\"\n        *ngIf=\"loader || gridLoader\"\n        style=\"margin-top:30px;\"\n      >\n        <content-loader></content-loader>\n      </div>\n      <ng-template #popTemplate>\n        <div [innerHtml]=\"popHtml\"></div>\n      </ng-template>\n      <!--\n        <data-grid  *ngIf=\"!loader\" (linkClick)=\"getRequestListNext($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n\n        <content-loader *ngIf=\"loader\"></content-loader>\n      -->\n    </section>\n  </section>\n</section>\n<!-- Section End -->\n";
+
+/***/ }),
+
+/***/ 1892:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1893);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1893:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1894);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./ipsla-matrix.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./ipsla-matrix.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1894:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#ipsla-matrix data-grid td {\r\n  text-align: center;\r\n}\r\n#ipsla-matrix #full-screen-img:hover {\r\n  cursor: pointer;\r\n}\r\n#ipsla-matrix data-grid .tooltip-inner {\r\n  max-width: none;\r\n  background-color: none;\r\n  border: 1px solid black;\r\n  padding: 0px;\r\n  position: fixed;\r\n}\r\n#ipsla-matrix data-grid .table-black {\r\n  color: black;\r\n}\r\n#ipsla-matrix data-grid .red {\r\n  color: rgb(177, 43, 43);\r\n}\r\n#ipsla-matrix data-grid .green {\r\n  color: rgb(34, 163, 120);\r\n}\r\n#ipsla-matrix .rpt-btn-active button {\r\n  color: #fff;\r\n  background: #556670;\r\n}\r\n#ipsla-matrix #grid-data {\r\n  overflow-y: hidden;\r\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1895:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var ipsla_matrix_component_1 = __webpack_require__(1556);
+var IPSLA_MATRIX_ROUTER = [
+    {
+        path: '',
+        component: ipsla_matrix_component_1.IpslaMatrixComponent,
+        pathMatch: 'full'
+    }
+];
+exports.IpslaMatrixRouter = router_1.RouterModule.forChild(IPSLA_MATRIX_ROUTER);
+//router config text
+//	{ path: '', loadChildren: function() { return new Promise(function (resolve, reject) {  (require as any).ensure([], function (require: any) {    resolve(require('.\\modules\\foldername\\.module')['Module']);  }, function() {    reject({ loadChunkError: true });  });}) }, canActivate: [AuthGuard]},
+
+
+/***/ })
+
+});]]></script>
+        <script_name>45.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>d8b6c9cbdb3d2300429e2a9a4896191d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.45.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_d8b6c9cbdb3d2300429e2a9a4896191d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:20:59</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

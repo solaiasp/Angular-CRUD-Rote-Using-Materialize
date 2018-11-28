@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.35.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([35],{
+
+/***/ 1289:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var raise_request_component_1 = __webpack_require__(1395);
+var raise_request_router_1 = __webpack_require__(1699);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start raise-request-details */
+var RaiseRequestModule = /** @class */ (function () {
+    function RaiseRequestModule() {
+    }
+    RaiseRequestModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, raise_request_router_1.RaiseRequestRouter],
+            declarations: [
+                raise_request_component_1.RaiseRequestComponent,
+            ],
+        })
+    ], RaiseRequestModule);
+    return RaiseRequestModule;
+}());
+exports.RaiseRequestModule = RaiseRequestModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1395:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var common_1 = __webpack_require__(6);
+var ngx_cookie_1 = __webpack_require__(62);
+var router_1 = __webpack_require__(48);
+var common_2 = __webpack_require__(6);
+var RaiseRequestComponent = /** @class */ (function () {
+    function RaiseRequestComponent(router, cookies, location, commonServices, pageViewService, datePipe) {
+        var _this = this;
+        this.router = router;
+        this.cookies = cookies;
+        this.location = location;
+        this.commonServices = commonServices;
+        this.pageViewService = pageViewService;
+        this.datePipe = datePipe;
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    RaiseRequestComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.currentUser = this.cookies.getObject('globals');
+        this.currentState = this.router.routerState.snapshot.url.substring(1);
+        this.userData = this.cookies.getObject('globals') || {};
+        this.userType = this.currentUser.user_type;
+        this.title = 'Change Request';
+        this.pageData = this.pageViewService.getData();
+        if (this.userData.user_type == "6") {
+            this.editfield = false;
+            this.raisefield = true;
+        }
+        else {
+            this.editfield = true;
+            this.raisefield = false;
+        }
+        this.raiseTicketFormData = {};
+        //this.ddLists = ["Change Request - Device Change","Change Request - Provider Change","Change Request - Link Upgradation","Change Request - Link Decommissioning"];
+        this.commonServices.getRequest('/_itil/itilProblomCodes').then(function (response) {
+            console.log('itil6', response);
+            if (response['status'] == 'success') {
+                _this.ddLists = response.items[0].problemCodes[0].changeProblemCodes;
+            }
+        });
+        this.raiseTicketFormData.problemCode = this.ddLists;
+        this.deviceinfo = true;
+        this.linkinfo = false;
+        if (this.pageData) {
+            this.raiseTicketFormData = {};
+            this.raiseTicketFormData.problemcode = this.pageData.problem_code;
+            this.raiseTicketFormData.asset = this.pageData.asset_info;
+            this.raiseTicketFormData.mailId = this.pageData.contact_email;
+            this.raiseTicketFormData.contactNum = this.pageData.contact_num;
+            this.raiseTicketFormData.contactName = this.pageData.contact_name;
+            this.raiseTicketFormData.problemDes = this.pageData.problem_desc;
+        }
+        else {
+            this.router.navigate(['/internal-request']);
+        }
+    };
+    RaiseRequestComponent.prototype.raiseapprove = function (req) {
+        console.log('submit', req);
+        console.log(this.pageData);
+        if (this.pageData.taskType == "approve") {
+            this.editfield = true;
+            this.raisefield = false;
+            var linkPostData = { "reqId": this.pageData.reqId, "taskStatus": "0", "approverComments": req.problemDes, "loggedUser": this.userData.user_name };
+            console.log(linkPostData);
+            this.commonServices.postRequest('/_core/approveCustomerInternalRequest', linkPostData).then(function (response) {
+                if (response['status'] == 'success') {
+                    console.log("raise", response);
+                    this.commonServices.success(response['message']);
+                    this.router.navigate(['internal-request']);
+                }
+                else {
+                    this.commonServices.error(response['messages']);
+                }
+            });
+        }
+        else if (this.pageData.taskType == "reject") {
+            this.editfield = true;
+            this.raisefield = false;
+            var linkPostData = { "reqId": this.pageData.reqId, "taskStatus": "2", "approverComments": req.problemDes, "loggedUser": this.userData.user_name };
+            this.commonServices.postRequest('/_core/approveCustomerInternalRequest', linkPostData).then(function (response) {
+                if (response['status'] == 'success') {
+                    console.log("raise", response);
+                    this.commonServices.success(response['message']);
+                    this.router.navigate(["/internal-request"]);
+                }
+                else {
+                    this.commonServices.error(response['messages']);
+                }
+            });
+        }
+    };
+    RaiseRequestComponent.prototype.changeoptions = function (xchange) {
+        console.log(xchange);
+        if (xchange == "Change Request - Device Change") {
+            this.deviceinfo = true;
+            this.linkinfo = false;
+            var linkPostData = { "clientid": 10122, "state": "", "city": "", "device": "", "groupid": this.userData.group_id };
+            this.commonServices.postRequest('/getDeviceInfo_subuser', linkPostData).then(function (response) {
+                if (response['status'] == 'success') {
+                    console.log(response);
+                    this.ddLinkS = response.items;
+                }
+                else {
+                    this.commonServices.error(response['messages']);
+                }
+            });
+        }
+        else if (xchange == "Change Request - Provider Change" || xchange == "Change Request - Link Upgradation" || xchange == "Change Request - Link Decommissioning") {
+            this.deviceinfo = false;
+            this.linkinfo = true;
+            var linkPostData = { "clientid": 10122, "state": "", "city": "", "device": "", "groupid": this.userData.group_id };
+            this.commonServices.postRequest('/getLinksInfo', linkPostData).then(function (response) {
+                if (response['status'] == 'success') {
+                    console.log(response);
+                    this.ddLinkS = response.items;
+                }
+                else {
+                    this.commonServices.error(response['messages']);
+                }
+            });
+        }
+    };
+    RaiseRequestComponent.prototype.raiserequest = function (raise) {
+        var linkPostData = { "clientId": "10122", "problem_code": raise.problemCode, "problem_desc": raise.problemDes, "asset_info": raise.linkID.name, "requestedBy": this.userData.user_name, "contact_num": raise.contactNum, "contact_name": raise.contactName, "contact_email": raise.mailId };
+        this.commonServices.postRequest('/_core/addCustomerInternalRequest', linkPostData).then(function (response) {
+            if (response['status'] == 'success') {
+                console.log("raise", response);
+                this.commonServices.success(response['message']);
+                this.raiseTicketFormData = "";
+            }
+            else {
+                this.commonServices.error(response['messages']);
+            }
+        });
+    };
+    RaiseRequestComponent.prototype.cancelRequest = function () {
+        this.raiseTicketFormData = "";
+        this.router.navigate(['/internal-request']);
+    };
+    RaiseRequestComponent = __decorate([
+        core_1.Component({
+            selector: 'raise-request',
+            template: __webpack_require__(1695),
+            styles: [__webpack_require__(1696)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, ngx_cookie_1.CookieService, common_1.Location, common_service_1.CommonService, page_view_service_1.PageViewService, common_2.DatePipe])
+    ], RaiseRequestComponent);
+    return RaiseRequestComponent;
+}());
+exports.RaiseRequestComponent = RaiseRequestComponent;
+
+
+/***/ }),
+
+/***/ 1695:
+/***/ (function(module, exports) {
+
+module.exports = "<!--  Section Start -->\n  <section id=\"main-content\">\n      <section class=\"wrapper\">\n      <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n        <li class=\"active\"><a routerLink=\"/internal-request\">Internal Requests</a></li>\n        <li class=\"active\">{{title}}</li>\n    </ol>\n    <div class=\"dashboard-txt\">\n        <h1>{{title}}</h1>\n      </div>\n      <div class=\"container content-txt\">\n          <div class=\"raise-ticket-form\" *ngIf=\"editfield\">\n          <form name=\"raiseTicketForm\" novalidate=\"\">       \n              <div class=\"row\" >\n                 \n                  <div class=\"col-md-6\">\n                     <div class=\"form-group\">\n                          <input [(ngModel)]=\"raiseTicketFormData.problemcode\" type=\"text\"  class=\"form-control\" disabled=\"true\" name=\"problemcode\" required/>\n                          <span class=\"floating-label\">Problem Code <span>*</span></span>\n                      </div>\n                  <!--     <div class=\"form-group chosenselect\">                            \n                          <select allow-single-deselect=\"true\" placeholder-text-single=\"Select Problem Code\" chosen [(ngModel)]=\"raiseTicketFormData.problemCode\" options='ddLists' data-ng-options=\"dd for dd in ddLists\"  class=\"form-control\" ng-change=\"changeoptions(raiseTicketFormData.problemCode)\">\n                              <option value=\"\"></option>\n                          </select>\n                           <span class=\"floating-label\">Problem Code<span>*</span></span>\n                      </div> -->\n                  </div>\n                  <div class=\"col-md-6\">\n                     <div class=\"form-group\">\n                          <input [(ngModel)]=\"raiseTicketFormData.asset\" type=\"text\" name=\"asset\" class=\"form-control\" disabled=\"true\" required/>\n                          <span class=\"floating-label\">Asset <span>*</span></span>\n                      </div>\n                <!--       <div class=\"form-group chosenselect\">                            \n                          <select chosen options='ddLinkS' *ngIf=\"deviceinfo\" allow-single-deselect=\"true\" placeholder-text-single=\"Select Link Id\" data-ng-options=\"link.name for link in ddLinkS\" [(ngModel)]=\"raiseTicketFormData.linkID\" class=\"form-control\">\n                              <option value=\"\"></option>\n                          </select>\n                           <select chosen options='ddLinkS' *ngIf=\"linkinfo\" allow-single-deselect=\"true\" placeholder-text-single=\"Select Link Id\" data-ng-options=\"link.link_desc for link in ddLinkS\" [(ngModel)]=\"raiseTicketFormData.linkID\" class=\"form-control\">\n                              <option value=\"\"></option>\n                          </select>\n                           <span class=\"floating-label\">Asset<span>*</span></span>\n                      </div> -->\n                  </div>\n                  <div class=\"clearfix\"></div>     \n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                          <input [(ngModel)]=\"raiseTicketFormData.mailId\" disabled=\"true\" name=\"mailId\" type=\"text\"  class=\"form-control\" required/>\n                          <span class=\"floating-label\">Mail Id <span>*</span></span>\n                      </div>\n                  </div>   \n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                          <input [(ngModel)]=\"raiseTicketFormData.contactNum\"  disabled=\"true\" name=\"contactNum\" type=\"text\"  class=\"form-control\" required/>\n                          <span class=\"floating-label\">Contact No <span>*</span></span>\n                      </div>\n                  </div>\n                  <div class=\"clearfix\"></div>  \n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                        <input [(ngModel)]=\"raiseTicketFormData.contactName\" disabled=\"true\" name=\"contactName\" type=\"text\"  class=\"form-control\" required/>\n                        <span class=\"floating-label\">Contact Name <span>*</span></span>\n                      </div>\n                  </div>\n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                        <input [(ngModel)]=\"raiseTicketFormData.problemDes\" type=\"text\" name=\"problemDes\" class=\"form-control\" required/>\n                        <span class=\"floating-label\">Remarks <span>*</span></span>\n                      </div>\n                  </div>     \n                  <div class=\"clearfix\"></div>\n                  <div class=\"col-md-12 text-center\">\n                      <button (click)=\"raiseapprove(raiseTicketFormData)\" type=\"submit\" class=\"border-btn active\" >Raise</button>\n                      <button (click)=\"cancelRequest()\" class=\"border-btn\">CANCEL</button>\n                  </div>\n              </div>\n          </form>\n        </div>\n     <div class=\"raise-ticket-form\" *ngIf=\"raisefield\">\n          <form name=\"raiseTicketForm\" novalidate=\"\">       \n              <div class=\"row\" >\n                  <div class=\"col-md-6\">\n                        <div class=\"form-group\">\n                                <ngx-select [items]=\"ddLists\"  [(ngModel)]=\"raiseTicketFormData.problemCode\" name=\"problemcode\" (change)=\"changeoptions(raiseTicketFormData.problemCode)\"></ngx-select>\n                                <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Problem Code<span>*</span></span>\n                           </div>\n                  </div>\n                  <div class=\"col-md-6\">\n                                <div class=\"form-group\">\n                                     <ngx-select [items]=\"ddLinkS\" *ngIf=\"deviceinfo\" [(ngModel)]=\"raiseTicketFormData.linkID\" name=\"linkid\"></ngx-select>\n                                     <ngx-select [items]=\"ddLinkS\" *ngIf=\"linkinfo\" [(ngModel)]=\"raiseTicketFormData.linkID\" name=\"linkid\"></ngx-select>\n                                     <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Asset<span>*</span></span>\n                                </div>\n                  </div>\n                  <div class=\"clearfix\"></div>     \n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                          <input [(ngModel)]=\"raiseTicketFormData.mailId\" type=\"text\" name=\"mailId\"  class=\"form-control\" required/>\n                          <span class=\"floating-label\">Mail Id <span>*</span></span>\n                      </div>\n                  </div>   \n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                          <input [(ngModel)]=\"raiseTicketFormData.contactNum\"  type=\"text\" name=\"contactNum\"  class=\"form-control\" required/>\n                          <span class=\"floating-label\">Contact No <span>*</span></span>\n                      </div>\n                  </div>\n                  <div class=\"clearfix\"></div>  \n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                        <input [(ngModel)]=\"raiseTicketFormData.contactName\" type=\"text\" name=\"contactName\"  class=\"form-control\" required/>\n                        <span class=\"floating-label\">Contact Name <span>*</span></span>\n                      </div>\n                  </div>\n                  <div class=\"col-md-6\">\n                      <div class=\"form-group\">\n                        <input [(ngModel)]=\"raiseTicketFormData.problemDes\" type=\"text\" name=\"problemDes\"  class=\"form-control\" required/>\n                        <span class=\"floating-label\">Remarks <span>*</span></span>\n                      </div>\n                  </div>     \n                  <div class=\"clearfix\"></div>\n                  <div class=\"col-md-12 text-center\">\n                      <button (click)=\"raiserequest(raiseTicketFormData)\" type=\"submit\" class=\"border-btn active\" >Raise</button>\n                      <button (click)=\"cancelRequest()\" class=\"border-btn\">CANCEL</button>\n                  </div>\n              </div>\n          </form>\n                                  \n                                  </div>\n      </div>\n  </section>\n  </section>\n  <!--  Section End -->    ";
+
+/***/ }),
+
+/***/ 1696:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1697);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1697:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1698);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./raise-request.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./raise-request.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1698:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".main-menu {\n    height: auto;\n}\n  \n.main-menu li {\n    padding-right: 0px;\n}\n\n.main-menu li > a {\n    text-align: center;\n    font-size: 14px;\n    padding: 10px;\n    display: inline-block;\n}\n    .form-group:last-child{\n        margin-bottom: 30px;\n    }\n    .border-btn:hover::after, .border-btn:focus::after, .border-btn.active::after, .login-register-dropdown.open .border-btn::after {\n        content: '';\n        position: absolute;\n        bottom: 100%;\n        left: 50%;\n        margin-left: -15px;\n        width: 0;\n        height: 0;\n        border-bottom: solid 15px #00a6c9;\n        border-left: solid 15px transparent;\n        border-right: solid 15px transparent;\n        z-index: 100;\n        border-top: 0;\n        top: auto;\n    }\n    .navbar li.dropdown:hover > ul.dropdown-menu {\n\t    display: block;\n\t}\n\t.submenu .dropdown-menu {\n\t    padding: 0;\n        margin-top: 0;\n\t}\n\t.navbar.navbar-default.main-menu .submenu .dropdown-menu li, .navbar.navbar-default.main-menu .submenu .dropdown-menu li a {\n\t\twidth: 100%;\n\t\ttext-align: left;\n\t}\n    .ngx-select__selected\n    {\n     font-size:6px !important;\n    }\n    a:hover{\n        cursor:pointer;\n    }\n    ", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1699:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var raise_request_component_1 = __webpack_require__(1395);
+var RAISE_REQUEST_ROUTER = [
+    {
+        path: '',
+        component: raise_request_component_1.RaiseRequestComponent,
+        pathMatch: 'full'
+    }
+];
+exports.RaiseRequestRouter = router_1.RouterModule.forChild(RAISE_REQUEST_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>35.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>d0b689cbdb3d2300429e2a9a4896198e</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.35.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_d0b689cbdb3d2300429e2a9a4896198e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:22:58</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

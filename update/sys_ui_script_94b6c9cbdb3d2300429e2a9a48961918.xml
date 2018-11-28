@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.21.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([21],{
+
+/***/ 1311:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var wan_pool_component_1 = __webpack_require__(1550);
+var wan_pool_router_1 = __webpack_require__(1859);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var WanPoolModule = /** @class */ (function () {
+    function WanPoolModule() {
+    }
+    WanPoolModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, wan_pool_router_1.wanPoolRouter],
+            declarations: [wan_pool_component_1.WanPoolComponent]
+        })
+    ], WanPoolModule);
+    return WanPoolModule;
+}());
+exports.WanPoolModule = WanPoolModule;
+
+
+/***/ }),
+
+/***/ 1550:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var wan_pool_column_1 = __webpack_require__(1854);
+var modal_1 = __webpack_require__(104);
+var WanPoolComponent = /** @class */ (function () {
+    function WanPoolComponent(commonServices, cookies, dateFilter, modalService) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.modalService = modalService;
+        this.gridDataObj = wan_pool_column_1.wanPoolGridObj;
+        this.loader = false;
+        this.getWanPool = function () {
+            _this.loader = true;
+            _this.gridDataObj.data = [];
+            _this.commonServices.getRequest('/_workflow/NSEResourcewanIpList').then(function (response) {
+                if (response.status == "success") {
+                    _this.gridDataObj.data = response.items[0].NSEResourceWanIpList;
+                    _this.assignedOrFreeGrid = JSON.parse(JSON.stringify(_this.gridDataObj.data)).slice();
+                }
+                _this.loader = false;
+            }, function (err) {
+                _this.loader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.getLinkedData = function (eventObj) {
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    WanPoolComponent.prototype.ngOnInit = function () {
+        this.getWanPool();
+        this.gridDataObj.hasCheckbox = true;
+        this.gridDataObj.updateEvent = true;
+        this.statusDetails = ["ASSIGNED", "FREE"];
+        this.dynamicTab = ["ALL", "ASSIGNED", "FREE"];
+    };
+    WanPoolComponent.prototype.updatedCustomerDetails = function (details, updateDetails) {
+        console.log('details', details);
+        this.lanDetails = Object.assign({}, details, {});
+        this.modalRef = this.modalService.show(updateDetails, Object.assign({}, { class: 'modal-md' }));
+    };
+    WanPoolComponent.prototype.updateCustomerInfo = function () {
+        var _this = this;
+        var assignedorfree;
+        if (this.lanDetails.status == "ASSIGNED")
+            assignedorfree = { "id": this.lanDetails.id, "status": this.lanDetails.status, "remarks": this.lanDetails.remarks, "service": this.lanDetails.service, "detailId": this.lanDetails.detailId, "linkId": this.lanDetails.linkId };
+        if (this.lanDetails.status == "FREE")
+            assignedorfree = { "id": this.lanDetails.id, "status": this.lanDetails.status };
+        this.commonServices.postRequest('/_workflow/NSEResourceWanIpListUpdate', { "NSEResourceWanIpList": [assignedorfree] }).then(function (res) {
+            _this.commonServices.success(res.message);
+            if (res.status == "success") {
+                _this.getWanPool();
+            }
+            _this.modalRef.hide();
+        }, function (err) {
+            _this.commonServices.error(err);
+        });
+    };
+    WanPoolComponent.prototype.ngOnDestroy = function () {
+        if (this.modalRef) {
+            this.modalRef.hide();
+        }
+    };
+    WanPoolComponent.prototype.showTab = function (tab, i) {
+        this.activeTabName = tab;
+        console.log('activeTabName', this.activeTabName);
+        if (tab == "FREE" || tab == "ASSIGNED") {
+            this.gridDataObj.data = this.assignedOrFreeGrid.filter(function (data) {
+                return data.status == tab;
+            }).slice();
+        }
+        else {
+            this.gridDataObj.data = this.assignedOrFreeGrid.slice();
+        }
+    };
+    WanPoolComponent = __decorate([
+        core_1.Component({
+            selector: '<wan-pool>',
+            template: __webpack_require__(1855),
+            styles: [__webpack_require__(1856)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, modal_1.BsModalService])
+    ], WanPoolComponent);
+    return WanPoolComponent;
+}());
+exports.WanPoolComponent = WanPoolComponent;
+
+
+/***/ }),
+
+/***/ 1854:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.wanPoolGridObj = {
+    pdfName: 'Resource DB WAN IP Pool',
+    pdfTitle: 'Resource DB WAN IP Pool',
+    excelTitle: 'Resource DB WAN IP Pool',
+    excelName: 'Resource DB WAN IP Pool',
+    data: [],
+    id: 'resource_db_wan_ip_pool',
+    columns: [
+        {
+            dataKey: 'id',
+            title: 'Id',
+            hide: true,
+            width: ''
+        },
+        {
+            dataKey: 'supernet',
+            title: 'Supernet Segment',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'networkip',
+            title: 'Network Ip',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'ip1',
+            title: 'Ip 1',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'ip2',
+            title: 'Ip 2',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkId',
+            title: 'Link Id',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'detailId',
+            title: 'Detail Id',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'status',
+            title: 'Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'createdDate',
+            title: 'Created Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'assignedDate',
+            title: 'Assigned Date',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'releasedDate',
+            title: 'Released Date',
+            hide: false,
+            width: ''
+        }
+    ]
+};
+
+
+/***/ }),
+
+/***/ 1855:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li class=\"active\">Resource DB WAN IP Pool</li>\n      </ol>\n\n      <div class=\"row\">\n        <div class=\"pn-ProductNav_Wrapper\" style=\"position:relative;z-index:999;\" *ngIf=\"!loader\">\n            <nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n               <div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\">\n                  <a class=\"pn-ProductNav_Link\" [ngClass]=\"{'active' : activeTabName == tab}\" (click)=\"showTab(tab,i)\" *ngFor=\"let tab of dynamicTab;let i=index;\"> {{tab}}</a>\n               </div>\n            </nav>\n         </div>\n          </div>\n      <div class=\"row\" id=\"ResourceDBWan\">\n        <div class=\"col-md-12\">\n            <div class=\"box-title box-title-tabs\">              \n                <div class=\"pull-right\">\n                <ul class=\"box-title-right\">\n                    \n                </ul>\n                </div>\n                <div class=\"pull-left\">\n                  <h3>Resource DB WAN IP Pool</h3>\n                </div>\n                <div class=\"clearfix\"></div>\n            </div>\n        </div>\n    </div>\n    <data-grid  *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\" (updateClickEvent)=\"updatedCustomerDetails($event,editCustomer)\"></data-grid>\n\n    <content-loader *ngIf=\"loader\"></content-loader>   \n    </section>\n</section>\n<ng-template #editCustomer>\n    <div class=\"modal-header\">\n      <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n      <h4 class=\"modal-title\">Edit Wan Details</h4>\n    </div>\n    <div class=\"modal-body\" style=\"margin-top:20px;\">\n      <div class=\"form\">\n        <form novalidate=\"\" name=\"profileForm\">\n          <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" disabled=\"true\" [(ngModel)]=\"lanDetails.id\" name=\"lan_id\" required\n                />\n                <span class=\"floating-label\">Id</span>\n              </div>\n          <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" disabled=\"true\" [(ngModel)]=\"lanDetails.supernet\" name=\"supernet\" required\n                />\n                <span class=\"floating-label\">Supernet</span>\n              </div>\n              <div class=\"form-group\">\n                    <input type=\"text\" class=\"form-control\" disabled=\"true\" [(ngModel)]=\"lanDetails.networkip\" name=\"network_ip\" required\n                    />\n                    <span class=\"floating-label\">Network Ip</span>\n                  </div>\n          <div class=\"form-group\">\n            <input type=\"text\" class=\"form-control\" [(ngModel)]=\"lanDetails.service\" *ngIf=\"lanDetails.status=='ASSIGNED'\" name=\"service\" />\n            <span class=\"floating-label\">Service</span>\n          </div>\n          <div class=\"form-group\">\n                <ngx-select [items]=\"statusDetails\" [(ngModel)]=\"lanDetails.status\" name=\"status\" required></ngx-select>\n                <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Status</span>\n          </div>\n          <div class=\"form-group\">\n            <input type=\"text\" class=\"form-control\" *ngIf=\"lanDetails.status=='ASSIGNED'\" [(ngModel)]=\"lanDetails.remarks\" name=\"remarks\" />\n            <span class=\"floating-label\">Remarks</span>\n          </div>\n          <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" *ngIf=\"lanDetails.status=='ASSIGNED'\" [(ngModel)]=\"lanDetails.detailId\" name=\"detailid\" />\n                <span class=\"floating-label\">Detail Id</span>\n              </div>\n          <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" *ngIf=\"lanDetails.status=='ASSIGNED'\" [(ngModel)]=\"lanDetails.linkId\" name=\"linkid\" />\n                <span class=\"floating-label\">Link Id</span>\n              </div>\n          <div class=\"form-group\">\n            <button class=\"btn btn-lg btn-primary\" type=\"button\" (click)=\"updateCustomerInfo()\">Update</button>\n          </div>\n        </form>\n      </div>\n    </div>\n  \n  </ng-template>";
+
+/***/ }),
+
+/***/ 1856:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1857);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1857:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1858);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./wan-pool.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./wan-pool.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1858:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1859:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var wan_pool_component_1 = __webpack_require__(1550);
+var WAN_POOL_ROUTER = [
+    {
+        path: '',
+        component: wan_pool_component_1.WanPoolComponent,
+        pathMatch: 'full'
+    }
+];
+exports.wanPoolRouter = router_1.RouterModule.forChild(WAN_POOL_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>21.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>94b6c9cbdb3d2300429e2a9a48961918</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.21.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_94b6c9cbdb3d2300429e2a9a48961918</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:03</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

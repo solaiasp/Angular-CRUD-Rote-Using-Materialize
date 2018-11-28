@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.30.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([30],{
+
+/***/ 1313:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var working_hours_component_1 = __webpack_require__(1552);
+var working_hours_router_1 = __webpack_require__(1870);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var WorkingHoursModule = /** @class */ (function () {
+    function WorkingHoursModule() {
+    }
+    WorkingHoursModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, working_hours_router_1.WorkingHoursRouter],
+            declarations: [working_hours_component_1.WorkingHoursComponent]
+        })
+    ], WorkingHoursModule);
+    return WorkingHoursModule;
+}());
+exports.WorkingHoursModule = WorkingHoursModule;
+
+
+/***/ }),
+
+/***/ 1552:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var WorkingHoursComponent = /** @class */ (function () {
+    function WorkingHoursComponent() {
+    }
+    WorkingHoursComponent.prototype.ngOnInit = function () {
+        this.outside = true;
+        this.selected = false;
+        this.calendarId = "Select Calendar";
+    };
+    WorkingHoursComponent.prototype.getCalendarId = function (id) {
+        console.log('Selected Calendar Id', id);
+        this.calendarId = id + "";
+        this.selected = false;
+    };
+    WorkingHoursComponent.prototype.selectCalendarId = function () {
+        this.selected = true;
+    };
+    WorkingHoursComponent.prototype.preventWrite = function (event) {
+        event.preventDefault();
+    };
+    WorkingHoursComponent = __decorate([
+        core_1.Component({
+            selector: 'working-hours',
+            template: __webpack_require__(1866),
+            styles: [__webpack_require__(1867)]
+        }),
+        __metadata("design:paramtypes", [])
+    ], WorkingHoursComponent);
+    return WorkingHoursComponent;
+}());
+exports.WorkingHoursComponent = WorkingHoursComponent;
+
+
+/***/ }),
+
+/***/ 1866:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"working-hours\">\n  <section id=\"main-content\">\n    <section class=\"wrapper\">\n      <ol class=\"breadcrumb\">\n        <li>\n          <a (click)=\"goToHomePage()\">Home</a>\n        </li>\n        <li class=\"active\">Working Hours Management</li>\n      </ol>\n      <!-- <div class=\"dashboard-txt\">\n      <h1>{{activeReportName}}</h1>\n    </div> -->\n    <div class=\"row\" *ngIf=\"!selected\">\n        <div class=\"col-md-12\">\n          <div class=\"box-title box-title-tabs box-title-tabs-sla\">\n            <div class=\"pull-left\">\n              <!-- <img class=\"svg\" src=\"images/icons/user-management.svg\"> -->\n              <h3 id=\"working-hours-heading\">Select Working Hours</h3>\n            </div>\n            <div class=\"clearfix\"></div>\n          </div>\n        </div>\n      </div>\n    <div class=\"row\">\n        <div class=\"col-md-12\">\n            <input [(ngModel)]=\"calendarId\" id=\"calendarId\" type=\"text\" name=\"calendarId\" class=\"form-control\" required *ngIf=\"!selected\" (click)=\"selectCalendarId()\" (keydown)=\"preventWrite($event)\"/>\n            </div>\n    </div>\n    <working-hours-ui [outside]=\"outside\" *ngIf=\"selected\" (calendarIdOutput)=\"getCalendarId($event)\"></working-hours-ui>\n     </section>\n     </section>\n    </section>";
+
+/***/ }),
+
+/***/ 1867:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1868);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1868:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1869);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./working-hours.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./working-hours.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1869:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1870:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var working_hours_component_1 = __webpack_require__(1552);
+var WORKING_HOURS_ROUTER = [
+    {
+        path: '',
+        component: working_hours_component_1.WorkingHoursComponent,
+        pathMatch: 'full'
+    }
+];
+exports.WorkingHoursRouter = router_1.RouterModule.forChild(WORKING_HOURS_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>30.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>dcb689cbdb3d2300429e2a9a48961991</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.30.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_dcb689cbdb3d2300429e2a9a48961991</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:22:30</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

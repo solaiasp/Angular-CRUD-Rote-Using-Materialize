@@ -1,0 +1,3854 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.4.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([4],{
+
+/***/ 1363:
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = __webpack_require__(1810);
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = __webpack_require__(1811);
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(42), __webpack_require__(268)))
+
+/***/ }),
+
+/***/ 1541:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var forms_1 = __webpack_require__(26);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var router_1 = __webpack_require__(48);
+var modal_1 = __webpack_require__(104);
+var page_view_service_1 = __webpack_require__(498);
+var nse_circuit_column_1 = __webpack_require__(1798);
+var ngx_pipes_1 = __webpack_require__(267);
+var NseCircuitComponent = /** @class */ (function () {
+    /* Filter Variables Ends */
+    function NseCircuitComponent(router, commonServices, cookies, modalService, formBuilder, pageView, filter) {
+        var _this = this;
+        this.router = router;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.modalService = modalService;
+        this.formBuilder = formBuilder;
+        this.pageView = pageView;
+        this.filter = filter;
+        this.pageData = {};
+        this.nseDetailFields = nse_circuit_column_1.nseDetailFieldObj;
+        this.selectedTitle = 'Service Request - NSE Circuits';
+        this.pageViewData = {};
+        this.userData = {};
+        this.nseOrderGrid = nse_circuit_column_1.nseOrdersGridObj;
+        this.nseLoader = false;
+        this.validFileFormat = false;
+        this.uploadedFileName = '';
+        this.bkUploadFormData = {};
+        this.nseUpdateRuleLists = [];
+        this.nseOrderLists = [];
+        this.nseDetailObjFormat = {
+            nsedevice: 'DeviceDetails',
+            sify: 'SifyDetails',
+            nse: 'NSERequestDetais',
+            nselink: 'LinkDeatils',
+            id: 'id',
+            nsestatus: 'nsestatus'
+        };
+        this.nseUpdateLists = [];
+        this.errorMsgs = [];
+        this.bulkUploadLoader = false;
+        /* Filter Variables Start */
+        this.searchform = [
+            { 'modelName': 'memberCode', 'value': '', 'title': 'TM Code', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'consolidated_status', 'value': '', 'title': 'Overall Status', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'order_status', 'value': '', 'title': 'Order Status', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'router_del_status', 'value': '', 'title': 'Router Delivery Status', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'member_site_status', 'value': '', 'title': 'Member Site Status', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'link1_del_status', 'value': '', 'title': 'Link1 Delivery Status', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'link2_del_status', 'value': '', 'title': 'Link2 Delivery Status', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'implementation_status', 'value': '', 'title': 'Implementation Status', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'memberName', 'value': '', 'title': 'Member Name', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'scenarioId', 'value': '', 'title': 'Scenario Id', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'tapIPNumber', 'value': '', 'title': 'TAP IP Number', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'region', 'value': '', 'title': 'Region', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            /* {'modelName':'city','value' : '','title' : 'City','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'district','value' : '','title' : 'District','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'state','value' : '','title' : 'State','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'router1IP_0','value' : '','title' : 'Router1 IP L1','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'router2IP_0','value' : '','title' : 'Router2 IP L1','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},*/
+            { 'modelName': 'serviceProvider_0', 'value': '', 'title': 'Service Provider L1', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            /*{'modelName':'router1IP_1','value' : '','title' : 'Router1 IP L2','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'router2IP_1','value' : '','title' : 'Router2 IP L2','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},*/
+            { 'modelName': 'serviceProvider_1', 'value': '', 'title': 'Service Provider L2', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'accountId', 'value': '', 'title': 'Sify Account Id', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            /*{'modelName':'gstIn','value' : '','title' : 'GSTIN','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'invoiceNumber','value' : '','title' : 'Sify Invoice Number','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'lmCode','value' : '','title' : 'Sify LM Code','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},
+            {'modelName':'poNumber','value' : '','title' : 'PO Number','optionTextField' : 'display','optionValueField': 'id','dropdownList' : []},*/
+            { 'modelName': 'routerQty', 'value': '', 'title': 'Router Qty', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+            { 'modelName': 'migrationBatch', 'value': '', 'title': 'Migration Batch', 'optionTextField': 'display', 'optionValueField': 'id', 'dropdownList': [] },
+        ];
+        this.copyNSECircuiteData = [];
+        this.isFilterActive = false;
+        this.ParentChildFlag = false;
+        this.getOrderLists = function () {
+            _this.nseLoader = true;
+            _this.nseOrderGrid.data = [];
+            _this.isFilterActive = false;
+            _this.commonServices.getRequest('/_workflow/NSECircuitsList').then(function (response) {
+                if (response.status == 'success') {
+                    _this.nseOrderLists = response.items[0].NSEOrdersList;
+                    response.items[0].NSEOrdersList.forEach(function (obj) {
+                        var order = obj.NSEOrderDetailsResponse;
+                        order.NSERequestDetais.sacId = order.NSERequestDetais.requestId;
+                        var singleOrder = __assign({}, order.NSEStatus, order.NSERequestDetais, order.DeviceDetails, order.SifyDetails);
+                        order.LinkDetails.forEach(function (link, index) {
+                            for (var key in link) {
+                                singleOrder[key + '_' + index] = link[key];
+                            }
+                        });
+                        _this.nseOrderGrid.data.push(singleOrder);
+                    });
+                }
+                _this.nseLoader = false;
+                if (_this.nseOrderGrid.data.length) {
+                    _this.copyNSECircuiteData = JSON.parse(JSON.stringify(_this.nseOrderGrid.data));
+                    _this.buildFilterDetails(_this.copyNSECircuiteData);
+                }
+                if (_this.pageData.popName) {
+                    _this.generateCircuitByPageData();
+                }
+            }, function (err) {
+                _this.nseLoader = false;
+            });
+        };
+        this.generateCircuitByPageData = function () {
+            _this.nseOrderGrid.data = _this.copyNSECircuiteData.filter(function (val) {
+                var serviceProvider_0 = val.serviceProvider_0.toLowerCase();
+                var serviceProvider_1 = '';
+                if (val.serviceProvider_1) {
+                    serviceProvider_1 = val.serviceProvider_1.toLowerCase();
+                }
+                if (_this.pageData.popName != 'total' && _this.pageData.providerName != 'total') {
+                    return ((val.pop_0 == _this.pageData.popName || val.pop_1 == _this.pageData.popName) && (serviceProvider_0 == _this.pageData.providerName || serviceProvider_1 == _this.pageData.providerName));
+                }
+                else if (_this.pageData.popName == 'total' && _this.pageData.providerName != 'total') {
+                    return (serviceProvider_0 == _this.pageData.providerName || serviceProvider_1 == _this.pageData.providerName);
+                }
+                else if (_this.pageData.popName != 'total' && _this.pageData.providerName == 'total') {
+                    return (val.pop_0 == _this.pageData.popName || val.pop_1 == _this.pageData.popName);
+                }
+                return true;
+            });
+        };
+        this.goToSummary = function () {
+            _this.router.navigate(['/nse-circuit']);
+        };
+        this.getLinkedData = function (eventObj, asset) {
+            var orderData = _this.nseOrderLists.filter(function (order) {
+                return (eventObj.row.requestId == order.NSEOrderDetailsResponse.NSERequestDetais.sacId);
+            });
+            _this.pageView.setData(__assign({}, _this.pageData, { rowData: eventObj.row, order: orderData[0] }));
+            _this.router.navigate(['/nse-circuit-details']);
+        };
+        this.filterGrid = function (template) {
+            _this.modalRef = _this.modalService.show(template, { class: 'filtermodal' });
+        };
+        this.buildFilterDetails = function (orderLists) {
+            orderLists.forEach(function (order) {
+                _this.searchform.forEach(function (filterObj) {
+                    if (order[filterObj.modelName] && filterObj.dropdownList.indexOf(order[filterObj.modelName]) == -1) {
+                        filterObj.dropdownList.push(order[filterObj.modelName]);
+                    }
+                });
+            });
+        };
+        this.onSubmitFilter = function () {
+            _this.nseLoader = true;
+            var clonedData = JSON.parse(JSON.stringify(_this.copyNSECircuiteData));
+            _this.searchform.forEach(function (filterObj) {
+                if (filterObj.value) {
+                    clonedData = _this.filter.transform(clonedData, [filterObj.modelName], filterObj.value);
+                }
+            });
+            _this.nseOrderGrid.data = clonedData;
+            _this.isFilterActive = true;
+            _this.modalRef.hide();
+            _this.nseLoader = false;
+        };
+        this.reset = function () {
+            _this.nseLoader = true;
+            _this.pageData = {};
+            _this.searchform.forEach(function (filterObj) {
+                filterObj.value = '';
+            });
+            _this.isFilterActive = false;
+            _this.nseOrderGrid.data = JSON.parse(JSON.stringify(_this.copyNSECircuiteData));
+            _this.nseLoader = false;
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    NseCircuitComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.pageData = this.pageView.getData();
+        this.userData = this.cookies.getObject('globals');
+        var postData = { customerName: this.userData.customer_name };
+        this.commonServices.postRequest('/_core/getChildClientsDetails', postData).then(function (resDetails) {
+            if (resDetails.items.length >= 1) {
+                _this.ParentChildFlag = true;
+            }
+            else {
+                _this.ParentChildFlag = false;
+            }
+        });
+        this.getOrderLists();
+    };
+    NseCircuitComponent = __decorate([
+        core_1.Component({
+            selector: '<nse-circuit>',
+            template: __webpack_require__(1799),
+            styles: [__webpack_require__(1800)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router,
+            common_service_1.CommonService,
+            ngx_cookie_1.CookieService,
+            modal_1.BsModalService,
+            forms_1.FormBuilder,
+            page_view_service_1.PageViewService,
+            ngx_pipes_1.FilterByPipe])
+    ], NseCircuitComponent);
+    return NseCircuitComponent;
+}());
+exports.NseCircuitComponent = NseCircuitComponent;
+
+
+/***/ }),
+
+/***/ 1542:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var router_1 = __webpack_require__(48);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var nse_circuit_details_column_1 = __webpack_require__(1803);
+var file_saver_1 = __webpack_require__(501);
+var modal_1 = __webpack_require__(104);
+var Viewer = __webpack_require__(1804);
+var NseCircuitDetailsComponent = /** @class */ (function () {
+    function NseCircuitDetailsComponent(router, cookie, commonServices, PageViewService, modalService) {
+        var _this = this;
+        this.router = router;
+        this.cookie = cookie;
+        this.commonServices = commonServices;
+        this.PageViewService = PageViewService;
+        this.modalService = modalService;
+        this.nseDetailObj = {};
+        this.nseReqArr1 = nse_circuit_details_column_1.requestDetaisArr1;
+        this.nseReqArr2 = nse_circuit_details_column_1.requestDetaisArr2;
+        this.statusTabGrid = nse_circuit_details_column_1.statusTabGridObj;
+        this.SALinkGrid = nse_circuit_details_column_1.serviceAssuranceLinkGrid;
+        this.SADeviceGrid = nse_circuit_details_column_1.serviceAssuranceDeviceGrid;
+        this.SAObj = {
+            NSEAssuranceDeviceList: [],
+            NSEAssuranceLinkList: []
+        };
+        this.openAll = false;
+        this.statusTabOpen = true;
+        this.nseDetailLoader = false;
+        this.NseCircuitStatusRead = false;
+        this.NseCircuitDetailsRead = false;
+        this.NseCircuitDeviceRead = false;
+        this.NseCircuitLinkRead = false;
+        this.NseCircuitSifyRead = false;
+        this.NseCircuitDevConfigRead = false;
+        this.NseCircuitUatRead = false;
+        this.serviceAssureRead = false;
+        this.nseCommandLoader = false;
+        this.ParentChildFlag = false;
+        this.selectedIp = '';
+        this.commandText = '';
+        this.responseXmlStr = '';
+        this.expandCollapseAll = function () {
+            _this.openAll = !_this.openAll;
+            _this.statusTabOpen = false;
+        };
+        this.getResponseLinks = function () {
+            _this.responseXmlStr = '';
+            var _post = {
+                "request_id": _this.pageData.rowData.requestId
+            };
+            _this.commonServices.postRequest('_workflow/generateResponseXML', _post).then(function (response) {
+                if (response.status == 'success') {
+                    var resObj = response.items[0];
+                    for (var key in resObj) {
+                        _this.responseXmlStr = _this.responseXmlStr + resObj[key];
+                    }
+                    console.log('this.responseXmlStr', _this.responseXmlStr);
+                }
+            }, function (err) {
+            });
+        };
+        this.showResponseLink = function (template) {
+            _this.modalRef = _this.modalService.show(template, Object.assign({}, { class: 'modal-lg' }));
+            //var parser : any = new DOMParser();
+            //var xmlDoc : any = parser.parseFromString(this.responseXmlStr,"text/xml");
+            var view = new Viewer('<?xml version="1.0" encoding="UTF-8"?>' + _this.responseXmlStr);
+            setTimeout(function () {
+                view.appendTo(document.getElementById('xml-container'));
+            }, 500);
+        };
+        this.getNseDetails = function () {
+            if (_this.pageData.order) {
+                _this.statusTabGrid.data = [_this.pageData.rowData];
+                _this.nseDetailObj = _this.pageData.order.NSEOrderDetailsResponse;
+                _this.getAssurance();
+                _this.getResponseLinks();
+            }
+            else {
+                _this.router.navigate(['/nse-circuit']);
+            }
+        };
+        this.downloadXml = function () {
+            var blob = new Blob([_this.responseXmlStr], {
+                type: "application/xml"
+            });
+            file_saver_1.default(blob, "response-link.xml");
+        };
+        this.getAssurance = function () {
+            var _post = {
+                "requestId": _this.pageData.rowData.requestId
+            };
+            _this.commonServices.postRequest('_workflow/NSEServiceAssurance', _post).then(function (response) {
+                _this.SAObj = response.items[0];
+            }, function (err) {
+            });
+        };
+        this.deviceClick = function (column, device) {
+            if (column.key == 'multicast') {
+                var pageData = {
+                    siteName: _this.SAObj.sitecode,
+                    multicast: _this.SAObj.NSEAssuranceDeviceList[0].multicast,
+                };
+                _this.PageViewService.setData(pageData);
+            }
+            else {
+                var keyObj = {
+                    cpu: 'cpu',
+                    mem: 'memory'
+                };
+                var pageData = {
+                    perfType: keyObj[column.key],
+                    hostname: device.ceIP,
+                    siteName: _this.SAObj.sitecode
+                };
+                _this.PageViewService.setData(pageData);
+            }
+            _this.router.navigate(['/assets-details']);
+        };
+        this.linkClicked = function (column, link) {
+            var pageData = {
+                siteName: _this.SAObj.sitecode,
+                link_desc: link.linkDesc
+            };
+            _this.PageViewService.setData(pageData);
+            _this.router.navigate(['/assets-details']);
+        };
+        this.downLoadFile = function (fileName, fileType) {
+            if (fileName) {
+                var fileNameArr = fileName.split('.');
+                var fileExtension = fileNameArr[1];
+                if (fileExtension == 'xls' || fileExtension == 'xlsx' || fileExtension == 'zip' || fileExtension == 'jpg' || fileExtension == 'jpeg') {
+                    var _postData = {
+                        "requestId": _this.nseDetailObj.NSERequestDetais.requestId,
+                        "fileName": fileName,
+                        "fileType": fileType
+                    };
+                    var headers = { accept: 'application/zip;charset=utf-8', responseType: 'arraybuffer', observe: 'response' };
+                    if (fileExtension == 'xls' || fileExtension == 'xlsx') {
+                        headers = { accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.topology;charset=utf-8', responseType: 'arraybuffer', observe: 'response' };
+                    }
+                    _this.commonServices.customPostRequest('_workflow/NSEDownloadFile', _postData, headers).then(function (response) {
+                        if (fileExtension == 'xls' || fileExtension == 'xlsx') {
+                            var blob = new Blob([response.body], {
+                                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.topology;charset=utf-8"
+                            });
+                            file_saver_1.default(blob, fileName);
+                        }
+                        else if (fileExtension == 'zip') {
+                            var blob = new Blob([response.body], {
+                                type: "application/zip;charset=utf-8"
+                            });
+                            file_saver_1.default(blob, fileName);
+                        }
+                        else if (fileExtension == 'jpg' || fileExtension == 'jpeg') {
+                            var blob = new Blob([response.body], {
+                                type: "mime"
+                            });
+                            file_saver_1.default(blob, fileName);
+                        }
+                    }, function (err) {
+                    });
+                }
+                else {
+                    _this.commonServices.error('Unsupported File');
+                }
+            }
+        };
+        this.getCommand = function (ip, templateName, commandTemplate) {
+            _this.selectedIp = ip;
+            _this.nseCommandLoader = true;
+            _this.modalRef = _this.modalService.show(commandTemplate, Object.assign({}, { class: 'modal-lg' }));
+            var _post = {
+                "requestId": _this.nseDetailObj.NSERequestDetais.requestId,
+                "templateName": templateName
+            };
+            _this.commonServices.postRequest('_workflow/NSECommandExecutorTemplate', _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.commandText = response.items[0].data;
+                }
+                _this.nseCommandLoader = false;
+            }, function (err) {
+                _this.nseCommandLoader = false;
+            });
+        };
+        this.downLoadCmd = function () {
+            var text = (' ' + _this.commandText).slice(1);
+            text = text.replace(/\n/g, "\r\n");
+            var blob = new Blob([text], {
+                type: "text/plain;charset=utf-8"
+            });
+            file_saver_1.default(blob, "configuration-command.txt");
+        };
+    }
+    NseCircuitDetailsComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        var currentUser = this.cookie.getObject('globals');
+        var userType = currentUser.user_type;
+        var postData = { customerName: currentUser.customer_name };
+        this.commonServices.postRequest('/_core/getChildClientsDetails', postData).then(function (resDetails) {
+            if (resDetails.items.length >= 1) {
+                _this.ParentChildFlag = true;
+            }
+            else {
+                _this.ParentChildFlag = false;
+            }
+        });
+        this.pageData = this.PageViewService.getData();
+        this.NseCircuitStatusRead = this.commonServices.checkApiAvailability('NseCircuitStatusRead');
+        this.NseCircuitDetailsRead = this.commonServices.checkApiAvailability('NseCircuitDetailsRead');
+        this.NseCircuitDeviceRead = this.commonServices.checkApiAvailability('NseCircuitDeviceRead');
+        this.NseCircuitLinkRead = this.commonServices.checkApiAvailability('NseCircuitLinkRead');
+        this.NseCircuitSifyRead = this.commonServices.checkApiAvailability('NseCircuitSifyRead');
+        this.serviceAssureRead = this.commonServices.checkApiAvailability('NSEServiceAssurance');
+        this.NseCircuitDevConfigRead = this.commonServices.checkApiAvailability('NseCircuitDeviceConfigRead');
+        this.NseCircuitUatRead = this.commonServices.checkApiAvailability('NseCircuitUATStatusRead');
+        this.getNseDetails();
+    };
+    NseCircuitDetailsComponent = __decorate([
+        core_1.Component({
+            selector: '<nse-circuit--detail>',
+            template: __webpack_require__(1818),
+            styles: [__webpack_require__(1819)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, ngx_cookie_1.CookieService, common_service_1.CommonService, page_view_service_1.PageViewService, modal_1.BsModalService])
+    ], NseCircuitDetailsComponent);
+    return NseCircuitDetailsComponent;
+}());
+exports.NseCircuitDetailsComponent = NseCircuitDetailsComponent;
+
+
+/***/ }),
+
+/***/ 1543:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var nse_circuit_component_1 = __webpack_require__(1541);
+var nse_circuit_details_component_1 = __webpack_require__(1542);
+/* Start */
+var NSE_CIRCUIT_ROUTER = [
+    {
+        path: '',
+        component: nse_circuit_component_1.NseCircuitComponent,
+        pathMatch: 'full'
+    }
+];
+exports.nseCircuitRouter = router_1.RouterModule.forChild(NSE_CIRCUIT_ROUTER);
+/* end */
+/* Start */
+var NSE_CIRCUIT_DETAILS_ROUTER = [
+    {
+        path: '',
+        component: nse_circuit_details_component_1.NseCircuitDetailsComponent,
+        pathMatch: 'full'
+    }
+];
+exports.nseCircuitDetailsRouter = router_1.RouterModule.forChild(NSE_CIRCUIT_DETAILS_ROUTER);
+/* end */ 
+
+
+/***/ }),
+
+/***/ 1798:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.nseOrdersGridObj = {
+    pdfName: 'Nse Circuits Lists',
+    pdfTitle: 'Nse Circuits Lists',
+    excelTitle: 'Nse Circuits Lists',
+    excelName: 'Nse Circuits Lists',
+    id: 'nse_circuit_lists',
+    hideFilter: true,
+    data: [],
+    columns: [{
+            dataKey: 'requestId',
+            title: 'Request Id',
+            hide: false,
+            width: '',
+            link: true
+        }, {
+            dataKey: 'memberCode',
+            title: 'TM Code',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'consolidated_status',
+            title: 'Overall Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'order_status',
+            title: 'Order Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'router_del_status',
+            title: 'Router Delivery Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'member_site_status',
+            title: 'Member Site Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link1_del_status',
+            title: 'Link1 Delivery Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link2_del_status',
+            title: 'Link2 Delivery Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'implementation_status',
+            title: 'Implementation Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'masterId',
+            title: 'Master Id',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'memberId',
+            title: 'Member Id',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'memberName',
+            title: 'Member Name',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'activityCode',
+            title: 'Activity Code',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'scenarioId',
+            title: 'Scenario Id',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'recordType',
+            title: 'Record Type',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'linkService',
+            title: 'Link Service',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'scenarioDesc',
+            title: 'Scenario Desc',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'memberCode',
+            title: 'Member Code',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'categoryCode',
+            title: 'Category Code',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'tapIPNumber',
+            title: 'TAP IP Number',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'broadcast',
+            title: 'Broadcast',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'region',
+            title: 'Region',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'officeId',
+            title: 'Office Id',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'address1',
+            title: 'Address1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'address2',
+            title: 'Address2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'address3',
+            title: 'Address3',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'email',
+            title: 'Email',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'telephone',
+            title: 'Telephone',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'city',
+            title: 'City',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'district',
+            title: 'District',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'state',
+            title: 'State',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'pin',
+            title: 'Pin',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'd1LocationId',
+            title: 'Device Location Id',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'd1Make',
+            title: 'Device-1 Make',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'd1MgmtIP',
+            title: 'Device-1 Mgmt IP',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'd1Serial',
+            title: 'Device-1 Serial No.',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'd2Make',
+            title: 'Device-2 Make',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'd2MgmtIP',
+            title: 'Device-2 Mgmt IP',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'd2Serial',
+            title: 'Device-2 Serial No.',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'lanSubnet',
+            title: 'LAN Subnet',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'tapIP',
+            title: 'TAP IP',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'lan1Ip',
+            title: 'LAN-1 Ip',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'lan13Ip',
+            title: 'LAN-13 Ip',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'lan14Ip',
+            title: 'LAN-14 Ip',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'activeTemplate_0',
+            title: 'Work Template L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'backupTemplate_0',
+            title: 'Protect Template L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'bandwidth_0',
+            title: 'Bandwidth L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'ceIP_0',
+            title: 'CE IP L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'deatilId_0',
+            title: 'Detail Id L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'lmCode_0',
+            title: 'LM Code L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'linkNo_0',
+            title: 'Link NO. L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'externalLinkId_0',
+            title: 'External LinkId-1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'wanSegment_0',
+            title: 'Wan Segment L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'peIP_0',
+            title: 'WAN PE IP L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'providerMUXSlot_0',
+            title: 'Provider MUX Slot L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router1IP_0',
+            title: 'Router1 IP L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router1Interface_0',
+            title: 'Router1 Interface L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router2IP_0',
+            title: 'Router2 IP L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router2Interface_0',
+            title: 'Router2 Interface L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'serviceProvider_0',
+            title: 'Service Provider L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'sifyLinkId_0',
+            title: 'Sify Link Id L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'pop_0',
+            title: 'POP Name L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'vlan_0',
+            title: 'VLAN L1',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'activeTemplate_1',
+            title: 'Work Template L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'backupTemplate_1',
+            title: 'Protect Template L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'bandwidth_1',
+            title: 'Bandwidth L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'ceIP_1',
+            title: 'CE IP L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'deatilId_1',
+            title: 'Detail Id L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'lmCode_1',
+            title: 'LM Code L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'linkNo_1',
+            title: 'Link NO. L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'externalLinkId_1',
+            title: 'External LinkId-2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'peIP_1',
+            title: 'WAN PE IP L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'wanSegment_1',
+            title: 'Lan Segment L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'providerMUXSlot_1',
+            title: 'Provider MUX Slot L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router1IP_1',
+            title: 'Router1 IP L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router1Interface_1',
+            title: 'Router1 Interface L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router2IP_1',
+            title: 'Router2 IP L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'router2Interface_1',
+            title: 'Router2 Interface L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'serviceProvider_1',
+            title: 'Service Provider L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'sifyLinkId_1',
+            title: 'Sify Link Id L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'pop_1',
+            title: 'POP Name L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'vlan_1',
+            title: 'VLAN L2',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'accountId',
+            title: 'Sify Account Id',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'gstIn',
+            title: 'GSTIN',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'invoiceNumber',
+            title: 'Sify Invoice Number',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'lmCode',
+            title: 'Sify LM Code',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'sitecode',
+            title: 'Site Code',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'poNumber',
+            title: 'PO Number',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'orderno',
+            title: 'Order NO.',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'oracleId',
+            title: 'Oracle Id',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'routerQty',
+            title: 'Router Qty',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'migrationBatch',
+            title: 'Migration Batch',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'subMarket',
+            title: 'Sub Market',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'migrationTime',
+            title: 'Migration Time',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'requestDate',
+            title: 'Request Date',
+            hide: true,
+            width: ''
+        }, {
+            dataKey: 'circuit_added_date',
+            title: 'Circuit Added Date',
+            hide: true,
+            width: ''
+        }]
+};
+exports.nseDetailFieldObj = {
+    "request_id": "requestId",
+    "master_id": "masterId",
+    "mem_id": "memberId",
+    "mem_name": "memberName",
+    "activity_code": "activityCode",
+    "scenario_id": "scenarioId",
+    "record_type": "recordType",
+    "scenario_desc": "scenarioDesc",
+    "mem_code": "memberCode",
+    "category_cd": "categoryCode",
+    "tapip_no": "tapIPNumber",
+    "broadcast": "broadcast",
+    "status": "",
+    "region": "region",
+    "office_id": "officeId",
+    "off_addr1": "address1",
+    "off_addr2": "address2",
+    "off_addr3": "address3",
+    "city": "city",
+    "district": "district",
+    "state": "state",
+    "pin": "pin",
+    "tel_no": "telephone",
+    "email": "email",
+    "detail_id": "deatilId",
+    "service_provider": "serviceProvider",
+    "bandwidth": "bandwidth",
+    "pop": "pop",
+    "wansegment": "wanIP",
+    "sifylink_id": "sifyLinkId",
+    "externallink_id": "externalLinkId",
+    "vlan": "vlan",
+    "pe_ip": "peIP",
+    "ce_ip": "ceIP",
+    "r1_ip": "router1IP",
+    "r1_interface": "router1Interface",
+    "r2_ip": "router2IP",
+    "r2_interface": "router2Interface",
+    "d1_serial": "d1Serial",
+    "d1_make": "d1Make",
+    "d1_locationid": "d1LocationId",
+    "d1_mgmtip": "d1MgmtIP",
+    "d2_serial": "d2Serial",
+    "d2_make": "d2Make",
+    "d2_mgmtip": "d2MgmtIP",
+    "d2_locationid": "d2LocationId",
+    "tap_ip": "tapIP",
+    "lan_subnet": "lanSubnet",
+    "hsrp_ip": "hsrIP",
+    "lm_code": "lmCode",
+    "oracle_id": "oracleId",
+    "po_number": "poNumber",
+    "acc_id": "accountId",
+    "gstin": "gstIn",
+    "router_qty": "routerQty",
+    "invoice_no": "invoiceNumber",
+    "consolidated_status": "consolidated_status",
+    "consolidated_status_date": "consolidated_status_date",
+    "implementation_status": "implementation_status",
+    "implementation_status_date": "implementation_status_date",
+    "link1_del_status": "link1_del_status",
+    "link1_del_status_date": "link1_del_status_date",
+    "link2_del_status": "link2_del_status",
+    "link2_del_status_date": "link2_del_status_date",
+    "member_site_status": "member_site_status",
+    "member_site_status_date": "member_site_status_date",
+    "order_status": "order_status",
+    "order_status_date": "order_status_date",
+    "router_del_status": "router_del_status",
+    "router_del_status_date": "router_del_status_date",
+    "mux_slot": "providerMUXSlot",
+    "sub_market": "subMarket",
+    "migration_batch": "migrationBatch",
+    "d1_template_name": "d1TemplateName",
+    "d2_template_name": "d2TemplateName",
+    "lan_1_ip": "lan1Ip",
+    "lan_13_ip": "lan13Ip",
+    "lan_14_ip": "lan14Ip",
+    "active_template": "activeTemplate",
+    "backup_template": "backupTemplate",
+    "contact_name": "contactName",
+    "del_address": "delAddress",
+    "file_name": "fileName",
+    "insert_date": "insertDate",
+    "location_id": "locationId",
+    "pre_request_id": "preRequestId",
+    "uat_status": "uat_status",
+    "uat_status_date": "uat_status_date",
+    "orderno": "orderno",
+    "sify_scenario ": "sifyScenario",
+    "site_code": "sitecode"
+};
+
+
+/***/ }),
+
+/***/ 1799:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n\t<section class=\"wrapper\" id=\"nse-wrapper\">\n\t\t<ol class=\"breadcrumb\">\n\t\t\t<li>\n\t\t\t\t<a (click)=\"goToHomePage()\">Home</a>\n\t\t\t</li>\n\t\t\t<li *ngIf=\"ParentChildFlag\">\n\t\t\t\t<a (click)=\"goToSummary()\">NSE Circuits Summary</a>\n\t\t\t</li>\n\t\t\t<li class=\"active\"> NSE Circuits </li>\n\t\t</ol>\n\t\t<!-- <div class=\"dashboard-txt\">\n\t\t\t<h1>{{selectedTitle}}</h1>\n\t\t</div> -->\n\t\t<div class=\"col-md-12\" style=\"padding:0px;\">\n\t\t\t<div class=\"box-title box-title-tabs\">\n\t\t\t\t <div class=\"pull-right\">\n\t\t\t\t\t<ul class=\"box-title-right\" id=\"sub-usermenu\">\n\t\t\t\t\t\t<li *ngIf=\"!nseLoader\" class=\"grid-event-icon\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Filter\">\n\t\t\t\t\t\t\t\t\t<span class=\"fa fa-filter\" [ngClass]=\"{'filteractive': (isFilterActive==true)}\" style=\"font-size: 30px;\" (click)=\"filterGrid(filterTemplate)\"></span>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t\t<li *ngIf=\"!nseLoader\" class=\"grid-event-icon\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Reset\">\n\t\t\t\t\t\t\t\t\t<span class=\"fa fa-refresh\" style=\"font-size: 30px;\" (click)=\"reset()\"></span>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t</ul>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t<h3>NSE Circuits</h3>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t</div>\n\t\t</div>\n\t\t<div>\n\t\t\t<data-grid *ngIf=\"!nseLoader\" (linkClick)=\"getLinkedData($event)\" (addClickEvent)=\"AddData($event)\" [gridobj]=\"nseOrderGrid\"></data-grid>\n\t\t</div>\n\t\t\n\t\t<div classs=\"col-md-12\" *ngIf=\"noData\" style=\"font-size: 30px;text-align: center;\">\n\t\t\tNo Data\n\t\t</div>\n\t\t<content-loader *ngIf=\"nseLoader\" style=\"margin-top:50px;\"></content-loader>\n\t\t\n\t\t<ng-template #filterTemplate>\n\t\t\t<div class=\"modal-header subusrModalHeader\" style=\"padding:35px;\">\n\t\t\t\t<h4 class=\"modal-title pull-left\" style=\"margin-top: -11px; margin-left: -16px;\">\n\t\t\t\t\t<i class=\"fa fa-fw fa-filter fa-1x\"></i> NSE Circuits Filter</h4>\n\t\t\t\t<button type=\"button\" class=\"close pull-right syslog-popup-close\" style=\"margin-top: -10px;margin-right: -11px;\" aria-label=\"Close\"\n\t\t\t\t (click)=\"modalRef.hide()\">\n\t\t\t\t\t<span aria-hidden=\"true\">&times;</span>\n\t\t\t\t</button>\n\t\t\t</div>\n\t\t\t<div class=\"modal-body\" style=\"padding: 35px;\">\n\t\t\t\t<div class=\"row\" id=\"popupForm\" >\n\t\t\t\t\t\t<div *ngIf=\"pageData.popName\" class=\"col-md-12 complex-filter\">\n\t\t\t\t\t\t\t<div class=\"col-md-12 title-block\" *ngIf=\"pageData.popName !='total' || pageData.providerName !='total'\">\n\t\t\t\t\t\t\t\t<span class=\"filter-title\">Filterd By:</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"col-md-6\" *ngIf=\"pageData.popName !='total'\">\n\t\t\t\t\t\t\t\t<span class=\"filter-lable\">POP Name : </span>\n\t\t\t\t\t\t\t\t<span class=\"filter-value\">{{pageData.popName}}</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"col-md-6\" *ngIf=\"pageData.providerName !='total'\">\n\t\t\t\t\t\t\t\t<span class=\"filter-lable\">Provider Name : </span>\n\t\t\t\t\t\t\t\t<span class=\"filter-value\">{{pageData.providerName.toUpperCase()}}</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t<div class=\"col-md-4 no-padding selectlistcls\" *ngFor=\"let formdata of searchform; let i = index\">\n\t\t\t\t\t\t\t\t\t<ngx-select  [items]=\"formdata.dropdownList\"  [(ngModel)]=\"formdata.value\" name=\"formdata.modelName\" placeholder=\"Select a {{formdata.title}}\" required>\n\t\t\t\t\t\t\t\t\t</ngx-select>\n\t\t\t\t\t\t\t\t\t<span class=\"floating-label customfilterLabel\"  [ngClass]=\"{'dropdown-active': !(formdata.value=='')}\" >{{formdata.title}}</span>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-12 text-center\">\n              <button (click)=\"onSubmitFilter()\" type=\"button\">Filter</button> \n              <button (click)=\"modalRef.hide()\" type=\"button\">Cancel</button> \n          </div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</ng-template>\n\n\t\t\n\t</section>\n</section>\n";
+
+/***/ }),
+
+/***/ 1800:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1801);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1801:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1802);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./nse-circuit.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./nse-circuit.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1802:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\t#nse-wrapper .datetimepicker-start-end{\n\t\tpadding : 0 5px;\n\t\tmargin-right : 0;\n\t}\n\t#nse-wrapper .datetimepicker-start-end input {\n\t\theight : 28px;\n\t}\n\t#nse-wrapper .datetimepicker-start-end span {\n\t\tline-height : 28px;\n\t}\n\t#nse-wrapper .start-end-icon{\n\t\t\tpadding : 2px !important;\t\t\n\t}\n\t#nse-wrapper .box-title{\n\t\tpadding-bottom : 6px !important;\n\t}\n\t#nse-wrapper .dashboard-txt h1 {\n\t\tmargin-bottom: 10px;\n\t}\n\n\t.custom-modal-dialog {\n\t\twidth: 98%;\n\t}\n\n\t.custom-modal-dialog .modal-body {\n\t\toverflow: auto;\n\t}\n\n\t.ctrl-create-btn{\n\t\tmargin : 0px !important;\n\t}\n\n\t.cus-row-sty .col-md-5:last-child {\n\t\tmargin-left: 40px;\n\t}\n\n\t.cus-row-sty .col-md-5:first-child {\n\t\tmargin-left: 0px;\n\t}\n\n\t.cus-row-sty .floating-label{\n\t\tleft : 15px;\n\t}\n\n\t.ctrl-addlink{\n\t\tfloat: right;\n\t\tcolor: blue;\n\t\tcursor: pointer;\n\t}\n\n\t.ctrl-link {\n\t\tdisplay: inline-block;\n    \tfont-size: 18px;\n\t\tfont-weight: bolder\n\t}\n\t#viewUpload .inputfile {\n  opacity: 0;\n  overflow: hidden;\n  position: absolute;\n  \n}\n\n#viewUpload .inputfile + label {\n  color: #00a6c9;\n}\n\n#viewUpload .inputfile + label {\n  border: 1px solid #00a6c9;\n  background-color: #f1e5e6;\n  padding: 0;\n  width: 100%;\n}\n\n#viewUpload .inputfile:focus + label,\n#viewUpload .inputfile.has-focus + label,\n#viewUpload .inputfile + label:hover {\n  border-color: #337ab7;\n}\n\n#viewUpload .inputfile + label span,\n#viewUpload .inputfile + label strong {\n  padding: 0.625rem 1.25rem;\n  /* 10px 20px */\n}\n\n#viewUpload .inputfile + label span {\n  min-height: 2em;\n  display: inline-block;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  overflow: hidden;\n  vertical-align: top;\n}\n\n#viewUpload .inputfile + label strong {\n  height: 100%;\n  color: #f1e5e6;\n  background-color: #00a6c9;\n  display: inline-block;\n  \n}\n\n#viewUpload .inputfile:focus + label strong,\n#viewUpload .inputfile.has-focus + label strong,\n#viewUpload .inputfile + label:hover strong {\n  background-color: #337ab7;\n}\n\n@media screen and (max-width: 50em) {\n#viewUpload .inputfile + label strong {\n  display: block;\n}\n}\n\n.modal-dialog.filtermodal {\n\twidth: 68% !important;\n}\n\n.selectlistcls{\n\tpadding-left: 0;\n\tpadding-right: 0;\n\theight: 75px;\n\tpadding: 15px;\n}\n.customfilterLabel{\n\ttop: -20px;\n    font-size: 14px;\n    color: #00a6c9;\n    padding: 10px;\n}\n\n.dropdown-active{\n\tcolor: rgb(0, 176, 80) !important;\n}\n\n.filteractive{\n\tcolor: #00abb6 !important;\n}\n.complex-filter {\n\tmargin-bottom : 30px;\n}\n.title-block {\n\tmargin-bottom : 10px;\n}\n.filter-lable {\n\tfont-size : 16px;\n}\n.filter-value { \n\tfont-size : 18px;\n\tcolor : #169a40;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1803:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.requestDetaisArr1 = [
+    {
+        key: 'requestId',
+        name: 'Request ID'
+    }, {
+        key: 'masterId',
+        name: 'Master ID'
+    }, {
+        key: 'memberId',
+        name: 'Member ID'
+    }, {
+        key: 'memberName',
+        name: 'Member Name'
+    }, {
+        key: 'activityCode',
+        name: 'Activity Code'
+    }, {
+        key: 'scenarioId',
+        name: 'Scenario ID'
+    }, {
+        key: 'recordType',
+        name: 'Record Type'
+    }, {
+        key: 'scenarioDesc',
+        name: 'Scenario Desc'
+    }, {
+        key: 'categoryCode',
+        name: 'Category Code'
+    }, {
+        key: 'tapIPNumber',
+        name: 'TAP IP Numbers'
+    }, {
+        key: 'broadcast',
+        name: 'Broadcast'
+    }, {
+        key: 'memberCode',
+        name: 'Member Code'
+    }, {
+        key: 'linkService',
+        name: 'Link Service'
+    }
+];
+exports.requestDetaisArr2 = [
+    {
+        key: 'requestDate',
+        name: 'Request Date'
+    }, {
+        key: 'region',
+        name: 'Region'
+    }, {
+        key: 'officeId',
+        name: 'Office ID'
+    }, {
+        key: 'address1',
+        name: 'Address 1'
+    }, {
+        key: 'address2',
+        name: 'Address 2'
+    }, {
+        key: 'address3',
+        name: 'Address 3'
+    }, {
+        key: 'telephone',
+        name: 'Telephone'
+    }, {
+        key: 'email',
+        name: 'Email'
+    }, {
+        key: 'city',
+        name: 'City'
+    }, {
+        key: 'district',
+        name: 'District'
+    }, {
+        key: 'state',
+        name: 'State'
+    }, {
+        key: 'pin',
+        name: 'Pin'
+    }, {
+        key: 'contactName',
+        name: 'Contact Name'
+    },
+];
+exports.statusTabGridObj = {
+    data: [],
+    columns: [{
+            dataKey: 'memberCode',
+            title: 'TM Code',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'linkService',
+            title: 'Service Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'consolidated_status',
+            title: 'Overall Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'order_status',
+            title: 'Order Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'router_del_status',
+            title: 'Router Delivery Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'member_site_status',
+            title: 'Member Site Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link1_del_status',
+            title: 'Link1 Delivery Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'link2_del_status',
+            title: 'Link2 Delivery Status',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'implementation_status',
+            title: 'Implementation Status',
+            hide: false,
+            width: ''
+        }]
+};
+exports.serviceAssuranceDeviceGrid = [
+    {
+        key: 'ceIP',
+        name: 'Device IP'
+    }, {
+        key: 'uptime',
+        name: 'Device Uptime'
+    }, {
+        key: 'cpu',
+        name: 'CPU',
+        link: true
+    }, {
+        key: 'mem',
+        name: 'Memory',
+        link: true
+    }, {
+        key: 'multicast',
+        name: 'Multicast',
+        link: true
+    }, {
+        key: 'routerIP',
+        name: 'Router IP'
+    }
+];
+exports.serviceAssuranceLinkGrid = [
+    {
+        key: 'linkDesc',
+        name: 'Description'
+    }, {
+        key: 'provider',
+        name: 'Provider'
+    }, {
+        key: 'linkID',
+        name: 'Link ID'
+    }, {
+        key: 'extLinkID',
+        name: 'External Link ID'
+    }, {
+        key: 'bandwidth',
+        name: 'Bandwidth'
+    }, {
+        key: 'routerIP',
+        name: 'Router IP'
+    }, {
+        key: 'interface',
+        name: 'Interface'
+    }, {
+        key: 'inBits',
+        name: 'IN (Kbps)',
+        link: true
+    }, {
+        key: 'outBits',
+        name: 'OUT (Kbps)',
+        link: true
+    }, {
+        key: 'status',
+        name: 'Status'
+    }
+];
+
+
+/***/ }),
+
+/***/ 1804:
+/***/ (function(module, exports, __webpack_require__) {
+
+var parse = __webpack_require__(1805);
+var render = __webpack_require__(1809);
+var fmt = __webpack_require__(1363).format;
+var h = __webpack_require__(1812);
+var inherits = __webpack_require__(1363).inherits;
+var EventEmitter = __webpack_require__(1817).EventEmitter;
+
+module.exports = Viewer;
+inherits(Viewer, EventEmitter);
+
+function Viewer(xml){
+  EventEmitter.call(this);
+  if (typeof xml != 'string') xml = xml.toString();
+  var obj = parse(xml);
+  this._el = this._renderRoot(obj);
+  this._selection = null;
+}
+
+Viewer.prototype.appendTo = function(el){
+  var self = this;
+  el.appendChild(this._el);
+  el.addEventListener('click', function(ev){
+    if (ev.target == el) self._setSelection(null);
+  });
+};
+
+Viewer.prototype._setSelection = function(node){
+  if (this._selection === node) return;
+
+  if (this._selection) this._selection.el.classList.remove('selected');
+  if (node) node.el.classList.add('selected');
+
+  this._selection = node;
+  this.emit('select', this._selection);
+};
+
+Viewer.prototype.getSelection = function(){
+  return this._selection;
+};
+
+Viewer.prototype._renderRoot = function(node){
+  var self = this;
+
+  node.text = function(){
+    return render.node(node);
+  };
+
+  var el = h('span',
+    { onclick: this._handleClick(node) },
+    spaces(2),
+    render.declaration(node.declaration),
+    this._renderNode(node.root)
+  );
+  node.el = el;
+
+  return el;
+};
+
+Viewer.prototype._renderNode = function(node, indent){
+  var self = this;
+  var folded = false;
+  indent = indent || 0;
+
+  if (!node.children || !node.children.length) return this._renderLeaf(node, indent);
+
+  function ontoggle(ev){
+    ev.stopPropagation();
+    if (folded) {
+      ev.target.innerHTML = '-';
+      node.children.forEach(function(child){
+        child.el.style.display = 'inline';
+      });
+    } else {
+      ev.target.innerHTML = '+';
+      node.children.forEach(function(child){
+        child.el.style.display = 'none';
+      });
+    }
+    folded = !folded;
+  }
+
+  node.text = function(){
+    return render.node(node);
+  };
+
+  var el = h('span',
+    { onclick: this._handleClick(node) },
+    h('br'),
+    tabs(indent),
+    h('span', { onclick: ontoggle }, '-'),
+    spaces(1),
+    render.tagOpen(node),
+    node.children.map(function(child){
+      return self._renderNode(child, indent + 1);
+    }),
+    h('br'),
+    tabs(indent),
+    spaces(2),
+    render.tagClose(node)
+  );
+  node.el = el;
+
+  return el;
+}
+
+Viewer.prototype._renderLeaf = function(node, indent){
+  var self = this;
+
+  node.text = function(){
+    return render.node(node);
+  };
+
+  var el = h('span',
+    { onclick: this._handleClick(node) },
+    h('br'),
+    tabs(indent),
+    spaces(2),
+    node.text()
+  );
+  node.el = el;
+
+  return el;
+}
+
+Viewer.prototype._handleClick = function(node){
+  var self = this;
+  return function(ev){
+    ev.stopPropagation();
+    self._setSelection(node);
+  };
+};
+
+function tabs(n){
+  var out = [];
+  for (var i = 0; i < n; i++) out.push(spaces(4));
+  return out;
+}
+
+function spaces(n){
+  var el = document.createElement('span');
+  for (var i = 0; i < n; i++) {
+    el.innerHTML += '&nbsp';
+  }
+  return el;
+}
+
+
+/***/ }),
+
+/***/ 1805:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * Module dependencies.
+ */
+
+var debug = __webpack_require__(1806)('xml-parser');
+
+/**
+ * Expose `parse`.
+ */
+
+module.exports = parse;
+
+/**
+ * Parse the given string of `xml`.
+ *
+ * @param {String} xml
+ * @return {Object}
+ * @api public
+ */
+
+function parse(xml) {
+  xml = xml.trim();
+
+  // strip comments
+  xml = xml.replace(/<!--[\s\S]*?-->/g, '');
+
+  return document();
+
+  /**
+   * XML document.
+   */
+
+  function document() {
+    return {
+      declaration: declaration(),
+      root: tag()
+    }
+  }
+
+  /**
+   * Declaration.
+   */
+
+  function declaration() {
+    var m = match(/^<\?xml\s*/);
+    if (!m) return;
+
+    // tag
+    var node = {
+      attributes: {}
+    };
+
+    // attributes
+    while (!(eos() || is('?>'))) {
+      var attr = attribute();
+      if (!attr) return node;
+      node.attributes[attr.name] = attr.value;
+    }
+
+    match(/\?>\s*/);
+
+    return node;
+  }
+
+  /**
+   * Tag.
+   */
+
+  function tag() {
+    debug('tag %j', xml);
+    var m = match(/^<([\w-:.]+)\s*/);
+    if (!m) return;
+
+    // name
+    var node = {
+      name: m[1],
+      attributes: {},
+      children: []
+    };
+
+    // attributes
+    while (!(eos() || is('>') || is('?>') || is('/>'))) {
+      var attr = attribute();
+      if (!attr) return node;
+      node.attributes[attr.name] = attr.value;
+    }
+
+    // self closing tag
+    if (match(/^\s*\/>\s*/)) {
+      return node;
+    }
+
+    match(/\??>\s*/);
+
+    // content
+    node.content = content();
+
+    // children
+    var child;
+    while (child = tag()) {
+      node.children.push(child);
+    }
+
+    // closing
+    match(/^<\/[\w-:.]+>\s*/);
+
+    return node;
+  }
+
+  /**
+   * Text content.
+   */
+
+  function content() {
+    debug('content %j', xml);
+    var m = match(/^([^<]*)/);
+    if (m) return m[1];
+    return '';
+  }
+
+  /**
+   * Attribute.
+   */
+
+  function attribute() {
+    debug('attribute %j', xml);
+    var m = match(/([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
+    if (!m) return;
+    return { name: m[1], value: strip(m[2]) }
+  }
+
+  /**
+   * Strip quotes from `val`.
+   */
+
+  function strip(val) {
+    return val.replace(/^['"]|['"]$/g, '');
+  }
+
+  /**
+   * Match `re` and advance the string.
+   */
+
+  function match(re) {
+    var m = xml.match(re);
+    if (!m) return;
+    xml = xml.slice(m[0].length);
+    return m;
+  }
+
+  /**
+   * End-of-source.
+   */
+
+  function eos() {
+    return 0 == xml.length;
+  }
+
+  /**
+   * Check for `prefix`.
+   */
+
+  function is(prefix) {
+    return 0 == xml.indexOf(prefix);
+  }
+}
+
+
+/***/ }),
+
+/***/ 1806:
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * This is the web browser implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = __webpack_require__(1807);
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
+
+/**
+ * Colors.
+ */
+
+exports.colors = [
+  'lightseagreen',
+  'forestgreen',
+  'goldenrod',
+  'dodgerblue',
+  'darkorchid',
+  'crimson'
+];
+
+/**
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
+ *
+ * TODO: add a `localStorage` variable to explicitly enable/disable colors
+ */
+
+function useColors() {
+  // NB: In an Electron preload script, document will be defined but not fully
+  // initialized. Since we know we're in Chrome, we'll just detect this case
+  // explicitly
+  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+    return true;
+  }
+
+  // is webkit? http://stackoverflow.com/a/16459606/376773
+  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
+    // is firebug? http://stackoverflow.com/a/398120/376773
+    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
+    // double check webkit in userAgent just in case we are in a worker
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
+}
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+exports.formatters.j = function(v) {
+  try {
+    return JSON.stringify(v);
+  } catch (err) {
+    return '[UnexpectedJSONParseError]: ' + err.message;
+  }
+};
+
+
+/**
+ * Colorize log arguments if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs(args) {
+  var useColors = this.useColors;
+
+  args[0] = (useColors ? '%c' : '')
+    + this.namespace
+    + (useColors ? ' %c' : ' ')
+    + args[0]
+    + (useColors ? '%c ' : ' ')
+    + '+' + exports.humanize(this.diff);
+
+  if (!useColors) return;
+
+  var c = 'color: ' + this.color;
+  args.splice(1, 0, c, 'color: inherit')
+
+  // the final "%c" is somewhat tricky, because there could be other
+  // arguments passed either before or after the %c, so we need to
+  // figure out the correct index to insert the CSS into
+  var index = 0;
+  var lastC = 0;
+  args[0].replace(/%[a-zA-Z%]/g, function(match) {
+    if ('%%' === match) return;
+    index++;
+    if ('%c' === match) {
+      // we only are interested in the *last* %c
+      // (the user may have provided their own)
+      lastC = index;
+    }
+  });
+
+  args.splice(lastC, 0, c);
+}
+
+/**
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
+ *
+ * @api public
+ */
+
+function log() {
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
+    && Function.prototype.apply.call(console.log, console, arguments);
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  try {
+    if (null == namespaces) {
+      exports.storage.removeItem('debug');
+    } else {
+      exports.storage.debug = namespaces;
+    }
+  } catch(e) {}
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  var r;
+  try {
+    r = exports.storage.debug;
+  } catch(e) {}
+
+  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
+  if (!r && typeof process !== 'undefined' && 'env' in process) {
+    r = process.env.DEBUG;
+  }
+
+  return r;
+}
+
+/**
+ * Enable namespaces listed in `localStorage.debug` initially.
+ */
+
+exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage() {
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(268)))
+
+/***/ }),
+
+/***/ 1807:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
+exports.coerce = coerce;
+exports.disable = disable;
+exports.enable = enable;
+exports.enabled = enabled;
+exports.humanize = __webpack_require__(1808);
+
+/**
+ * The currently active debug mode names, and names to skip.
+ */
+
+exports.names = [];
+exports.skips = [];
+
+/**
+ * Map of special "%n" handling functions, for the debug "format" argument.
+ *
+ * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
+ */
+
+exports.formatters = {};
+
+/**
+ * Previous log timestamp.
+ */
+
+var prevTime;
+
+/**
+ * Select a color.
+ * @param {String} namespace
+ * @return {Number}
+ * @api private
+ */
+
+function selectColor(namespace) {
+  var hash = 0, i;
+
+  for (i in namespace) {
+    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return exports.colors[Math.abs(hash) % exports.colors.length];
+}
+
+/**
+ * Create a debugger with the given `namespace`.
+ *
+ * @param {String} namespace
+ * @return {Function}
+ * @api public
+ */
+
+function createDebug(namespace) {
+
+  function debug() {
+    // disabled?
+    if (!debug.enabled) return;
+
+    var self = debug;
+
+    // set `diff` timestamp
+    var curr = +new Date();
+    var ms = curr - (prevTime || curr);
+    self.diff = ms;
+    self.prev = prevTime;
+    self.curr = curr;
+    prevTime = curr;
+
+    // turn the `arguments` into a proper Array
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+
+    args[0] = exports.coerce(args[0]);
+
+    if ('string' !== typeof args[0]) {
+      // anything else let's inspect with %O
+      args.unshift('%O');
+    }
+
+    // apply any `formatters` transformations
+    var index = 0;
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
+      // if we encounter an escaped % then don't increase the array index
+      if (match === '%%') return match;
+      index++;
+      var formatter = exports.formatters[format];
+      if ('function' === typeof formatter) {
+        var val = args[index];
+        match = formatter.call(self, val);
+
+        // now we need to remove `args[index]` since it's inlined in the `format`
+        args.splice(index, 1);
+        index--;
+      }
+      return match;
+    });
+
+    // apply env-specific formatting (colors, etc.)
+    exports.formatArgs.call(self, args);
+
+    var logFn = debug.log || exports.log || console.log.bind(console);
+    logFn.apply(self, args);
+  }
+
+  debug.namespace = namespace;
+  debug.enabled = exports.enabled(namespace);
+  debug.useColors = exports.useColors();
+  debug.color = selectColor(namespace);
+
+  // env-specific initialization logic for debug instances
+  if ('function' === typeof exports.init) {
+    exports.init(debug);
+  }
+
+  return debug;
+}
+
+/**
+ * Enables a debug mode by namespaces. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} namespaces
+ * @api public
+ */
+
+function enable(namespaces) {
+  exports.save(namespaces);
+
+  exports.names = [];
+  exports.skips = [];
+
+  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
+  var len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    if (!split[i]) continue; // ignore empty strings
+    namespaces = split[i].replace(/\*/g, '.*?');
+    if (namespaces[0] === '-') {
+      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+    } else {
+      exports.names.push(new RegExp('^' + namespaces + '$'));
+    }
+  }
+}
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+function disable() {
+  exports.enable('');
+}
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+function enabled(name) {
+  var i, len;
+  for (i = 0, len = exports.skips.length; i < len; i++) {
+    if (exports.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (i = 0, len = exports.names.length; i < len; i++) {
+    if (exports.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Coerce `val`.
+ *
+ * @param {Mixed} val
+ * @return {Mixed}
+ * @api private
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+
+/***/ }),
+
+/***/ 1808:
+/***/ (function(module, exports) {
+
+/**
+ * Helpers.
+ */
+
+var s = 1000;
+var m = s * 60;
+var h = m * 60;
+var d = h * 24;
+var y = d * 365.25;
+
+/**
+ * Parse or format the given `val`.
+ *
+ * Options:
+ *
+ *  - `long` verbose formatting [false]
+ *
+ * @param {String|Number} val
+ * @param {Object} [options]
+ * @throws {Error} throw an error if val is not a non-empty string or a number
+ * @return {String|Number}
+ * @api public
+ */
+
+module.exports = function(val, options) {
+  options = options || {};
+  var type = typeof val;
+  if (type === 'string' && val.length > 0) {
+    return parse(val);
+  } else if (type === 'number' && isNaN(val) === false) {
+    return options.long ? fmtLong(val) : fmtShort(val);
+  }
+  throw new Error(
+    'val is not a non-empty string or a valid number. val=' +
+      JSON.stringify(val)
+  );
+};
+
+/**
+ * Parse the given `str` and return milliseconds.
+ *
+ * @param {String} str
+ * @return {Number}
+ * @api private
+ */
+
+function parse(str) {
+  str = String(str);
+  if (str.length > 100) {
+    return;
+  }
+  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(
+    str
+  );
+  if (!match) {
+    return;
+  }
+  var n = parseFloat(match[1]);
+  var type = (match[2] || 'ms').toLowerCase();
+  switch (type) {
+    case 'years':
+    case 'year':
+    case 'yrs':
+    case 'yr':
+    case 'y':
+      return n * y;
+    case 'days':
+    case 'day':
+    case 'd':
+      return n * d;
+    case 'hours':
+    case 'hour':
+    case 'hrs':
+    case 'hr':
+    case 'h':
+      return n * h;
+    case 'minutes':
+    case 'minute':
+    case 'mins':
+    case 'min':
+    case 'm':
+      return n * m;
+    case 'seconds':
+    case 'second':
+    case 'secs':
+    case 'sec':
+    case 's':
+      return n * s;
+    case 'milliseconds':
+    case 'millisecond':
+    case 'msecs':
+    case 'msec':
+    case 'ms':
+      return n;
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Short format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function fmtShort(ms) {
+  if (ms >= d) {
+    return Math.round(ms / d) + 'd';
+  }
+  if (ms >= h) {
+    return Math.round(ms / h) + 'h';
+  }
+  if (ms >= m) {
+    return Math.round(ms / m) + 'm';
+  }
+  if (ms >= s) {
+    return Math.round(ms / s) + 's';
+  }
+  return ms + 'ms';
+}
+
+/**
+ * Long format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function fmtLong(ms) {
+  return plural(ms, d, 'day') ||
+    plural(ms, h, 'hour') ||
+    plural(ms, m, 'minute') ||
+    plural(ms, s, 'second') ||
+    ms + ' ms';
+}
+
+/**
+ * Pluralization helper.
+ */
+
+function plural(ms, n, name) {
+  if (ms < n) {
+    return;
+  }
+  if (ms < n * 1.5) {
+    return Math.floor(ms / n) + ' ' + name;
+  }
+  return Math.ceil(ms / n) + ' ' + name + 's';
+}
+
+
+/***/ }),
+
+/***/ 1809:
+/***/ (function(module, exports, __webpack_require__) {
+
+var fmt = __webpack_require__(1363).format;
+
+exports.tagOpen = function(node){
+  return fmt('<%s%s>', node.name, renderAttributes(node));
+};
+
+exports.declaration = function(node){
+  return fmt('<?xml%s?>', renderAttributes(node));
+};
+
+function renderAttributes(node){
+  var attr = exports.attributes(node);
+  return attr.length ? ' ' + attr : '';
+};
+
+exports.attributes = function(node){
+  if (!node.attributes) return '';
+  var keys = Object.keys(node.attributes);
+  if (!keys.length) return '';
+  return keys.map(function(key){
+    return fmt('%s="%s"', key, node.attributes[key]);
+  }).join(' ');
+};
+
+exports.tagClose = function(node){
+  return fmt('</%s>', node.name);
+};
+
+exports.leaf = function(node){
+  return exports.tagOpen(node) + node.content + exports.tagClose(node);
+};
+
+exports.node = function(node){
+  if (node.root) return exports.document(node);
+  if (!node.children || !node.children.length) return exports.leaf(node);
+
+  return exports.tagOpen(node) + '\n'
+    + node.children.map(function(child){
+        return exports.node(child).replace(/^/gm, '\t');
+      }).join('\n') + '\n'
+    + exports.tagClose(node);
+};
+
+exports.document = function(node){
+  return exports.declaration(node.declaration) + '\n'
+    + exports.node(node.root);
+};
+
+
+
+/***/ }),
+
+/***/ 1810:
+/***/ (function(module, exports) {
+
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+
+/***/ }),
+
+/***/ 1811:
+/***/ (function(module, exports) {
+
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+
+/***/ }),
+
+/***/ 1812:
+/***/ (function(module, exports, __webpack_require__) {
+
+var split = __webpack_require__(1813)
+var ClassList = __webpack_require__(1814)
+__webpack_require__(1816)
+
+function context () {
+
+  var cleanupFuncs = []
+
+  function h() {
+    var args = [].slice.call(arguments), e = null
+    function item (l) {
+      var r
+      function parseClass (string) {
+        // Our minimal parser doesn’t understand escaping CSS special
+        // characters like `#`. Don’t use them. More reading:
+        // https://mathiasbynens.be/notes/css-escapes .
+
+        var m = split(string, /([\.#]?[^\s#.]+)/)
+        if(/^\.|#/.test(m[1]))
+          e = document.createElement('div')
+        forEach(m, function (v) {
+          var s = v.substring(1,v.length)
+          if(!v) return
+          if(!e)
+            e = document.createElement(v)
+          else if (v[0] === '.')
+            ClassList(e).add(s)
+          else if (v[0] === '#')
+            e.setAttribute('id', s)
+        })
+      }
+
+      if(l == null)
+        ;
+      else if('string' === typeof l) {
+        if(!e)
+          parseClass(l)
+        else
+          e.appendChild(r = document.createTextNode(l))
+      }
+      else if('number' === typeof l
+        || 'boolean' === typeof l
+        || l instanceof Date
+        || l instanceof RegExp ) {
+          e.appendChild(r = document.createTextNode(l.toString()))
+      }
+      //there might be a better way to handle this...
+      else if (isArray(l))
+        forEach(l, item)
+      else if(isNode(l))
+        e.appendChild(r = l)
+      else if(l instanceof Text)
+        e.appendChild(r = l)
+      else if ('object' === typeof l) {
+        for (var k in l) {
+          if('function' === typeof l[k]) {
+            if(/^on\w+/.test(k)) {
+              (function (k, l) { // capture k, l in the closure
+                if (e.addEventListener){
+                  e.addEventListener(k.substring(2), l[k], false)
+                  cleanupFuncs.push(function(){
+                    e.removeEventListener(k.substring(2), l[k], false)
+                  })
+                }else{
+                  e.attachEvent(k, l[k])
+                  cleanupFuncs.push(function(){
+                    e.detachEvent(k, l[k])
+                  })
+                }
+              })(k, l)
+            } else {
+              // observable
+              e[k] = l[k]()
+              cleanupFuncs.push(l[k](function (v) {
+                e[k] = v
+              }))
+            }
+          }
+          else if(k === 'style') {
+            if('string' === typeof l[k]) {
+              e.style.cssText = l[k]
+            }else{
+              for (var s in l[k]) (function(s, v) {
+                if('function' === typeof v) {
+                  // observable
+                  e.style.setProperty(s, v())
+                  cleanupFuncs.push(v(function (val) {
+                    e.style.setProperty(s, val)
+                  }))
+                } else
+                  e.style.setProperty(s, l[k][s])
+              })(s, l[k][s])
+            }
+          } else if (k.substr(0, 5) === "data-") {
+            e.setAttribute(k, l[k])
+          } else {
+            e[k] = l[k]
+          }
+        }
+      } else if ('function' === typeof l) {
+        //assume it's an observable!
+        var v = l()
+        e.appendChild(r = isNode(v) ? v : document.createTextNode(v))
+
+        cleanupFuncs.push(l(function (v) {
+          if(isNode(v) && r.parentElement)
+            r.parentElement.replaceChild(v, r), r = v
+          else
+            r.textContent = v
+        }))
+      }
+
+      return r
+    }
+    while(args.length)
+      item(args.shift())
+
+    return e
+  }
+
+  h.cleanup = function () {
+    for (var i = 0; i < cleanupFuncs.length; i++){
+      cleanupFuncs[i]()
+    }
+    cleanupFuncs.length = 0
+  }
+
+  return h
+}
+
+var h = module.exports = context()
+h.context = context
+
+function isNode (el) {
+  return el && el.nodeName && el.nodeType
+}
+
+function isText (el) {
+  return el && el.nodeName === '#text' && el.nodeType == 3
+}
+
+function forEach (arr, fn) {
+  if (arr.forEach) return arr.forEach(fn)
+  for (var i = 0; i < arr.length; i++) fn(arr[i], i)
+}
+
+function isArray (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]'
+}
+
+
+/***/ }),
+
+/***/ 1813:
+/***/ (function(module, exports) {
+
+/*!
+ * Cross-Browser Split 1.1.1
+ * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
+ * Available under the MIT License
+ * ECMAScript compliant, uniform cross-browser split method
+ */
+
+/**
+ * Splits a string into an array of strings using a regex or string separator. Matches of the
+ * separator are not included in the result array. However, if `separator` is a regex that contains
+ * capturing groups, backreferences are spliced into the result each time `separator` is matched.
+ * Fixes browser bugs compared to the native `String.prototype.split` and can be used reliably
+ * cross-browser.
+ * @param {String} str String to split.
+ * @param {RegExp|String} separator Regex or string to use for separating the string.
+ * @param {Number} [limit] Maximum number of items to include in the result array.
+ * @returns {Array} Array of substrings.
+ * @example
+ *
+ * // Basic use
+ * split('a b c d', ' ');
+ * // -> ['a', 'b', 'c', 'd']
+ *
+ * // With limit
+ * split('a b c d', ' ', 2);
+ * // -> ['a', 'b']
+ *
+ * // Backreferences in result array
+ * split('..word1 word2..', /([a-z]+)(\d+)/i);
+ * // -> ['..', 'word', '1', ' ', 'word', '2', '..']
+ */
+module.exports = (function split(undef) {
+
+  var nativeSplit = String.prototype.split,
+    compliantExecNpcg = /()??/.exec("")[1] === undef,
+    // NPCG: nonparticipating capturing group
+    self;
+
+  self = function(str, separator, limit) {
+    // If `separator` is not a regex, use `nativeSplit`
+    if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
+      return nativeSplit.call(str, separator, limit);
+    }
+    var output = [],
+      flags = (separator.ignoreCase ? "i" : "") + (separator.multiline ? "m" : "") + (separator.extended ? "x" : "") + // Proposed for ES6
+      (separator.sticky ? "y" : ""),
+      // Firefox 3+
+      lastLastIndex = 0,
+      // Make `global` and avoid `lastIndex` issues by working with a copy
+      separator = new RegExp(separator.source, flags + "g"),
+      separator2, match, lastIndex, lastLength;
+    str += ""; // Type-convert
+    if (!compliantExecNpcg) {
+      // Doesn't need flags gy, but they don't hurt
+      separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags);
+    }
+    /* Values for `limit`, per the spec:
+     * If undefined: 4294967295 // Math.pow(2, 32) - 1
+     * If 0, Infinity, or NaN: 0
+     * If positive number: limit = Math.floor(limit); if (limit > 4294967295) limit -= 4294967296;
+     * If negative number: 4294967296 - Math.floor(Math.abs(limit))
+     * If other: Type-convert, then use the above rules
+     */
+    limit = limit === undef ? -1 >>> 0 : // Math.pow(2, 32) - 1
+    limit >>> 0; // ToUint32(limit)
+    while (match = separator.exec(str)) {
+      // `separator.lastIndex` is not reliable cross-browser
+      lastIndex = match.index + match[0].length;
+      if (lastIndex > lastLastIndex) {
+        output.push(str.slice(lastLastIndex, match.index));
+        // Fix browsers whose `exec` methods don't consistently return `undefined` for
+        // nonparticipating capturing groups
+        if (!compliantExecNpcg && match.length > 1) {
+          match[0].replace(separator2, function() {
+            for (var i = 1; i < arguments.length - 2; i++) {
+              if (arguments[i] === undef) {
+                match[i] = undef;
+              }
+            }
+          });
+        }
+        if (match.length > 1 && match.index < str.length) {
+          Array.prototype.push.apply(output, match.slice(1));
+        }
+        lastLength = match[0].length;
+        lastLastIndex = lastIndex;
+        if (output.length >= limit) {
+          break;
+        }
+      }
+      if (separator.lastIndex === match.index) {
+        separator.lastIndex++; // Avoid an infinite loop
+      }
+    }
+    if (lastLastIndex === str.length) {
+      if (lastLength || !separator.test("")) {
+        output.push("");
+      }
+    } else {
+      output.push(str.slice(lastLastIndex));
+    }
+    return output.length > limit ? output.slice(0, limit) : output;
+  };
+
+  return self;
+})();
+
+
+/***/ }),
+
+/***/ 1814:
+/***/ (function(module, exports, __webpack_require__) {
+
+// contains, add, remove, toggle
+var indexof = __webpack_require__(1815)
+
+module.exports = ClassList
+
+function ClassList(elem) {
+    var cl = elem.classList
+
+    if (cl) {
+        return cl
+    }
+
+    var classList = {
+        add: add
+        , remove: remove
+        , contains: contains
+        , toggle: toggle
+        , toString: $toString
+        , length: 0
+        , item: item
+    }
+
+    return classList
+
+    function add(token) {
+        var list = getTokens()
+        if (indexof(list, token) > -1) {
+            return
+        }
+        list.push(token)
+        setTokens(list)
+    }
+
+    function remove(token) {
+        var list = getTokens()
+            , index = indexof(list, token)
+
+        if (index === -1) {
+            return
+        }
+
+        list.splice(index, 1)
+        setTokens(list)
+    }
+
+    function contains(token) {
+        return indexof(getTokens(), token) > -1
+    }
+
+    function toggle(token) {
+        if (contains(token)) {
+            remove(token)
+            return false
+        } else {
+            add(token)
+            return true
+        }
+    }
+
+    function $toString() {
+        return elem.className
+    }
+
+    function item(index) {
+        var tokens = getTokens()
+        return tokens[index] || null
+    }
+
+    function getTokens() {
+        var className = elem.className
+
+        return filter(className.split(" "), isTruthy)
+    }
+
+    function setTokens(list) {
+        var length = list.length
+
+        elem.className = list.join(" ")
+        classList.length = length
+
+        for (var i = 0; i < list.length; i++) {
+            classList[i] = list[i]
+        }
+
+        delete list[length]
+    }
+}
+
+function filter (arr, fn) {
+    var ret = []
+    for (var i = 0; i < arr.length; i++) {
+        if (fn(arr[i])) ret.push(arr[i])
+    }
+    return ret
+}
+
+function isTruthy(value) {
+    return !!value
+}
+
+
+/***/ }),
+
+/***/ 1815:
+/***/ (function(module, exports) {
+
+
+var indexOf = [].indexOf;
+
+module.exports = function(arr, obj){
+  if (indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+
+/***/ }),
+
+/***/ 1816:
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 1817:
+/***/ (function(module, exports) {
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+
+/***/ }),
+
+/***/ 1818:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\" id=\"nse-wrapper\">\n        <ol class=\"breadcrumb\">\n            <li>\n                <a (click)=\"goToHomePage()\">Home</a>\n            </li>\n            <li *ngIf=\"ParentChildFlag\">\n                <a [routerLink]=\"['/nse-circuit']\"> NSE Circuit Summary </a>\n            </li>\n\t\t\t<li>\n                <a [routerLink]=\"['/nse-circuit-lists']\"> NSE Circuits</a>\n            </li>\n            <li class=\"active\"> {{pageData.rowData.requestId}}</li>\n        </ol>\n        <!-- <div class=\"dashboard-txt\">\n            <h1>Service Request Details</h1>\n        </div> -->\n        <div class=\"col-md-12\" style=\"padding:0px;\">\n\t\t\t<div class=\"box-title box-title-tabs\">\n\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t<ul class=\"box-title-right\" id=\"sub-usermenu\">\n\t\t\t\t\t\t<li class=\"nse-expand-colapse\">\n\t\t\t\t\t\t\t<i *ngIf=\"openAll\" aria-hidden=\"true\" (click)=\"expandCollapseAll()\" class=\"fa pull-right hover-hand fa-compress\" placement=\"top\" tooltip=\"Collapse\"></i>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t<i *ngIf=\"!openAll\" aria-hidden=\"true\" (click)=\"expandCollapseAll()\" class=\"fa pull-right hover-hand fa-expand\" placement=\"top\" tooltip=\"Expand\"></i>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t</ul>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t<h3> {{pageData.rowData.requestId}} </h3>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"row\" id=\"nse-detail-container\">\n\t\t\n\t\t\t<accordion *ngIf=\"NseCircuitStatusRead\">\n\t\t\t\t <accordion-group heading=\"Status Tab\" [isOpen]=\"openAll || statusTabOpen\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<th *ngFor=\"let column of statusTabGrid.columns\">\n\t\t\t\t\t\t\t\t\t\t\t{{column.title}}\n\t\t\t\t\t\t\t\t\t\t</th>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det' *ngFor=\"let row of statusTabGrid.data\">\n\t\t\t\t\t\t\t\t\t\t<td *ngFor=\"let column of statusTabGrid.columns\">\n\t\t\t\t\t\t\t\t\t\t\t{{row[column.dataKey]}}\n\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\n\t\t\t\t </accordion-group>\n\t\t\t</accordion>\n\t\t\n\t\t\t<accordion *ngIf=\"!nseDetailLoader && NseCircuitDetailsRead\">\n\t\t\t\t <accordion-group heading=\"NSE - Request Details\" [isOpen]=\"openAll\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t<a (click)=\"showResponseLink(responseLinkTemplate)\" class=\"pull-right\">Response XML</a>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"col-md-6\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead></thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det' *ngFor=\"let req of nseReqArr1\">\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>{{req.name}}</b></td>\n\t\t\t\t\t\t\t\t\t\t<td><span id='incident_id'>{{nseDetailObj.NSERequestDetais[req.key]}}</span></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"col-md-6\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead></thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det' *ngFor=\"let req of nseReqArr2\">\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>{{req.name}}</b></td>\n\t\t\t\t\t\t\t\t\t\t<td><span id='incident_id'>{{nseDetailObj.NSERequestDetais[req.key]}}</span></td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\n\t\t\t\t </accordion-group>\n\t\t\t</accordion>\n\t\t\t\n\t\t\t<accordion *ngIf=\"!nseDetailLoader && NseCircuitDeviceRead\">\n\t\t\t\t <accordion-group heading=\"Device Details\" [isOpen]=\"openAll\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<th><b> Details </b></th>\n\t\t\t\t\t\t\t\t\t\t<th><b>\tRouter-1 </b></th>\n\t\t\t\t\t\t\t\t\t\t<th *ngIf=\"nseDetailObj.SifyDetails.routerQty == 2\"><b>Router-2</b></th>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Serial No.</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.DeviceDetails.d1Serial}}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.SifyDetails.routerQty == 2\">{{nseDetailObj.DeviceDetails.d2Serial}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Make</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.DeviceDetails.d1Make }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.SifyDetails.routerQty == 2\">{{nseDetailObj.DeviceDetails.d2Make }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Mgmt. IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.DeviceDetails.d1MgmtIP}}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.SifyDetails.routerQty == 2\">{{nseDetailObj.DeviceDetails.d2MgmtIP}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Location ID</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.DeviceDetails.d1LocationId}}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.SifyDetails.routerQty == 2\">{{nseDetailObj.DeviceDetails.d2LocationId}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>LAN Subnet</b></td>\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">{{nseDetailObj.DeviceDetails.lanSubnet}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>LAN-1 IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">{{nseDetailObj.DeviceDetails.lan1Ip}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>TAP-IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">{{nseDetailObj.DeviceDetails.tapIP}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>LAN-13 IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">{{nseDetailObj.DeviceDetails.lan13Ip}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>LAN-14 IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">{{nseDetailObj.DeviceDetails.lan14Ip}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t </accordion-group>\n\t\t\t</accordion>\n\t\t\t\n\t\t\t<accordion *ngIf=\"!nseDetailLoader && NseCircuitLinkRead\">\n\t\t\t\t <accordion-group heading=\"Link Details\" [isOpen]=\"openAll\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<th><b> Details </b></th>\n\t\t\t\t\t\t\t\t\t\t<th><b>\tLink-1 </b></th>\n\t\t\t\t\t\t\t\t\t\t<th *ngIf=\"nseDetailObj.LinkDetails[1]\"><b>Link-2</b></th>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Detail ID</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].deatilId }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].deatilId }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>LM Code</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].lmCode }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].lmCode  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Link NO.</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].linkNo }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].linkNo  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Service Provider</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].serviceProvider  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].serviceProvider  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Bandwidth</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].bandwidth  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].bandwidth  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>POP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].pop  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].pop  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Sify Link ID</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].sifyLinkId  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].sifyLinkId  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>External Link ID</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].externalLinkId  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].externalLinkId  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Provider MUX Slot</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].providerMUXSlot }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].providerMUXSlot }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>VLAN</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].vlan  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].vlan  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>WAN Segment</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].wanSegment  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].wanSegment  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>PE IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].peIP  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].peIP  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>CE IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].ceIP  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].ceIP \t }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Router 1 IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].router1IP  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].router1IP  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Router 1 Interface</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].router1Interface  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].router1Interface  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Router 2 IP</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].router2IP  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].router2IP  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Router 2 Interface</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.LinkDetails[0] &&  nseDetailObj.LinkDetails[0].router2Interface  }}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">{{nseDetailObj.LinkDetails[1] &&  nseDetailObj.LinkDetails[1].router2Interface  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t </accordion-group>\n\t\t\t</accordion>\n\t\t\t\n\t\t\t<accordion *ngIf=\"!nseDetailLoader && NseCircuitSifyRead\">\n\t\t\t\t <accordion-group heading=\"Sify Details\" [isOpen]=\"openAll\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t\t<div class=\"col-md-6\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead></thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>LM Code</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.lmCode }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Oracle ID</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.oracleId  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>PO Number</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.poNumber  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Account ID</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.accountId  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Site Code</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.sitecode  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Migration Time</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.migrationTime  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"col-md-6\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead></thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Oracle Id</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.oracleId  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>GSTIN</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.gstIn  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Router Qty</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.routerQty }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Invoice Number</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.invoiceNumber  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Migration Batch</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.migrationBatch  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>Remarks</b></td>\n\t\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.SifyDetails.remarks  }}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t </accordion-group>\n\t\t\t</accordion>\n\t\t\t<accordion *ngIf=\"!nseDetailLoader && NseCircuitDevConfigRead\">\n\t\t\t\t <accordion-group heading=\"Device Configuration\" [isOpen]=\"openAll\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead></thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>CE</b></td>\n\t\t\t\t\t\t\t\t\t\t<td  colspan=\"2\"><a (click)=\"getCommand(nseDetailObj.DeviceDetails.d1MgmtIP,nseDetailObj.DeviceDetails.d1TemplateName,commandTemplate)\">{{nseDetailObj.DeviceDetails.d1MgmtIP}}</a> ({{nseDetailObj.DeviceDetails.d1TemplateName}})</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.DeviceDetails.d2MgmtIP\"  colspan=\"2\"><a (click)=\"getCommand(nseDetailObj.DeviceDetails.d2MgmtIP,nseDetailObj.DeviceDetails.d2TemplateName,commandTemplate)\">{{nseDetailObj.DeviceDetails.d2MgmtIP}}</a> ({{nseDetailObj.DeviceDetails.d2TemplateName}})</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr class='det'>\n\t\t\t\t\t\t\t\t\t\t<td rowspan=\"3\" class=\"detail-title\"><b>PE</b></td>\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">{{nseDetailObj.LinkDetails[0] && nseDetailObj.LinkDetails[0].serviceProvider}}</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\" colspan=\"2\">{{nseDetailObj.LinkDetails[1] && nseDetailObj.LinkDetails[1].serviceProvider}}</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td>WORK</td>\n\t\t\t\t\t\t\t\t\t\t<td>PROTECT</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">WORK</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\">PROTECT</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<td><a (click)=\"nseDetailObj.LinkDetails[0] && getCommand(nseDetailObj.LinkDetails[0].router1IP,nseDetailObj.LinkDetails[0].activeTemplate,commandTemplate)\"> {{nseDetailObj.LinkDetails[0] && nseDetailObj.LinkDetails[0].router1IP}} </a>( {{nseDetailObj.LinkDetails[0] && nseDetailObj.LinkDetails[0].activeTemplate}})</td>\n\t\t\t\t\t\t\t\t\t\t<td><a (click)=\"nseDetailObj.LinkDetails[0] && getCommand(nseDetailObj.LinkDetails[0].router2IP,nseDetailObj.LinkDetails[0].backupTemplate,commandTemplate)\"> {{nseDetailObj.LinkDetails[0] && nseDetailObj.LinkDetails[0].router2IP}} </a> ({{nseDetailObj.LinkDetails[0] && nseDetailObj.LinkDetails[0].backupTemplate}})</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\"><a (click)=\"nseDetailObj.LinkDetails[1] && getCommand(nseDetailObj.LinkDetails[1].router1IP,nseDetailObj.LinkDetails[1].activeTemplate,commandTemplate)\"> {{nseDetailObj.LinkDetails[1] && nseDetailObj.LinkDetails[1].router1IP}} </a> ({{nseDetailObj.LinkDetails[1] && nseDetailObj.LinkDetails[1].activeTemplate}})</td>\n\t\t\t\t\t\t\t\t\t\t<td *ngIf=\"nseDetailObj.LinkDetails[1]\"><a (click)=\"nseDetailObj.LinkDetails[1] && getCommand(nseDetailObj.LinkDetails[1].router2IP,nseDetailObj.LinkDetails[1].backupTemplate,commandTemplate)\"> {{nseDetailObj.LinkDetails[1] && nseDetailObj.LinkDetails[1].router2IP}} </a>( {{nseDetailObj.LinkDetails[1] && nseDetailObj.LinkDetails[1].backupTemplate}})</td>\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t </accordion-group>\n\t\t\t</accordion>\n\t\t\t<accordion *ngIf=\"!nseDetailLoader && NseCircuitUatRead\">\n\t\t\t\t<accordion-group heading=\"UAT Status\" [isOpen]=\"openAll\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<th>Status</th>\n\t\t\t\t\t\t\t\t\t<th>UAT File</th>\n\t\t\t\t\t\t\t\t\t<th>UAT Log File</th>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t<td>{{nseDetailObj.NSEStatus.uat_status}}</td>\n\t\t\t\t\t\t\t\t\t<td><a (click)=\"downLoadFile(nseDetailObj.SifyDetails.uatFileName,'file')\">{{nseDetailObj.SifyDetails.uatFileName || ''}}</a></td>\n\t\t\t\t\t\t\t\t\t<td><a (click)=\"downLoadFile(nseDetailObj.SifyDetails.uatLogName,'log')\">{{nseDetailObj.SifyDetails.uatLogName || ''}}</a></td>\n\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t</table>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t</accordion-group>\n\t\t\t</accordion>\n\t\t\t<accordion *ngIf=\"!nseDetailLoader && serviceAssureRead\">\n\t\t\t\t <accordion-group heading=\"Service Assurance\" [isOpen]=\"openAll\" class=\"col-md-12\">\n\t\t\t\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t\t\t<div class=\"col-md-12 sa-device\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<th><b> Details </b></th>\n\t\t\t\t\t\t\t\t\t\t<th><b>\tRouter-1 </b></th>\n\t\t\t\t\t\t\t\t\t\t<th *ngIf=\"SAObj.NSEAssuranceDeviceList.length == 2\"><b>Router-2 </b></th>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det' *ngFor=\"let devCol of SADeviceGrid\">\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>{{devCol.name}}</b></td>\n\t\t\t\t\t\t\t\t\t\t<td *ngFor=\"let device of SAObj.NSEAssuranceDeviceList; let i=index\">\n\t\t\t\t\t\t\t\t\t\t\t<span *ngIf=\"!devCol.link\">{{device[devCol.key]}}</span>\n\t\t\t\t\t\t\t\t\t\t\t<a (click)=\"deviceClick(devCol,device)\" *ngIf=\"devCol.link\">{{device[devCol.key]}}</a>\n\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\n\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t<table class=\"table table-striped display\">\n\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t<th><b> Details </b></th>\n\t\t\t\t\t\t\t\t\t\t<th><b>\tLink-1 </b></th>\n\t\t\t\t\t\t\t\t\t\t<th *ngIf=\"SAObj.NSEAssuranceLinkList.length == 2\"><b>Link-2 </b></th>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t<tbody>\n\t\t\t\t\t\t\t\t\t<tr class='det' *ngFor=\"let linkCol of SALinkGrid\">\n\t\t\t\t\t\t\t\t\t\t<td class=\"detail-title\"><b>{{linkCol.name}}</b></td>\n\t\t\t\t\t\t\t\t\t\t<td *ngFor=\"let link of SAObj.NSEAssuranceLinkList; let i=index\">\n\t\t\t\t\t\t\t\t\t\t\t<span *ngIf=\"!linkCol.link\">{{link[linkCol.key]}}</span>\n\t\t\t\t\t\t\t\t\t\t\t<a (click)=\"linkClicked(linkCol,link)\" *ngIf=\"linkCol.link\">{{link[linkCol.key]}}</a>\n\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\n\t\t\t\t\t</div>\n\t\t\t\t </accordion-group>\n\t\t\t</accordion>\n\t\t</div>\n\t\t<ng-template #commandTemplate>\n\t\t\t<div class=\"modal-header\">\n\t\t\t  <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n\t\t\t  <h4 class=\"modal-title\">{{selectedIp}}</h4>\n\t\t\t</div>\n\t\t\t<div class=\"modal-body row\">\n\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t<div *ngIf=\"!nseCommandLoader\" class=\"pull-right\">\n\t\t\t\t\t\t<ul class=\"box-title-right\">\n\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t  <button type=\"button\" class=\"button-upload btn btn-primary\" style=\"padding:4px;\" (click)=\"downLoadCmd()\" >Download</button>\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t  <div class=\"nse-command-detail col-md-12\" *ngIf=\"!nseCommandLoader\" [innerHTML]=\"commandText\"></div>\n\t\t\t  <content-loader *ngIf=\"nseCommandLoader\"></content-loader>\n\t\t\t</div>\n\n\t\t</ng-template>\n\t\t<ng-template #responseLinkTemplate>\n\t\t\t<div class=\"modal-header\">\n\t\t\t  <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n\t\t\t  <h4 class=\"modal-title\">Response XML</h4>\n\t\t\t</div>\n\t\t\t<div class=\"modal-body row\">\n\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t<div  class=\"pull-right\">\n\t\t\t\t\t\t<ul  class=\"box-title-right\">\n\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t  <button (click)=\"downloadXml()\" class=\"button-upload btn btn-primary\" style=\"padding:4px;\" type=\"button\">Download</button>\n\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"col-md-12\" id=\"xml-container\">\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t</ng-template>\n    </section>\n</section>";
+
+/***/ }),
+
+/***/ 1819:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1820);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1820:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1821);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./nse-circuit-details.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./nse-circuit-details.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1821:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".ctrl-section {\r\n    margin-top : 20px;\r\n}\r\n\r\n.ctrl-section button{\r\n    float: right;\r\n}\r\n\r\n.ctrl-section button{\r\n    background: #00a6c9;\r\n    font-size: 18px;\r\n    color: #fff;\r\n    width: 85px;\r\n    padding: 5px;\r\n}\r\n\r\n.detail-title {\r\n\tbackground : #4a5255;\r\n\tcolor : #fff;\r\n\twidth : 150px;\r\n    display: table-cell !important;\r\n    vertical-align: middle !important;\r\n    text-align: center !important;\r\n}\r\n#nse-detail-container td, #nse-detail-container th {\r\n\ttext-align: center !important;\r\n}\r\n\r\n#nse-detail-container {\r\n\tmargin-top : 75px;\r\n}\r\n.nse-expand-colapse i{\r\n\tcursor : pointer;\r\n\tfont-size : 30px;\r\n\tcolor: #a7afb8;\r\n}\r\n\r\n#nse-detail-container .table-striped{\r\n\tborder-right: 1px solid #ddd;\r\n    border-bottom: 1px solid #ddd;\r\n}\r\n\r\n.nse-command-detail{\r\n\twhite-space: pre-line;\r\n\theight : 400px;\r\n\toverflow : auto;\r\n\tfont-family: monospace;\r\n}\r\n.sa-device {\r\n\tmargin-bottom : 20px;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 512:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var nse_circuit_component_1 = __webpack_require__(1541);
+var nse_circuit_details_component_1 = __webpack_require__(1542);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var http_1 = __webpack_require__(87);
+var forms_1 = __webpack_require__(26);
+var buttons_1 = __webpack_require__(503);
+var nse_circuit_router_1 = __webpack_require__(1543);
+var nse_circuit_router_2 = __webpack_require__(1543);
+/* Module Start */
+var NseCircuitModule = /** @class */ (function () {
+    function NseCircuitModule() {
+    }
+    NseCircuitModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, nse_circuit_router_1.nseCircuitRouter, http_1.HttpClientModule, forms_1.FormsModule, forms_1.ReactiveFormsModule, buttons_1.ButtonsModule.forRoot()],
+            declarations: [nse_circuit_component_1.NseCircuitComponent]
+        })
+    ], NseCircuitModule);
+    return NseCircuitModule;
+}());
+exports.NseCircuitModule = NseCircuitModule;
+/* Module End */
+/* Module Start */
+var NseCircuitDetailsModule = /** @class */ (function () {
+    function NseCircuitDetailsModule() {
+    }
+    NseCircuitDetailsModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, nse_circuit_router_2.nseCircuitDetailsRouter, http_1.HttpClientModule, forms_1.FormsModule, forms_1.ReactiveFormsModule, buttons_1.ButtonsModule.forRoot()],
+            declarations: [nse_circuit_details_component_1.NseCircuitDetailsComponent]
+        })
+    ], NseCircuitDetailsModule);
+    return NseCircuitDetailsModule;
+}());
+exports.NseCircuitDetailsModule = NseCircuitDetailsModule;
+/* Module End */ 
+
+
+/***/ })
+
+});]]></script>
+        <script_name>4.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>18b689cbdb3d2300429e2a9a489619a9</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.4.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_18b689cbdb3d2300429e2a9a489619a9</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:00</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

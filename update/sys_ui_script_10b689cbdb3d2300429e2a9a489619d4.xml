@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.47.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([47],{
+
+/***/ 1280:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var escalation_matrix_component_1 = __webpack_require__(1381);
+var escalation_matrix_router_1 = __webpack_require__(1633);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var EscalationMatrixModule = /** @class */ (function () {
+    function EscalationMatrixModule() {
+    }
+    EscalationMatrixModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, escalation_matrix_router_1.EscalationMatrixRouter],
+            declarations: [
+                escalation_matrix_component_1.EscalationMatrixComponent,
+            ],
+        })
+    ], EscalationMatrixModule);
+    return EscalationMatrixModule;
+}());
+exports.EscalationMatrixModule = EscalationMatrixModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1381:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var common_1 = __webpack_require__(6);
+var ngx_cookie_1 = __webpack_require__(62);
+var router_1 = __webpack_require__(48);
+var pdf_service_1 = __webpack_require__(269);
+var common_2 = __webpack_require__(6);
+var excell_service_1 = __webpack_require__(266);
+var EscalationMatrixComponent = /** @class */ (function () {
+    function EscalationMatrixComponent(router, excellService, cookies, location, commonServices, pageViewService, pdfService, dateFilter) {
+        var _this = this;
+        this.router = router;
+        this.excellService = excellService;
+        this.cookies = cookies;
+        this.location = location;
+        this.commonServices = commonServices;
+        this.pageViewService = pageViewService;
+        this.dateFilter = dateFilter;
+        this.currentUser = {};
+        this.exportList = function () {
+            console.log('escalationsMatrixDetails', _this.escalationsMatrixDetails);
+            var allTableHtml = '';
+            var parentHtml = '<table border="1"><tr> <td colspan="6"> <b>Escalation Matrix</b></td></tr><tr><td><b>Client Name</b></td><td colspan="5">' + _this.currentUser.customer_fullname + '</td></tr>    <tr><td><b>Generated On</b></td><td colspan="5">' + _this.dateFilter.transform(new Date(), "dd-MM-yyyy @ h:mm:ss a") + '</td></tr></table><table><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr></table>';
+            allTableHtml = allTableHtml + parentHtml;
+            var tableContentHeader = '';
+            var titleArr = ['Helpdesk Nos.', '1st level Escalation (ETR Elaps)', '2nd level Escalation (ETR + 1Hr)', '3rd level Escalation (ETR + 2Hr)', '4th level Escalation (ETR + 3Hr)', '5th level Escalation (ETR + 4Hr)'];
+            for (var i = 0; i < titleArr.length; i++) {
+                tableContentHeader = tableContentHeader + '<th colspan="1">' + titleArr[i] + '</th>';
+            }
+            _this.escalationsMatrixDetails.forEach(function (matrix, i) {
+                var tableContentBody = '';
+                var helpDeskHtml = '';
+                helpDeskHtml = helpDeskHtml + '<div>' + matrix.helpdesk_numbers + '</div></br>';
+                matrix.helpdesk_mail_arr.forEach(function (mail) {
+                    helpDeskHtml = helpDeskHtml + '<div>' + mail.email_id + '</div></br>';
+                });
+                var esc1Html = '';
+                matrix.first_level_users.forEach(function (firstLevel) {
+                    esc1Html = esc1Html + '<div>' + firstLevel.userinfo.name + '</div></br>';
+                    esc1Html = esc1Html + '<div>' + firstLevel.userinfo.email_id + '</div></br>';
+                    esc1Html = esc1Html + '<div>' + firstLevel.userinfo.phone_no + '</div></br></br>';
+                });
+                var esc2Html = '';
+                matrix.second_level_users.forEach(function (secLevel) {
+                    esc2Html = esc2Html + '<div>' + secLevel.userinfo.name + '</div></br>';
+                    esc2Html = esc2Html + '<div>' + secLevel.userinfo.email_id + '</div></br>';
+                    esc2Html = esc2Html + '<div>' + secLevel.userinfo.phone_no + '</div></br></br>';
+                });
+                var esc3Html = '';
+                matrix.third_level_users.forEach(function (thirdLevel) {
+                    esc3Html = esc3Html + '<div>' + thirdLevel.userinfo.name + '</div></br>';
+                    esc3Html = esc3Html + '<div>' + thirdLevel.userinfo.email_id + '</div></br>';
+                    esc3Html = esc3Html + '<div>' + thirdLevel.userinfo.phone_no + '</div></br></br>';
+                });
+                var esc4Html = '';
+                matrix.fourth_level_users.forEach(function (fourthLevel) {
+                    esc4Html = esc4Html + '<div>' + fourthLevel.userinfo.name + '</div></br>';
+                    esc4Html = esc4Html + '<div>' + fourthLevel.userinfo.email_id + '</div></br>';
+                    esc4Html = esc4Html + '<div>' + fourthLevel.userinfo.phone_no + '</div></br></br>';
+                });
+                var esc5Html = '';
+                matrix.fifth_level_users.forEach(function (fifthLevel) {
+                    esc5Html = esc5Html + '<div>' + fifthLevel.userinfo.name + '</div></br>';
+                    esc5Html = esc5Html + '<div>' + fifthLevel.userinfo.email_id + '</div></br>';
+                    esc5Html = esc5Html + '<div>' + fifthLevel.userinfo.phone_no + '</div></br></br>';
+                });
+                var contenArr = [helpDeskHtml, esc1Html, esc2Html, esc3Html, esc4Html, esc5Html];
+                for (var j = 0; j < contenArr.length; j++) {
+                    tableContentBody = tableContentBody + '<td colspan="1">' + contenArr[j] + '</td>';
+                }
+                var mainTable = '<table class="table table-bordered table-striped" border="1"><thead><tr> <td colspan="6"> <b> Location : ' + matrix.location + '</b></td></tr><tr> <td colspan="6"> <b>Region : ' + matrix.region + '</b></td></tr><tr></tr><tr>' + tableContentHeader + '</tr></thead><tbody><tr>' + tableContentBody + '</tr><tr></tr><tr></tr></tbody></table><table><tr></tr></table>';
+                allTableHtml = allTableHtml + mainTable;
+            });
+            var finalHtml = '<div>' + allTableHtml + '</div>';
+            console.log('finalHtml', finalHtml);
+            _this.excellService.generateExcellByHtml({ html: finalHtml, excelName: 'Escalation Matrix' });
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        //.CoreEscMatrixDetails
+    }
+    EscalationMatrixComponent.prototype.showTab = function (tabName, index) {
+        var _this = this;
+        if (this.openAccordion.length > 0) {
+            for (var i = 0; i < this.openAccordion.length; i++) {
+                this.openAccordion[i] = false;
+            }
+        }
+        this.activeTabName = tabName;
+        this.titletab = tabName;
+        console.log('tabIndex', index);
+        this.openAccordion = [];
+        this.escalationsMatrixDetails = [];
+        this.openAll = [];
+        this.expandorcollapse = false;
+        if (index == 0) {
+            var _loop_1 = function (i) {
+                this_1.escalations[i].CoreEscMatrixDetails.map(function (val) {
+                    val.region = _this.escalations[i].region;
+                });
+                this_1.escalationsMatrixDetails = this_1.escalationsMatrixDetails.concat(this_1.escalations[i].CoreEscMatrixDetails);
+            };
+            var this_1 = this;
+            for (var i = 0; i < this.escalations.length; i++) {
+                _loop_1(i);
+            }
+        }
+        else {
+            this.escalations[index - 1].CoreEscMatrixDetails.map(function (val) {
+                val.region = _this.escalations[index - 1].region;
+            });
+            this.escalationsMatrixDetails = this.escalations[index - 1].CoreEscMatrixDetails.slice();
+        }
+        for (var i = 0; i < this.escalationsMatrixDetails.length; i++) {
+            this.openAccordion = this.openAccordion.concat([false]);
+            this.openAll = this.openAll.concat([false]);
+        }
+        this.activeTabName = this.dynamicTab[index].activeTabName;
+    };
+    EscalationMatrixComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.dynamicTab = [{ activeTabName: 'All', tooltip: 'All', tabIcon: 'report.svg' }];
+        this.openAccordion = [];
+        this.accordionContent = ["accordion1", "accordion2", "accordion3", "accordion4", "accordion5"];
+        this.escalations = [];
+        this.openAll = [];
+        this.escalationsMatrixDetails = [];
+        this.expandorcollapse = false;
+        this.loader = true;
+        this.currentUser = this.cookies.getObject('globals');
+        this.commonServices.getRequest('/_escmatrix/getEscalationMatrix').then(function (res) {
+            console.log(res);
+            _this.loader = false;
+            if (res.status == "success") {
+                _this.escalations = res.items.slice();
+                _this.escalations.map(function (regions) {
+                    _this.dynamicTab = _this.dynamicTab.concat([{ activeTabName: regions.region, tooltip: regions.region, tabIcon: 'report.svg' }]);
+                });
+                _this.activeTabName = _this.dynamicTab[0].activeTabName;
+                console.log('Active Tabname', _this.activeTabName, _this.activeTabName == 'All');
+                if (_this.activeTabName == 'All') {
+                    var _loop_2 = function (i) {
+                        _this.escalations[i].CoreEscMatrixDetails.map(function (val) {
+                            val.region = _this.escalations[i].region;
+                        });
+                        _this.escalationsMatrixDetails = _this.escalationsMatrixDetails.concat(_this.escalations[i].CoreEscMatrixDetails);
+                    };
+                    for (var i = 0; i < _this.escalations.length; i++) {
+                        _loop_2(i);
+                    }
+                }
+                else {
+                    _this.escalations[0].CoreEscMatrixDetails.map(function (val) {
+                        val.region = _this.escalations[0].region;
+                    });
+                    _this.escalationsMatrixDetails = _this.escalations[0].CoreEscMatrixDetails.slice();
+                }
+                for (var i = 0; i < _this.escalationsMatrixDetails.length; i++) {
+                    _this.openAccordion = _this.openAccordion.concat([false]);
+                    _this.openAll = _this.openAll.concat([false]);
+                }
+                _this.titletab = _this.activeTabName;
+                _this.expandCollapseAll();
+            }
+            else {
+                _this.commonServices.success(res.message);
+            }
+        }, function (err) {
+            _this.commonServices.error(err);
+        });
+    };
+    EscalationMatrixComponent.prototype.expandCollapseAll = function () {
+        this.expandorcollapse = this.expandorcollapse ? false : true;
+        console.log('true', this.expandorcollapse);
+        for (var i = 0; i < this.openAll.length; i++) {
+            this.openAll[i] = this.expandorcollapse;
+        }
+        console.log(this.openAll);
+    };
+    EscalationMatrixComponent.prototype.toggleOpen = function (open, index) {
+        console.log('open', open);
+        console.log('openIndex', index);
+        this.openAccordion[index] = open ? true : false;
+        this.openAll[index] = open ? true : false;
+    };
+    EscalationMatrixComponent = __decorate([
+        core_1.Component({
+            selector: 'escalation-matrix',
+            template: __webpack_require__(1629),
+            styles: [__webpack_require__(1630)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, excell_service_1.ExcellService, ngx_cookie_1.CookieService, common_1.Location, common_service_1.CommonService, page_view_service_1.PageViewService, pdf_service_1.PdfService, common_2.DatePipe])
+    ], EscalationMatrixComponent);
+    return EscalationMatrixComponent;
+}());
+exports.EscalationMatrixComponent = EscalationMatrixComponent;
+
+
+/***/ }),
+
+/***/ 1629:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = "<!--  Section Start -->\n<section id=\"escalation-matrix\">\n<section id=\"main-content\">\n  <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n      <li>\n        <a (click)=\"goToHomePage()\">Home</a>\n      </li>\n      <li class=\"active\">Escalation Matrix</li>\n    </ol>\n    <div class=\"dashboard-txt\" style=\"position:relative;z-index:1000;\" *ngIf=\"!loader\">\n      <i aria-hidden=\"true\" (click)=\"expandCollapseAll()\" class=\"fa pull-right hover-hand\" [class.fa-compress]=\"expandorcollapse\" [class.fa-expand]=\"!expandorcollapse\"  [title]=\"expandorcollapse==false?'Expand':'Collapse'\" style=\"margin-top:5px;padding:10px;border:1px solid lightgrey;\"></i>\n\t  <li class=\"export-esm\"><img  src=\"" + __webpack_require__(500) + "\" (click)=\"exportList()\"></li>\n\t  \n    </div>\n    <div style=\"margin-top:70px;\" class=\"text-center\" [ngStyle]=\"{'display':loader?'block':'none'}\">\n        <content-loader></content-loader>\n    </div>\n    <div class=\"pn-ProductNav_Wrapper\" style=\"position:relative;z-index:999;\" *ngIf=\"!loader\">\n      <nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n         <div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\">\n            <a class=\"pn-ProductNav_Link\" [ngClass]=\"{'active' : activeTabName == tab.activeTabName}\" (click)=\"showTab(tab.activeTabName,i)\" *ngFor=\"let tab of dynamicTab;let i=index;\"> {{tab.activeTabName}}</a>\n         </div>\n      </nav>\n   </div>\n    <div class=\"row\" style=\"margin-top:20px;\" *ngIf=\"!loader\">\n      <div class=\"col-md-12\">\n        <div>\n          <div class=\"tab-content clearfix\">\n            <div class=\"tab-pane\" class=\"active\">\n    <accordion class=\"accordion\">\n      <accordion-group (isOpenChange)=\"toggleOpen($event,i)\" [isOpen]=\"openAll[i]\" *ngFor=\"let escalation of escalationsMatrixDetails;let i=index;\">\n        <div accordion-heading>\n          <h6 style=\"display:inline-block;margin-top:7px !important;font-size:17px;\"> {{escalation.location.substring(0,1).toUpperCase()}}{{escalation.location.substring(1)}}</h6>\n          <i class=\"fa chevron-icon pull-right\" style=\"margin-top:15px !important;\" [ngClass]=\"{'fa-chevron-down': openAccordion[i], 'fa-chevron-right': !openAccordion[i]}\"></i>\n        </div>\n        <ul>\n          <li class=\"row\" style=\"background:#4a5255;color:#fff;\">\n            <div class=\"col-md-12\" style=\"padding:0px;display:flex;flex-wrap:nowrap;word-wrap:break-word;\">\n              <div class=\"col-md-2 text-center\" style=\"padding:17px;border-right:1px solid #fff;font-size:16px;\">\n                HelpDesk Nos\n              </div>\n              <div class=\"col-md-2 text-center\" style=\"padding:17px;border-right:1px solid #fff;font-size:16px;\">\n                1st level Escalation (ETR Elaps)\n              </div>\n              <div class=\"col-md-2 text-center\" style=\"padding:17px;border-right:1px solid #fff;font-size:16px;\">\n                2nd level Escalation (ETR + 1Hr)\n              </div>\n              <div class=\"col-md-2 text-center\" style=\"padding:17px;border-right:1px solid #fff;font-size:16px;\">\n                3rd level Escalation (ETR + 2Hr)\n              </div>\n              <div class=\"col-md-2 text-center\" style=\"padding:17px;border-right:1px solid #fff;font-size:16px;\">\n                4th level Escalation (ETR + 3Hr)\n              </div>\n              <div class=\"col-md-2 text-center\" style=\"padding:17px;font-size:16px;\">\n                5th level Escalation (ETR + 4Hr)\n              </div>\n            </div>\n          </li>\n          <li class=\"row\">\n            <div class=\"col-md-12\" style=\"display:flex;flex-wrap:no-wrap;padding:0px;\">\n              <div class=\"col-md-2\" style=\"font-size:14px;word-wrap:break-word;padding:10px;border-left:1px solid black;border-right:1px solid black;border-bottom:1px solid black;\">\n                {{escalation.helpdesk_numbers}}\n                <br/> {{escalation.helpdesk_mail}}\n              </div>\n              <div class=\"col-md-2\" style=\"font-size:14px;border-right:1px solid black;border-bottom:1px solid black;;\">\n                <div class=\"row\" *ngFor=\"let userDetail of escalation.first_level_users\">\n                  <div class=\"col-md-12 padding-10\" style=\"word-wrap:break-word;border-bottom:1px solid lightgrey;height:130px;overflow:auto;\">\n                    {{userDetail.userinfo.name}}\n                    <br/> {{userDetail.userinfo.email_id}}\n                    <br/> {{userDetail.userinfo.phone_no}}\n                  </div>\n                  <div class=\"padding-5\">\n\n                  </div>\n                </div>\n              </div>\n              <div class=\"col-md-2\" style=\"font-size:14px;border-right:1px solid black;border-bottom:1px solid black;\">\n                <div class=\"row\" *ngFor=\"let userDetail of escalation.second_level_users\">\n                  <div class=\"col-md-12  padding-10\" style=\"word-wrap:break-word;border-bottom:1px solid lightgrey;height:130px;overflow:auto;\">\n                    {{userDetail.userinfo.name}}\n                    <br/> {{userDetail.userinfo.email_id}}\n                    <br/> {{userDetail.userinfo.phone_no}}\n                  </div>\n                  <div class=\"padding-5\">\n\n                  </div>\n                </div>\n              </div>\n              <div class=\"col-md-2\" style=\"font-size:14px;border-right:1px solid black;border-bottom:1px solid black;\">\n                <div class=\"row\" *ngFor=\"let userDetail of escalation.third_level_users\">\n                  <div class=\"col-md-12  padding-10\" style=\"word-wrap:break-word;border-bottom:1px solid lightgrey;height:130px;overflow:auto;\">\n                    {{userDetail.userinfo.name}}\n                    <br/> {{userDetail.userinfo.email_id}}\n                    <br/> {{userDetail.userinfo.phone_no}}\n                  </div>\n                  <div class=\"padding-5\">\n\n                  </div>\n                </div>\n              </div>\n              <div class=\"col-md-2\" style=\"font-size:14px;border-right:1px solid black;border-bottom:1px solid black;\">\n                <div class=\"row\" *ngFor=\"let userDetail of escalation.fourth_level_users\">\n                  <div class=\"col-md-12  padding-10\" style=\"word-wrap:break-word;border-bottom:1px solid lightgrey;height:130px;overflow:auto;\">\n                    {{userDetail.userinfo.name}}\n                    <br/> {{userDetail.userinfo.email_id}}\n                    <br/> {{userDetail.userinfo.phone_no}}\n                  </div>\n                  <div class=\"padding-5\">\n\n                  </div>\n                </div>\n              </div>\n              <div class=\"col-md-2\" style=\"font-size:14px;border-right:1px solid black;border-bottom:1px solid black;\">\n                <div class=\"row\" *ngFor=\"let userDetail of escalation.fifth_level_users\">\n                  <div class=\"col-md-12  padding-5\" style=\"word-wrap:break-word;border-bottom:1px solid lightgrey;height:130px;overflow:auto;\">\n                    {{userDetail.userinfo.name}}\n                    <br/> {{userDetail.userinfo.email_id}}\n                    <br/> {{userDetail.userinfo.phone_no}}\n                  </div>\n                </div>\n              </div>\n            </div>\n            <div class=\"col-md-12 padding-10\">\n\n            </div>\n          </li>\n        </ul>\n      </accordion-group>\n    </accordion>\n    </div>\n    </div>\n    </div>\n    </div>\n    </div>\n  </section>\n</section>\n</section>\n<!--  Section End -->";
+
+/***/ }),
+
+/***/ 1630:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1631);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1631:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1632);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./escalation-matrix.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./escalation-matrix.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1632:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#escalation-matrix .navbar li.dropdown:hover > ul.dropdown-menu {\n\t    display: block;\n\t}\n\t#escalation-matrix .submenu .dropdown-menu {\n\t    padding: 0;\n        margin-top: 0;\n\t}\n\t#escalation-matrix .navbar.navbar-default.main-menu .submenu .dropdown-menu li,#escalation-matrix  .navbar.navbar-default.main-menu .submenu .dropdown-menu li a {\n\t\twidth: 100%;\n\t\ttext-align: left;\n\t}\n\n    #escalation-matrix  .bartoolTip {\n        /* font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif; */\n        position: absolute;\n        display: none;\n        width: auto;\n        min-width: 150px;\n        max-width: 200px;\n        height: auto;\n        background: none repeat scroll 0 0 white;\n        border-radius: 5px;\n        box-shadow: 0px 0px 1px 1px #666;\n        color: black;\n        padding: 5px;\n        text-align: left;\n        font-size: 12px;\n    }\n      \n    #escalation-matrix    .main-menu {\n          height: auto;\n      }\n        \n      #escalation-matrix   .main-menu li {\n          padding-right: 0px;\n      }\n      \n      #escalation-matrix  .main-menu li > a {\n          text-align: center;\n          font-size: 14px;\n          padding: 10px;\n          display: inline-block;\n      }\n      #escalation-matrix .excel-export{\n          color: green;\n          padding-right: 17px;\n     margin-top: 21px;\n      }\n      #escalation-matrix .excel-export i {\n          font-size : 23px;\n      }\n      #escalation-matrix           .datetimepicker-start-end{\n              padding: 10px !important;\n              width : 100% !important;\n              float : none !important;\n              background: #f8f8f8 !important;\n      }\n      #escalation-matrix  .start-end-icon{\n              position: absolute;\n              top: 8px;\n              font-size: 23px;\n              right: 24px;\n      }\n   .incident-all-lists .content-txt-rightbtn{\n    margin-bottom: 0 !important;\n  }\n  .incident-container-all{\n    margin-top : 40px;\n  }\n  .modal-content .table > tbody > tr > td:first-child {\n      min-width: 150px;\n  }\n  path.domain {\n      shape-rendering: crispEdges;\n      fill: none;\n      stroke-width: 1px;\n      stroke: #999;\n  }\n  rect.bar{\n    cursor: pointer;\n  }\n  .legend{\n    display: none;\n  }\n  ul.legendList {\n      float: right;\n      text-align: left;\n      width: 20%;\n  }\n  ul.legendList li {\n    font-size: 12px;\n  }\n  ul.legendList li span {\n      height: 10px;\n      width: 10px;\n      display: inline-block;\n      margin-right: 5px;\n  }\n  g.y.axis .tick{\n    display: none;\n  }\n  .padding-5\n  {\n      padding-top:5px;\n      padding-bottom:5px;\n  }\n  .padding-10\n  {\n      padding-top:10px;\n      padding-bottom:10px;\n  }\n  .panel-heading\n  {\n   padding-top:0px !important;\n   padding-bottom:0px !important;\n  }\n  .panel-body\n  {\n      border-top-color:transparent;\n      padding:30px;\n  }\n  .hover-hand:hover\n  {\ncursor:pointer !important;\n  }\n  \n  .export-esm{\n\tcursor : pointer;\n    width: 35px;\n    margin-top: 6px;\n    float: right;\n  }", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1633:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var escalation_matrix_component_1 = __webpack_require__(1381);
+var ESCALATION_MATRIX_ROUTER = [
+    {
+        path: '',
+        component: escalation_matrix_component_1.EscalationMatrixComponent,
+        pathMatch: 'full'
+    }
+];
+exports.EscalationMatrixRouter = router_1.RouterModule.forChild(ESCALATION_MATRIX_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>47.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>10b689cbdb3d2300429e2a9a489619d4</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.47.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_10b689cbdb3d2300429e2a9a489619d4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:03</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

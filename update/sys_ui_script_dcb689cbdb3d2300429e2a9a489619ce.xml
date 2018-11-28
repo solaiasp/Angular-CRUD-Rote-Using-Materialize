@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.23.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([23],{
+
+/***/ 1312:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var pop_device_pool_component_1 = __webpack_require__(1551);
+var pop_device_pool_router_1 = __webpack_require__(1865);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var PopDevicePoolModule = /** @class */ (function () {
+    function PopDevicePoolModule() {
+    }
+    PopDevicePoolModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, pop_device_pool_router_1.popDevicePoolRouter],
+            declarations: [pop_device_pool_component_1.PopDevicePoolComponent]
+        })
+    ], PopDevicePoolModule);
+    return PopDevicePoolModule;
+}());
+exports.PopDevicePoolModule = PopDevicePoolModule;
+
+
+/***/ }),
+
+/***/ 1551:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var pop_device_pool_column_1 = __webpack_require__(1860);
+var modal_1 = __webpack_require__(104);
+var PopDevicePoolComponent = /** @class */ (function () {
+    function PopDevicePoolComponent(commonServices, cookies, dateFilter, modalService) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.modalService = modalService;
+        this.gridDataObj = pop_device_pool_column_1.popDevicePoolGridObj;
+        this.loader = false;
+        this.popObj = {};
+        this.pops = [];
+        this.services = ['BSNL', 'TNPL', 'TCL', 'AIRTEL'];
+        this.devices = [];
+        this.links = [];
+        this.getPopDevicePool = function () {
+            _this.loader = true;
+            _this.gridDataObj.data = [];
+            _this.commonServices.getRequest('/_workflow/NSEResourcePopDeviceList').then(function (response) {
+                if (response.status == "success") {
+                    _this.gridDataObj.data = response.items[0].NSEResourcePopDeviceList;
+                }
+                _this.loader = false;
+            }, function (err) {
+                _this.loader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.getPopNames = function () {
+            _this.commonServices.getRequest('/_workflow/NSEResourcePopNameList').then(function (response) {
+                if (response.status == "success") {
+                    _this.pops = response.items;
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.onPopChange = function (popName) {
+            _this.links = [];
+            _this.devices = [];
+            var _post = {
+                sitename: popName,
+                username: "ADMIN_76434"
+            };
+            _this.commonServices.postRequest('/_workflow/NSEFlowsDetails/deviceip', _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.devices = response.items;
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.onDeviceChange = function (deviceIp) {
+            _this.links = [];
+            var _post = {
+                deviceip: deviceIp
+            };
+            _this.commonServices.postRequest('/_workflow/NSEFlowsDetails/interface', _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.links = response.items;
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.showCreatePopDevice = function () {
+            _this.devices = [];
+            _this.links = [];
+            _this.popObj = {};
+            _this.modalRef = _this.modalService.show(_this.popDeviceTemplate);
+        };
+        this.createPopDevice = function () {
+            var _post = {
+                NSEResourcePopDeviceList: [_this.popObj]
+            };
+            _this.commonServices.postRequest('/_workflow/NSEResourcePopDeviceList', _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.modalRef.hide();
+                    _this.commonServices.success(response.message);
+                    _this.getPopDevicePool();
+                }
+            }, function (err) {
+                _this.loader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.getLinkedData = function (eventObj) {
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    PopDevicePoolComponent.prototype.ngOnInit = function () {
+        this.getPopDevicePool();
+        this.getPopNames();
+    };
+    __decorate([
+        core_1.ViewChild('popDeviceTemplate'),
+        __metadata("design:type", core_1.ElementRef)
+    ], PopDevicePoolComponent.prototype, "popDeviceTemplate", void 0);
+    PopDevicePoolComponent = __decorate([
+        core_1.Component({
+            selector: '<pop-device-pool>',
+            template: __webpack_require__(1861),
+            styles: [__webpack_require__(1862)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, modal_1.BsModalService])
+    ], PopDevicePoolComponent);
+    return PopDevicePoolComponent;
+}());
+exports.PopDevicePoolComponent = PopDevicePoolComponent;
+
+
+/***/ }),
+
+/***/ 1860:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.popDevicePoolGridObj = {
+    pdfName: 'Resource DB Pop Device IP Pool',
+    pdfTitle: 'Resource DB Pop Device IP Pool',
+    excelTitle: 'Resource DB Pop Device IP Pool',
+    excelName: 'Resource DB Pop Device IP Pool',
+    data: [],
+    id: 'resource_db_pop_device_ip_pool',
+    addEvent: true,
+    columns: [{
+            dataKey: 'popname',
+            title: 'POP Name',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'provider',
+            title: 'Provider',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'rip',
+            title: 'Router Ip',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'rinterface',
+            title: 'Router Interface',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'provisiontype',
+            title: 'Provision Type',
+            hide: false,
+            width: ''
+        }, {
+            dataKey: 'createddate',
+            title: 'Created Date',
+            hide: true,
+            width: ''
+        }]
+};
+
+
+/***/ }),
+
+/***/ 1861:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li class=\"active\">Resource DB POP Device IP Pool</li>\n      </ol>\n      <div class=\"row\" id=\"ResourceDBPopDevice\">\n        <div class=\"col-md-12\">\n            <div class=\"box-title box-title-tabs\">              \n                <div class=\"pull-right\">\n                <ul class=\"box-title-right\">\n                    \n                </ul>\n                </div>\n                <div class=\"pull-left\">\n                  <h3>Resource DB POP Device IP Pool</h3>\n                </div>\n                <div class=\"clearfix\"></div>\n            </div>\n        </div>\n    </div>\n   \n    <data-grid (addClickEvent)=\"showCreatePopDevice()\"  *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n\n    <content-loader *ngIf=\"loader\"></content-loader>   \n\t\n\t<ng-template #popDeviceTemplate>\n\t\t<div class=\"modal-header\">\n\t\t\t<button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n\t\t\t<h4 class=\"modal-title\">Add Pop Device</h4>\n\t\t</div>\n  <div class=\"modal-body\" style=\"margin-top:20px;\">\n    <div class=\"form\">\n      <form novalidate=\"\" name=\"profileForm\">\n        <div class=\"form-group\">\n          <ngx-select [items]=\"pops\" [optionTextField]=\"'popname'\" [optionValueField]=\"'popname'\" [(ngModel)]=\"popObj.popname\"  name=\"popname\" (select)=\"onPopChange($event)\"></ngx-select> \n\t\t<!-- <input type=\"text\" class=\"form-control\" [(ngModel)]=\"popObj.popname\" name=\"pop\" required/> -->\n          <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Pop Name\n            <span>*</span>\n          </span>\n        </div>\n\n\t\t<div class=\"form-group\">\n          <ngx-select [items]=\"devices\" [optionTextField]=\"'deviceIp'\" [optionValueField]=\"'deviceName'\" [(ngModel)]=\"popObj.rip\"  name=\"rip\" (select)=\"onDeviceChange($event)\"></ngx-select> \n          <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">R Ip\n            <span>*</span>\n          </span>\n        </div>\n\t\t\n\t\t<div class=\"form-group\">\n         <ngx-select [items]=\"links\" [optionTextField]=\"'link_desc'\" [optionValueField]=\"'linkName'\" [(ngModel)]=\"popObj.rinterface\"  name=\"rinterface\"></ngx-select> \n          <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">R Interface\n            <span>*</span>\n          </span>\n        </div>\n\t\t\n\t\t<div class=\"form-group\">\n          <ngx-select [items]=\"services\" [(ngModel)]=\"popObj.service\"  name=\"service\"></ngx-select> \n\t\t <input type=\"text\" class=\"form-control\" [(ngModel)]=\"popObj.provider\" name=\"provider\" required/>\n          <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Provider\n            <span>*</span>\n          </span>\n        </div>\n\t\t\n\t\t<div class=\"form-group\">\n\t\t  <input type=\"text\" class=\"form-control\" [(ngModel)]=\"popObj.provisiontype\" name=\"provisiontype\" required/>\n          <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Provision Type\n            <span>*</span>\n          </span>\n        </div>\n       \n        <div class=\"form-group\">\n          <button class=\"btn btn-lg btn-primary\" type=\"button\" (click)=\"createPopDevice()\">Add</button>\n        </div>\n      </form>\n    </div>\n  </div>\n\t</ng-template>\n\t\n    </section>\n</section>";
+
+/***/ }),
+
+/***/ 1862:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1863);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1863:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1864);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./pop-device-pool.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./pop-device-pool.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1864:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1865:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var pop_device_pool_component_1 = __webpack_require__(1551);
+var POP_DEVICE_POOL_ROUTER = [
+    {
+        path: '',
+        component: pop_device_pool_component_1.PopDevicePoolComponent,
+        pathMatch: 'full'
+    }
+];
+exports.popDevicePoolRouter = router_1.RouterModule.forChild(POP_DEVICE_POOL_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>23.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>dcb689cbdb3d2300429e2a9a489619ce</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.23.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_dcb689cbdb3d2300429e2a9a489619ce</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:01</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

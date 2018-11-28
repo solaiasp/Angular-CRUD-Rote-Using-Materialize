@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.38.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([38],{
+
+/***/ 1308:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var parent_child_mapping_component_1 = __webpack_require__(1547);
+var parent_child_mapping_router_1 = __webpack_require__(1841);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var forms_1 = __webpack_require__(26);
+var ParentModule = /** @class */ (function () {
+    function ParentModule() {
+    }
+    ParentModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, forms_1.FormsModule, forms_1.ReactiveFormsModule, parent_child_mapping_router_1.parentRouter],
+            declarations: [parent_child_mapping_component_1.ParentComponent]
+        })
+    ], ParentModule);
+    return ParentModule;
+}());
+exports.ParentModule = ParentModule;
+
+
+/***/ }),
+
+/***/ 1547:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var modal_1 = __webpack_require__(104);
+var forms_1 = __webpack_require__(26);
+var ParentComponent = /** @class */ (function () {
+    function ParentComponent(commonServices, cookies, dateFilter, modalService, fb) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.modalService = modalService;
+        this.fb = fb;
+        this.loader = false;
+        this.gridDataObj = {
+            pdfName: 'parent-child-mapping',
+            pdfTitle: 'parent-child-mapping',
+            excelTitle: 'parent-child-mapping',
+            excelName: 'parent-child-mapping',
+            updateEvent: true,
+            deleteEvent: false,
+            hasCheckbox: true
+        };
+        this.currentUser = {};
+        this.userType = '';
+        this.roleObj = {};
+        this.isPageFromSubUser = false;
+        this.goBackSubUser = '';
+        this.selectedUser = {};
+        this.deleteUserObj = {};
+        this.createUserLoader = false;
+        this.customerIds = [];
+        this.customer_info = {};
+        this.selectedApis2 = [];
+        this.dropdownValues = [];
+        this.popuploader = false;
+        this.defaultCustomer = [];
+        this.fileConfig = {
+            displayKey: 'customerId',
+            search: true,
+            height: 'auto',
+            placeholder: 'Select Customer'
+        };
+        this.serarchCustomer = [];
+        this.isSearchTextVisible = '';
+        this.isMultipleSelectShow = false;
+        this.getGridList = function () {
+            _this.commonServices.getRequest('/_core/getParentChildMappingDetails').then(function (res) {
+                _this.loader = true;
+                if (res.status == 'success') {
+                    _this.gridDataObj.data = [];
+                    if (res.items.length > 0) {
+                        var gridData = res.items[0].ParentChildMappingDetails;
+                        var gridArray = [];
+                        if (gridData.length > 0) {
+                            gridData.map(function (element) {
+                                var tempObject = {};
+                                tempObject.customerId = parseInt(element.ParentDetails.parentClientId);
+                                tempObject.customer_name = element.ParentDetails.parentClientName;
+                                tempObject.customer_fullname = element.ParentDetails.parentClientName;
+                                tempObject.customer_id = parseInt(element.ParentDetails.parentClientId);
+                                tempObject.children = '';
+                                if (element.ChildDetails.length) {
+                                    var c = [];
+                                    element.ChildDetails.map(function (e) {
+                                        c.push(e.childClientName + "\t\t");
+                                    });
+                                    tempObject.children = c.toString();
+                                }
+                                gridArray.push(tempObject);
+                            });
+                            _this.gridDataObj.data = gridArray.slice();
+                            // // this.makeCopyCustomerList = [...gridArray];
+                            // // this.resetCheckedData(this.makeCopyCustomerList);
+                            // gridArray.map((customer: any) => {
+                            // 	this.customerIds=[...this.customerIds,{idandname:customer.customer_id+'('+customer.customer_name+')',customerId:customer.customer_name+' - ('+customer.customer_fullname+')'}];
+                            // 	  this.customer_info[customer.customer_name]={idandname:customer.customer_id+'('+customer.customer_name+')',customerId:customer.customer_name+' - ('+customer.customer_fullname+')'};
+                            // });
+                            _this.loader = false;
+                        }
+                        else {
+                            _this.loader = false;
+                            _this.commonServices.error(res.message);
+                        }
+                    }
+                    else {
+                        _this.commonServices.error("Record Not Found");
+                        _this.loader = false;
+                    }
+                }
+            });
+        };
+        this.getRoleLists = function () {
+            _this.loader = true;
+            _this.gridDataObj.data = [];
+            _this.makeCopyCustomerList = [];
+            _this.commonServices.getRequest('/getCustomerDetails').then(function (res) {
+                var customerLists = res.items[0].CoreCustomerList;
+                _this.makeCopyCustomerList = customerLists.slice();
+                _this.resetCheckedData(_this.makeCopyCustomerList);
+                customerLists.map(function (customer) {
+                    _this.customerIds = _this.customerIds.concat([{ idandname: customer.customer_id + '(' + customer.customer_name + ')', customerId: customer.customer_name + ' - (' + customer.customer_fullname + ')' }]);
+                    _this.customer_info[customer.customer_name] = { idandname: customer.customer_id + '(' + customer.customer_name + ')', customerId: customer.customer_name + ' - (' + customer.customer_fullname + ')' };
+                });
+            });
+        };
+        this.resetCheckedData = function (arr) {
+            _this.popuploader = true;
+            _this.dropdownValues = [];
+            _this.serarchCustomer = [];
+            arr.map(function (customer) {
+                var selectedCustomerRemove = (customer.customer_id != _this.selectedUser.customer_id) ? true : false;
+                if (selectedCustomerRemove) {
+                    var dummGenObj = {};
+                    var displayString = customer.customer_name + ' - (' + customer.customer_fullname + ')';
+                    dummGenObj.text = displayString;
+                    dummGenObj.value = customer.customer_id;
+                    dummGenObj.checked = false;
+                    _this.dropdownValues.push(dummGenObj);
+                }
+            });
+            _this.serarchCustomer = _this.dropdownValues;
+            _this.popuploader = false;
+            _this.isMultipleSelectShow = true;
+        };
+        this.showCreateRole = function (template) {
+            _this.roleObj = {};
+            _this.selectedUser = {};
+            _this.defaultCustomer = [];
+            _this.serarchCustomer = [];
+            _this.isMultipleSelectShow = false;
+            //this.resetCheckedData(this.makeCopyCustomerList);
+            //this.roleObj.customer=Object.assign({},this.customer_info[this.currentUser.customer_name],{});
+            //var idname : any = this.currentUser.customer_id + "("+this.currentUser.customer_name+")";
+            // this.roleObj.selectedCustomer=idname;
+            _this.modalRef = _this.modalService.show(template, { class: 'first22' });
+        };
+        this.createRoleForm = function () {
+            _this.createUserLoader = true;
+            var buildPostObj = {};
+            buildPostObj.ParentDetails = { "parent_clientid": _this.selectedUser.customer_id, "parent_clientname": _this.selectedUser.customer_name };
+            buildPostObj.ChildDetails = [];
+            console.log('this.myForm.value', _this.myForm.value);
+            if (_this.myForm.value.useremail.length > 0) {
+                _this.myForm.value.useremail.map(function (element) {
+                    if (element.checked) {
+                        var tempObj = {};
+                        var getName = element.text.split("-");
+                        tempObj.child_clientid = element.value.toString();
+                        tempObj.child_clientname = getName[0].trim();
+                        buildPostObj.ChildDetails.push(tempObj);
+                    }
+                });
+                _this.commonServices.postRequest('/_core/parentChildMapping', buildPostObj).then(function (response2) {
+                    if (response2.status == "success") {
+                        _this.roleObj = {};
+                        _this.commonServices.success(response2.message);
+                        _this.createUserLoader = false;
+                        _this.modalRef.hide();
+                        _this.getRoleLists();
+                        _this.getGridList();
+                    }
+                    else {
+                        _this.createUserLoader = false;
+                        _this.commonServices.error(response2.message);
+                    }
+                }), function (err) {
+                    _this.createUserLoader = false;
+                    _this.commonServices.error(err.message);
+                };
+            }
+            else {
+                _this.commonServices.error("Please Select at least One Customer !");
+                _this.createUserLoader = false;
+            }
+        };
+        this.changeSelectedCustomer = function (e) {
+            _this.popuploader = true;
+            console.log('change', e);
+            if (e.value && e.value[0]) {
+                _this.roleObj.selectedCustomer = e.value[0].idandname;
+                var customerName = _this.roleObj.selectedCustomer.split('(')[1].trim().substring(0, _this.roleObj.selectedCustomer.split('(')[1].trim().length - 1);
+                _this.roleObj.selectedCustomer = e.value[0].idandname;
+                _this.defaultCustomer = _this.customerIds.filter(function (customer) {
+                    return _this.roleObj.selectedCustomer == customer.idandname;
+                });
+            }
+            var getStr = _this.roleObj.selectedCustomer.replace(/"/g, "").replace(/'/g, "").replace(/\(|\)/g, " ");
+            var splitCustomer = getStr.split(" ");
+            var getCustomerId = splitCustomer[0];
+            var getCustomerName = splitCustomer[1];
+            _this.selectedUser = {
+                "checked": false,
+                "customer_id": getCustomerId.toString(),
+                "customer_name": getCustomerName,
+                "customer_fullname": "",
+                "gridRowId": "",
+                "ioni_clientid": "",
+            };
+            var postData = { "clientId": getCustomerId, "customerName": getCustomerName };
+            _this.commonServices.postRequest('/_core/getChildClientsDetails', postData).then(function (response2) {
+                if (response2.status == "success") {
+                    if (response2.items.length > 0) {
+                        var getCheckedDetails = response2.items[0].ChildDetails;
+                        if (getCheckedDetails.length > 0) {
+                            _this.getTreeData(getCheckedDetails, getCustomerId);
+                            _this.popuploader = false;
+                        }
+                        else {
+                            _this.resetCheckedData(_this.makeCopyCustomerList);
+                            _this.commonServices.error("Mapped Records Not Found");
+                            _this.popuploader = false;
+                        }
+                    }
+                    else {
+                        _this.resetCheckedData(_this.makeCopyCustomerList);
+                        _this.commonServices.error(response2.message);
+                        _this.popuploader = false;
+                    }
+                }
+                else {
+                    _this.resetCheckedData(_this.makeCopyCustomerList);
+                    _this.commonServices.error(response2.message);
+                    _this.popuploader = false;
+                }
+            }), function (err) {
+                _this.commonServices.error(err.message);
+                _this.popuploader = false;
+            };
+        };
+        this.getTreeData = function (arr, custId) {
+            _this.dropdownValues = [];
+            var checkedArr = [];
+            var unCheckedArr = [];
+            var realArr = [];
+            var custListData = [];
+            _this.makeCopyCustomerList.map(function (customer) {
+                var dummGenObj = {};
+                var displayString = customer.customer_name + " - (" + customer.customer_fullname + ")";
+                dummGenObj.text = displayString;
+                dummGenObj.value = customer.customer_id;
+                dummGenObj.checked = false;
+                custListData.push(dummGenObj);
+            });
+            arr.map(function (checkeddata) {
+                custListData.map(function (data, index) {
+                    if (checkeddata.childClientId == data.value) {
+                        data.checked = true;
+                        checkedArr.push(data);
+                        custListData.splice(index, 1);
+                    }
+                });
+            });
+            _this.myForm = _this.fb.group({
+                useremail: _this.fb.array(checkedArr)
+            });
+            _this.dropdownValues = checkedArr.concat(custListData);
+            _this.serarchCustomer = _this.dropdownValues;
+            _this.isMultipleSelectShow = true;
+        };
+        this.updateRole = function (e, template) {
+            // console.log('update', e);
+            _this.selectedUser = e;
+            _this.roleObj.customer = Object.assign({}, _this.customer_info[_this.selectedUser.customer_name], {});
+            var idname = _this.selectedUser.customer_id + "(" + _this.selectedUser.customer_name + ")";
+            _this.defaultCustomer = _this.customerIds.filter(function (customer) {
+                return idname == customer.idandname;
+            });
+            _this.roleObj.selectedCustomer = idname;
+            _this.modalRef = _this.modalService.show(template, { class: 'first22' });
+            var postData = _this.selectedUser.customer_id + "(" + _this.selectedUser.customer_name + ")";
+            _this.resetCheckedData(_this.makeCopyCustomerList);
+            _this.changeSelectedCustomer(postData);
+        };
+        // deleteRole = (e: any) => {
+        // 	this.selectedUser = e;
+        // 	this.roleObj.roleShortCode = e.roleShortCode;
+        // 	this.roleObj.roleName = e.roleName;
+        // 	this.roleObj.roleDesc = e.roleDescription;
+        // 	this.modalRef = this.modalService.show(this.confirmTemplate);
+        // }
+        this.deleteUser = function () {
+            _this.commonServices.deleteRequest('/_core/role/' + _this.selectedUser.roleShortCode).then(function (response) {
+                if (response.status == "success") {
+                    _this.commonServices.success(response.message);
+                    _this.modalRef.hide();
+                    _this.getRoleLists();
+                    _this.getGridList();
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.searchCustomerDetails = function (val) {
+            _this.isSearchTextVisible = val;
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    ParentComponent.prototype.ngOnInit = function () {
+        this.gridDataObj.columns = [{
+                dataKey: 'customer_fullname',
+                title: 'Full Name',
+                hide: true,
+                width: ''
+            }, {
+                dataKey: 'customer_name',
+                title: 'Parent Name',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'children',
+                title: 'Children',
+                hide: false,
+                width: ''
+            }];
+        this.gridDataObj.id = 'project-status-grid';
+        this.myForm = this.fb.group({
+            useremail: this.fb.array([])
+        });
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        //	console.log('this.currentUser', this.currentUser);
+        this.getGridList();
+        this.getRoleLists();
+    };
+    ParentComponent.prototype.onSelectedChange2 = function (selectedApis1) {
+        //console.log(selectedApis1);
+        this.selectedApis2 = selectedApis1.slice();
+    };
+    ParentComponent.prototype.onChangeMultiple = function (email, isChecked) {
+        var emailFormArray = this.myForm.controls.useremail;
+        if (isChecked) {
+            email.checked = isChecked;
+            emailFormArray.push(new forms_1.FormControl(email));
+        }
+        else {
+            var index = emailFormArray.controls.findIndex(function (x) { return x.value == email; });
+            emailFormArray.removeAt(index);
+        }
+    };
+    ParentComponent.prototype.ngOnDestroy = function () {
+        if (this.modalRef) {
+            this.modalRef.hide();
+        }
+    };
+    ParentComponent = __decorate([
+        core_1.Injectable(),
+        core_1.Component({
+            selector: '<parent-child-mapping>',
+            template: __webpack_require__(1837),
+            styles: [__webpack_require__(1838)],
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, modal_1.BsModalService, forms_1.FormBuilder])
+    ], ParentComponent);
+    return ParentComponent;
+}());
+exports.ParentComponent = ParentComponent;
+
+
+/***/ }),
+
+/***/ 1837:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n      <ol class=\"breadcrumb\">\n        <li>\n          <a (click)=\"goToHomePage()\">Home</a>\n        </li>\n        <li class=\"active\">Parent Child Mapping</li>\n      </ol>\n      <div class=\"row\" id=\"syslog-management\">\n        <div class=\"col-md-12\">\n          <div class=\"box-title box-title-tabs\">\n            <div class=\"pull-right\">\n              <ul class=\"box-title-right\">\n                <li>\n                  <button class=\"user_create pull-right\" style=\"margin-right: 6px;\" (click)=\"showCreateRole(template)\">Mapping</button>\n                </li>\n              </ul>\n            </div>\n            <div class=\"pull-left\">\n              <h3>Parent Child Mapping</h3>\n            </div>\n            <div class=\"clearfix\"></div>\n          </div>\n        </div>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-md-12\">\n          <data-grid *ngIf=\"!loader\" [gridobj]=\"gridDataObj\" (updateClickEvent)=\"updateRole($event, template)\" (deleteClickEvent)=\"deleteRole($event)\"></data-grid>\n          <content-loader *ngIf=\"loader\"></content-loader>\n        </div>\n      </div>\n  \n    </section>\n  </section>\n  \n  \n  <ng-template #template>\n    <div class=\"modal-header\">\n          <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n          <h4 class=\"modal-title\" *ngIf=\"!createUserLoader && !selectedUser.checked\">Parent Child Mapping</h4>\n          <h4 class=\"modal-title\" *ngIf=\"!createUserLoader && selectedUser.checked\">Update Parent Child Mapping  - {{this.selectedUser.customer_name}}</h4>\n    </div>\n    <div class=\"modal-body row\" style=\"padding: 35px;\">\n        \n      <div id=\"popupForm\">\n        <div class=\"form-group\">\n          <ngx-select-dropdown (change)=\"changeSelectedCustomer($event)\" [(value)]=\"defaultCustomer\" \t[config]=\"fileConfig\" [options]=\"customerIds\"></ngx-select-dropdown>\n          <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">Customer Name\n            <span>*</span>\n          </span>\n        </div>\n        <content-loader *ngIf=\"popuploader\"></content-loader>\n        <!-- <div class=\"form-group\"  *ngIf=\"!popuploader\">\n          <label for=\"email\">Customer List:</label>\n          <div class=\"form-group\" id=\"menu-mapping\">\n            <div class=\"d-inline-block\">\n              <ngx-treeview [items]=\"dropdownValues\" [itemTemplate]=\"itemTemplate\" (selectedChange)=\"onSelectedChange2($event)\">\n              </ngx-treeview>\n            </div>\n          </div>\n        </div> -->\n        <div class=\"col-md-12\" id=\"multipleCustomId\" *ngIf=\"!popuploader && isMultipleSelectShow\" style=\"padding: 15px;\">\n            <span class=\"form-group\" id=\"searchTxt\" style=\"z-index: 10000;\">\n              <input type=\"text\" #searchCustomer (keyup)=\"searchCustomerDetails(searchCustomer.value)\" name=\"customersearch\" placeholder=\"Search\"\n              />\n            </span>\n            <div class=\"form-group treeview-container\" style=\"height: 250px; overflow-y: scroll;\">\n              <div class=\"grid-cutom-check\" *ngFor=\"let data of serarchCustomer\" [hidden]=\"!(data.text.trim().toLowerCase().includes(isSearchTextVisible.trim().toLowerCase()))\">\n                <input type=\"checkbox\" class=\"form-check-input\" [checked]=\"data.checked\" (change)=\"onChangeMultiple(data, $event.target.checked)\"> {{data.text}}\n                <span class=\"checkmark\"></span>\n              </div>\n            </div>\n          </div>\n        <div class=\"form-group text-center\">\n          <br>\n          <content-loader *ngIf=\"createUserLoader\"></content-loader>\n          <button class=\"btn ang-submit\" *ngIf=\"!createUserLoader\" style=\"width: 22%;\" (click)=\"createRoleForm()\">Submit</button>\n        </div>\n      </div>\n    </div>\n  </ng-template>\n";
+
+/***/ }),
+
+/***/ 1838:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1839);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1839:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1840);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./parent-child-mapping.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./parent-child-mapping.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1840:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#syslog-management .ngx-select__search {\n  margin-bottom: 0;\n}\n\n#syslog-management .ip-select{\n  width: 250px;\n  margin: 0px 3px;\n}\n\n#syslog-management .ngx-select__toggle {\n  background-color: transparent\n}\n\n#syslog-management .ngx-select__item{\n  padding: 3px 70px;\n}\n\n#syslog-management .bs-chevron-up{\n  display: none;\n}\n\n#syslog-management .bs-chevron-down{\n  display: none;\n}\n\n#syslog-management table td {\n  padding: 0px;\n}\n\n.listingdata{\n  border-style: solid;\n  border-color: #bed730;\n  padding: 5px;\n  border-radius: 11px;\n  color: #fff;\n  background: #4a5255;\n}\n\n#popupForm table{\n  margin-top: -24px;\n}\n\n\n#popupForm .datepick{\n  margin-bottom: 80px;\n}\n\n#popupForm td{\n  padding: 0px !important;\n}\n\n#popupForm .bs-timepicker-field{\n  margin-bottom: 5px !important;;\n  width: 70px !important;\n  padding: 0 !important;\n}\n\n\n\n#syslog-management .modal-header {\n  min-height: 55.43px;\n  padding-top: 28px;\n  border-bottom: 1px solid #e5e5e5;\n  padding-left: 12px;\n}\n.syslog-filter{\nmargin-right : 15px !important;\n}\n.syslog-icon span {\ncolor : #a7afb8;\nfont-size : 30px;\ncursor : pointer;\n}\n\n.syslog-date-show{\npadding: 0px;\n  font-size: 21px;\n  margin-right: 15px !important;\n}\n\n\n\n.syslog-popup-close{\n  margin-top: -10px;\n  margin-right: -11px;\n}\n\n.subusrModalHeader{\n  padding: 27px !important;\n}\n\n\n.nice-radio input[type=radio]:not(old){\n  width: 0;\n  margin: 0;\n  padding: 0;\n  font-size: 1em;\n  opacity: 0;\n}\n\n.nice-radio > span.r {\n  display: inline-block;\n  width: 0.875em;\n  height: 0.875em;\n  margin: 0.25em .25em 0.25em 0.25em;\n  border: 0.0625em solid #aaa;\n  border-radius: 0.50em;\n  background: transparent;\n  vertical-align: bottom;\n}\n\n.nice-radio input[type=radio]:not(old):checked + span.r > span {\n  display: block;\n  width: 0.5em;\n  height: 0.5em;\n  margin: 0.16em;\n  border-radius: 0.5em;\n  background: #555;\n}\n\n.card-border-cust{\n\n  padding-top: 30px;\n}\n\n.ngx-select__selected\n{\n font-size:6px !important;\n}\n.ngx-select__toggle\n{\nbackground:#f9f9f9 !important;\n}\n.ngx-select__placeholder\n{\ncolor:#999;\n}\n\n.ngx-select__selected-single \n{\nfont-size:14px !important;\n}\n\n\n.treeview-container::-webkit-scrollbar {\n  width: 5px;\n  height: 5px;\n}\n.treeview-container::-webkit-scrollbar-button {\n  background: #eee\n}\n.treeview-container::-webkit-scrollbar-track-piece {\n  background: #eee\n}\n.treeview-container::-webkit-scrollbar-thumb {\n  background: #c1c1c1\n}\n\n#popupForm .treeview-container { overflow: hidden !important;     z-index: 10000; }\n\n#popupForm .treeview-container:hover { overflow-y:scroll !important;  }\n\n  \n#popupForm{\n  padding-left: 14px;\n  padding-right: 14px;\n}\n\n.modal-dialog.first22 {\n  width: 60% !important;\n}\n\n#popupForm .form-check-input {\n  width: 17px;\n  height: 17px;\n  background: rgb(44, 173, 248) !important;\n  font-size: 13px;\n  border: none;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  z-index: 1;\n  cursor: pointer;\n}\n#popupForm .checkmark {\nposition: absolute;\ntop: 0;\nleft: 0px;\nheight: 17px;\nwidth: 17px;\nborder: 1px solid #a7afb8;\nmargin: 0 10px;\n}\n\n\n/* When the checkbox is checked, add a blue background */\n#popupForm input:checked ~ .checkmark {\nbackground-color: #00abb6;\ntransition: 0.3s;\n\n}\n\n/* Create the checkmark/indicator (hidden when not checked) */\n#popupForm .checkmark:after {\ncontent: \"\";\nposition: absolute;\nopacity:0;\n-webkit-transform: rotate(0deg);\n-ms-transform: rotate(0deg);\ntransform: rotate(0deg);\n}\n\n/* Show the checkmark when checked */\n#popupForm input:checked ~ .checkmark:after {\nopacity:1;\n-webkit-transform: rotate(405deg);\n-ms-transform: rotate(405deg);\ntransform: rotate(405deg);\ntransition:0.3s;\n}\n\n/* Style the checkmark/indicator */\n#popupForm .checkmark:after {\nleft: 6px;\ntop: 2px;\nwidth: 5px;\nheight: 10px;\nborder: solid white;\nborder-width: 0 4px 4px 0;\n-webkit-transform: rotate(0deg);\n-ms-transform: rotate(0deg);\ntransform: rotate(0deg);\ntransition: 0.3s;\n}\n#popupForm .form-check-label\n{\nfloat:left;\n}\n\n.grid-cutom-check{\n  position: relative;\n    padding: 0 34px;\n    cursor: pointer;\n}\n\n.form-check-input {\n  width: 17px;\n  height: 17px;\n  background: rgb(44, 173, 248) !important;\n  font-size: 13px;\n  border: none;\n  opacity: 0;\n  position: absolute;\n  left: 0;\n  z-index: 1;\n  cursor: pointer;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1841:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var parent_child_mapping_component_1 = __webpack_require__(1547);
+var PARENT_ROUTER = [
+    {
+        path: '',
+        component: parent_child_mapping_component_1.ParentComponent,
+        pathMatch: 'full'
+    }
+];
+exports.parentRouter = router_1.RouterModule.forChild(PARENT_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>38.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>94b689cbdb3d2300429e2a9a489619bb</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.38.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_94b689cbdb3d2300429e2a9a489619bb</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:09</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.53.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([53],{
+
+/***/ 1307:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var optical_span_report_component_1 = __webpack_require__(1545);
+var optical_span_report_router_1 = __webpack_require__(1830);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var OpticalSpanReportModule = /** @class */ (function () {
+    function OpticalSpanReportModule() {
+    }
+    OpticalSpanReportModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, optical_span_report_router_1.opticalSpanReportRouter],
+            declarations: [optical_span_report_component_1.OpticalSpanReportComponent]
+        })
+    ], OpticalSpanReportModule);
+    return OpticalSpanReportModule;
+}());
+exports.OpticalSpanReportModule = OpticalSpanReportModule;
+
+
+/***/ }),
+
+/***/ 1545:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var modal_1 = __webpack_require__(104);
+var ngx_cookie_1 = __webpack_require__(62);
+var optical_span_report_column_1 = __webpack_require__(1828);
+var excell_service_1 = __webpack_require__(266);
+var common_1 = __webpack_require__(6);
+var OpticalSpanReportComponent = /** @class */ (function () {
+    function OpticalSpanReportComponent(commonServices, cookies, modalService, dateFilter, excellService) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.modalService = modalService;
+        this.dateFilter = dateFilter;
+        this.excellService = excellService;
+        this.loader = false;
+        this.popUploader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.pageTitle = 'Optical Span Report';
+        this.gridDataObj = {};
+        this.isHiddenCheck = false;
+        this.options = {};
+        this.graphData = [];
+        this.data = [];
+        this.copydata = [];
+        this.popupGraph = false;
+        this.postDetails = {};
+        this.dateType = 'live';
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.excelDownloadObj = {};
+        this.from_time = '00:00:00';
+        this.to_time = '23:59:59';
+        this.setMinyAxis = 0;
+        this.setMaxyAxis = 50;
+        this.initCall = function () {
+            _this.loader = true;
+            _this.commonServices.getRequest("/_optical/getSpanLossIpPortList").then(function (res) {
+                if (res.status == 'success') {
+                    if (res.items.length > 0) {
+                        res.items.map(function (data) {
+                            data.ip = data.ip + "_" + data.port;
+                        });
+                        _this.gridDataObj.data = res.items.slice();
+                        _this.loader = false;
+                    }
+                    _this.loader = false;
+                }
+                else {
+                    _this.loader = false;
+                    _this.commonServices.error('Some Error Occured in Report Details');
+                }
+            }, function (err) {
+                _this.loader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.getLinkedData = function (e) {
+            // console.log('event', e);
+            var ipPortData = e.row.ip.split("_");
+            _this.postDetails = { "ip": ipPortData[0], "port": ipPortData[1] };
+            _this.buildOptionForGraph();
+            _this.graphData = [];
+            _this.copydata = [];
+            _this.dateType = 'live';
+            var fr_date;
+            var to_date;
+            fr_date = _this.dateFilter.transform(new Date(), "yyyy-MM-dd");
+            to_date = _this.dateFilter.transform(new Date(), "yyyy-MM-dd");
+            _this.bsRangeValue = [new Date(fr_date), new Date(to_date)];
+            _this.popUploader = true;
+            _this.modalRef = _this.modalService.show(_this.opticalSpanLossTemplates, { class: 'modal-lg' });
+            var _postData = { "from": fr_date, "to": to_date, "ip": _this.postDetails.ip, "port": _this.postDetails.port };
+            _this.callGraphAPI(_postData);
+        };
+        this.modelClose = function () {
+            _this.popupGraph = false;
+            _this.modalRef.hide();
+        };
+        this.getLists = function (getfromDate, gettoDate) {
+            //console.log(e);
+            // console.log(this.proObj);
+            // this.btnStauts = {};
+            var fromDateStr = _this.dateFilter.transform(getfromDate, "yyyy-MM-dd");
+            var toDateStr = _this.dateFilter.transform(gettoDate, "yyyy-MM-dd");
+            // this.bsRangeValue = [new Date(fromDateStr), new Date(toDateStr)];   
+            // this.from_time = '00:00:00';
+            // this.to_time = '23:59:59';
+            var _postData = { "from": fromDateStr, "to": toDateStr, "ip": _this.postDetails.ip, "port": _this.postDetails.port };
+            _this.callGraphAPI(_postData);
+        };
+        this.callGraphAPI = function (_data) {
+            _this.popUploader = true;
+            _this.graphData = [];
+            _this.copydata = [];
+            _this.commonServices.postRequest(" /_optical/SpanLoss", _data).then(function (res) {
+                if (res.status == 'success') {
+                    _this.popUploader = false;
+                    if (res.items[0].SpanLossList.length > 0) {
+                        var tempArr = [];
+                        _this.copydata = res.items[0].SpanLossList.slice();
+                        var findMaxArray = [];
+                        res.items[0].SpanLossList.forEach(function (buildData) {
+                            var t = [];
+                            buildData.pollTime = buildData.pollTime.replace(' ', 'T');
+                            t[0] = new Date(buildData.pollTime).getTime();
+                            t[1] = parseFloat(buildData.spanLoss);
+                            findMaxArray.push(t[1]);
+                            // t[2] = parseInt(buildData.dmdistance);
+                            // t[3] = parseInt(buildData.dmcount);
+                            tempArr.push(t);
+                        });
+                        _this.setMinyAxis = Math.min.apply(Math, findMaxArray);
+                        _this.setMaxyAxis = Math.max.apply(Math, findMaxArray);
+                        //  console.log('maxtempArr', this.setMaxyAxis);
+                        _this.data = tempArr.slice();
+                        //this.graphData = this.buildData(tempArr, ['OSC Span Loss(DB)', 'OSC Optical Disitance(KM)', 'OSC Latency(ms)'], ['#6C6C6C', '#2ca02c', '#E43211']);
+                        _this.popupGraph = true;
+                        _this.graphData = _this.buildData(tempArr, ['OSC Span Loss'], ['#2ca02c']);
+                    }
+                }
+                else {
+                    _this.commonServices.error('Some Error Occured in Customer Details');
+                }
+            });
+        };
+        this.buildOptionForGraph = function () {
+            _this.options = {
+                chart: {
+                    type: 'lineWithFocusChart',
+                    height: 450,
+                    margin: {
+                        top: 20,
+                        right: 95,
+                        bottom: 60,
+                        left: 55
+                    },
+                    padding: {
+                        left: 40
+                    },
+                    duration: 50,
+                    useInteractiveGuideline: true,
+                    clipVoronoi: false,
+                    focusShowAxisX: true,
+                    focusShowAxisY: false,
+                    //forceY : [this.setMinyAxis, this.setMaxyAxis],
+                    xAxis: {
+                        axisLabel: 'Date',
+                        tickFormat: function (d) {
+                            return d3.time.format('%d/%b/%y %H:%M')(new Date(d));
+                        },
+                        wrapLabels: true,
+                        axisLabelDistance: 15,
+                        showMaxMin: true,
+                        staggerLabels: true
+                    },
+                    x2Axis: {
+                        tickFormat: function (d) {
+                            return d3.time.format('%d/%b/%y %H:%M')(new Date(d));
+                        },
+                        wrapLabels: true,
+                        axisLabelDistance: 15,
+                        showMaxMin: true,
+                        staggerLabels: true
+                    },
+                    yAxis: {
+                        axisLabel: 'DB',
+                        tickFormat: function (d) {
+                            return d3.format('.2f')(d);
+                        },
+                        axisLabelDistance: 15,
+                        rotateYLabel: true,
+                        showMaxMin: true,
+                        orient: 'left',
+                        css: { 'transform': 'rotate(45deg)' }
+                    },
+                    y2Axis: {
+                        tickFormat: function (d) {
+                            return d3.format('.2f')(d);
+                        }
+                    },
+                    callback: function (chart) {
+                        setTimeout(function () {
+                            d3.selectAll('.nvtooltip').style('opacity', 0);
+                        }, 100);
+                    },
+                    interactiveLayer: {
+                        tooltip: {
+                            valueFormatter: function (d, i) {
+                                return d;
+                            }
+                        }
+                    },
+                }
+            };
+        };
+        this.buildData = function (data, labels, colors) {
+            var series = [];
+            // first(0) value is date
+            for (var i = 1; i < data[0].length; i++) {
+                var values = [];
+                for (var j = 0; j < data.length; j++) {
+                    values.push({
+                        x: data[j][0],
+                        y: data[j][i] // y is value
+                    });
+                }
+                series.push({
+                    values: values,
+                    key: labels[i - 1],
+                    color: colors[i - 1] // color of series
+                });
+            }
+            console.log('series', series);
+            return series;
+        };
+        this.dateSelect = function (dateType) {
+            var today = new Date();
+            var time = today.getTime();
+            var yesterday = time - (24 * 1 * 60 * 60 * 1000);
+            _this.dateType = dateType;
+            var fr_date;
+            var to_date;
+            _this.graphData = [];
+            _this.copydata = [];
+            if (dateType == 'month') {
+                var lastMnthTime = time - (24 * 31 * 60 * 60 * 1000);
+                _this.fromDate = new Date(lastMnthTime);
+                _this.toDate = new Date(yesterday);
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            else if (dateType == 'week') {
+                var lastWeekTime = time - (24 * 8 * 60 * 60 * 1000);
+                _this.fromDate = new Date(lastWeekTime);
+                _this.toDate = new Date(yesterday);
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            else if (dateType == 'yesterday') {
+                var yesterday = time - (24 * 1 * 60 * 60 * 1000);
+                _this.fromDate = new Date(yesterday);
+                _this.toDate = new Date(yesterday);
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            else {
+                _this.fromDate = new Date();
+                _this.toDate = new Date();
+                fr_date = _this.dateFilter.transform(new Date(_this.fromDate), "yyyy-MM-dd");
+                to_date = _this.dateFilter.transform(new Date(_this.toDate), "yyyy-MM-dd");
+                _this.bsRangeValue = [new Date(_this.fromDate), new Date(_this.toDate)];
+            }
+            var _postData = { "from": fr_date, "to": to_date, "ip": _this.postDetails.ip, "port": _this.postDetails.port };
+            console.log('ChangePostData', _postData);
+            _this.callGraphAPI(_postData);
+        };
+        this.excelDownlod = function (getArray) {
+            if (getArray.length > 0) {
+                //excelDownloadObj
+                var ipPortData = _this.postDetails.ip + " " + _this.postDetails.port;
+                getArray.map(function (element) {
+                    element.ip_port = ipPortData;
+                });
+                console.log('excelgetArray', getArray);
+                _this.excelDownloadObj = {
+                    pdfName: "Span_Report_" + ipPortData,
+                    pdfTitle: "Optical Span Report " + ipPortData,
+                    excelName: "Span_Report_" + ipPortData,
+                    excelTitle: "Optical Span Report " + ipPortData
+                };
+                _this.excelDownloadObj.deviceIP = ipPortData;
+                _this.excelDownloadObj.deviceName = "";
+                _this.excelDownloadObj.fromDate = _this.fromDate;
+                _this.excelDownloadObj.toDate = _this.toDate;
+                _this.excelDownloadObj.id = "optical_span_report_id";
+                _this.excelDownloadObj.columns = [{
+                        dataKey: 'ip_port',
+                        title: 'IP/PORT',
+                        hide: false,
+                        width: ''
+                    }, {
+                        dataKey: 'spanLoss',
+                        title: "SPAN LOSS",
+                        hide: false,
+                        width: ''
+                    }, {
+                        dataKey: 'dmcount',
+                        title: "DM COUNT",
+                        hide: false,
+                        width: ''
+                    }, {
+                        dataKey: 'dmdistance',
+                        title: "DM DISTANCE",
+                        hide: false,
+                        width: ''
+                    }, {
+                        dataKey: 'pollTime',
+                        title: "POLL TIME",
+                        hide: false,
+                        width: ''
+                    }];
+                _this.excelDownloadObj.data = getArray.slice();
+                _this.excellService.generateExcell(_this.excelDownloadObj);
+            }
+        };
+    }
+    OpticalSpanReportComponent.prototype.ngOnInit = function () {
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.loader = false;
+        this.maxDate = new Date();
+        this.maxDate.setDate(this.maxDate.getDate() - 1);
+        this.gridDataObj = optical_span_report_column_1.opticalSpanReportColumnInfo;
+        this.initCall();
+    };
+    OpticalSpanReportComponent.prototype.ngOnDestroy = function () {
+        this.popupGraph = false;
+        if (this.modalRef) {
+            this.modalRef.hide();
+        }
+    };
+    __decorate([
+        core_1.ViewChild('opticalSpanLossTemplate'),
+        __metadata("design:type", core_1.ElementRef)
+    ], OpticalSpanReportComponent.prototype, "opticalSpanLossTemplates", void 0);
+    OpticalSpanReportComponent = __decorate([
+        core_1.Component({
+            selector: '<optical-span-report>',
+            template: __webpack_require__(1829),
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, modal_1.BsModalService, common_1.DatePipe, excell_service_1.ExcellService])
+    ], OpticalSpanReportComponent);
+    return OpticalSpanReportComponent;
+}());
+exports.OpticalSpanReportComponent = OpticalSpanReportComponent;
+
+
+/***/ }),
+
+/***/ 1828:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.opticalSpanReportColumnInfo = {
+    pdfName: 'Optical Span Report',
+    pdfTitle: 'Optical Span Report',
+    excelTitle: 'Optical Span Report',
+    excelName: 'Optical Span Report',
+    id: 'optical_span_report_id',
+    updateEvent: false,
+    deleteEvent: false,
+    hasCheckbox: false,
+    data: [],
+    columns: [{
+            dataKey: 'ip',
+            title: 'IP Address',
+            hide: false,
+            link: true,
+            width: ''
+        }, {
+            dataKey: 'port',
+            title: 'Port',
+            hide: true,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'aidtype',
+            title: 'Type',
+            hide: true,
+            link: false,
+            width: ''
+        }
+    ]
+};
+
+
+/***/ }),
+
+/***/ 1829:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = "<section id=\"main-content\">\n        <section class=\"wrapper\">\n        <ol class=\"breadcrumb\">\n            <li><a href=\"#dashboard\">Home</a></li>\n              <li class=\"active\">{{pageTitle}}</li>\n          </ol>\n          <div class=\"row\">\n            <div class=\"col-md-12\">\n              <div class=\"box-title box-title-tabs\">              \n                <!-- <div class=\"pull-right\">\n                  <ul class=\"box-title-right\">\n                    <li data-toggle=\"tooltip\" placement=\"top\" tooltip=\"{{ticketTitle}}\" title=\"{{ticketTitle}}\"><a (click)=\"raiseTicket()\"><img-icon src=\"tickets.svg\" class=\"svg\"></img-icon></a></li>\n                  </ul>\n                </div> -->\n                <div class=\"pull-left\">\n                  <h3>{{pageTitle}}</h3>\n                </div>\n                <div class=\"clearfix\"></div>\n              </div>\n            </div>\n          </div>\n          <data-grid *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n          <content-loader *ngIf=\"loader\"></content-loader>  \n        </section>\n    </section>\n\n    <ng-template #opticalSpanLossTemplate>\n      <div class=\"modal-header\">\n        <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modelClose()\">&times;</button>\n        <h4 class=\"modal-title\">Optical Span Loss ( {{ this.postDetails.ip +\"_\" + this.postDetails.port }} ) </h4>\n      </div>\n      <div class=\"modal-body\" style=\"margin-top:20px;height: 600px;\">\n          <content-loader *ngIf=\"popUploader\"></content-loader>\n          <div class=\"col-md-12\" *ngIf=\"!popUploader\">\n             \n            <ul class=\"box-title-right pull-left\">\n              <li [ngClass]=\"{'rpt-btn-active' : dateType == 'month'}\" >\n                <button [ngClass]='{\"active\":dateType == \"month\"}'  class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('month')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> Month</button>\n              </li>\n              <li [ngClass]=\"{'rpt-btn-active' : dateType == 'week'}\">\n                <button [ngClass]='{\"active\":dateType == \"week\"}' class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('week')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> Week</button>\n              </li>\n              <li [ngClass]=\"{'rpt-btn-active' : dateType == 'yesterday'}\">\n                <button [ngClass]='{\"active\":dateType == \"yesterday\"}'  class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('yesterday')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> Yesterday</button>\n              </li>\n              <li [ngClass]=\"{'rpt-btn-active' : dateType == 'live'}\">\n                <button [ngClass]='{\"active\":dateType == \"live\"}' class=\"btn btn-info btn-sm algn\" (click) = \"dateSelect('live')\"><i class=\"fa fa-calendar\" aria-hidden=\"true\"></i> NRT</button>\n              </li>\n              <li>\n                  <div class=\"picker\">                    \n                      <div class=\"input-group datetimepicker-start-end\">\n                          <input bsDatepicker  (ngModelChange)=\"getLists($event ,toDate)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [maxDate]=\"maxDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\"><span>to</span>\n                          <input bsDatepicker  (ngModelChange)=\"getLists(fromDate,$event)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\" [minDate]=\"fromDate\" [maxDate]=\"maxDate\">\n                      </div>\n                      <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n                  </div>\n              </li>\n              </ul>\n              <ul class=\"box-title-right pull-right\">\n                <li>\n                  <img class=\"excell-img\" style=\"cursor: pointer;\" (click)=\"excelDownlod(copydata)\" src=\"" + __webpack_require__(500) + "\">\n                </li>\n              </ul>\n          </div>\n         \n          <div class=\"col-md-12\" *ngIf=\"!popUploader\">\n            <div class=\"graphdiv\">\n                <!-- <h4 class=\"popuph4\">( {{ this.postDetails.ip +\"_\" + this.postDetails.port }} )</h4> -->\n              <nvd3 class=\"opticalnvd3\" [hidden]=\"!popupGraph\" [options]=\"options\" [data]=\"graphData\"></nvd3>\n            </div>\n          </div>\n     </div>\n    </ng-template>";
+
+/***/ }),
+
+/***/ 1830:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var optical_span_report_component_1 = __webpack_require__(1545);
+var OPTICAL_SPAN_REPORT_ROUTER = [
+    {
+        path: '',
+        component: optical_span_report_component_1.OpticalSpanReportComponent,
+        pathMatch: 'full'
+    }
+];
+exports.opticalSpanReportRouter = router_1.RouterModule.forChild(OPTICAL_SPAN_REPORT_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>53.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>50b689cbdb3d2300429e2a9a48961955</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.53.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_50b689cbdb3d2300429e2a9a48961955</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:09</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

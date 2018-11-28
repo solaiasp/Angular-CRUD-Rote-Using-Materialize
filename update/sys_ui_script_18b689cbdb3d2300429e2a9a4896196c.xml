@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.32.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([32],{
+
+/***/ 1285:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var sub_user_router_1 = __webpack_require__(1669);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var ngx_bootstrap_1 = __webpack_require__(505);
+var forms_1 = __webpack_require__(26);
+var sub_user_component_1 = __webpack_require__(1390);
+var SubUserModule = /** @class */ (function () {
+    function SubUserModule() {
+    }
+    SubUserModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, sub_user_router_1.SubUserRouter, ngx_bootstrap_1.SortableModule.forRoot(), forms_1.FormsModule, forms_1.ReactiveFormsModule],
+            declarations: [sub_user_component_1.SubUserComponent]
+        })
+    ], SubUserModule);
+    return SubUserModule;
+}());
+exports.SubUserModule = SubUserModule;
+
+
+/***/ }),
+
+/***/ 1390:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var forms_1 = __webpack_require__(26);
+var common_service_1 = __webpack_require__(61);
+var page_view_service_1 = __webpack_require__(498);
+var router_1 = __webpack_require__(48);
+var ngx_cookie_1 = __webpack_require__(62);
+var modal_1 = __webpack_require__(104);
+var SubUserComponent = /** @class */ (function () {
+    function SubUserComponent(router, cookie, commonServices, PageViewService, modalService, formBuilder) {
+        var _this = this;
+        this.router = router;
+        this.cookie = cookie;
+        this.commonServices = commonServices;
+        this.PageViewService = PageViewService;
+        this.modalService = modalService;
+        this.formBuilder = formBuilder;
+        this.itemStringsLeft = [
+            'Windstorm',
+            'Bombasto',
+            'Magneta',
+            'Tornado'
+        ];
+        this.selectedUser = {};
+        this.deleteUserObj = {};
+        //  langs: any[] = ['IDRBT', 'idrbt_dc', 'testing', 'testing1', 'GroupExample', 'GroupExample2', 'example2', 'checkgroup3', 'new', 'fda', 'sfdasfd'];
+        this.langs = [];
+        this.itemStringsRight = ['Mr. O', 'Tomato'];
+        this.gridDataObj = {
+            pdfName: 'Sub User Status',
+            pdfTitle: 'Sub User Status',
+            excelTitle: 'Sub User Status',
+            excelName: 'Sub User Status',
+            addEvent: true,
+            updateEvent: true,
+            deleteEvent: true,
+            hasCheckbox: true
+        };
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this._subuserlist = [];
+        this.response1 = [];
+        this.isGroupChange = false;
+        this.mappingLoader = false;
+        this.optionTextField = 'group_name';
+        this.optionValueField = 'group_id';
+        this.createUserLoader = false;
+        this.isEdit = false;
+        this.gridCall = function (customer_id) {
+            var _post = customer_id;
+            _this.commonServices.getRequest('/getSubUserByCustID/' + _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.commonServices.getRequest('./api/ioni_groups').then(function (group) {
+                        response.items.forEach(function (key, val) {
+                            key['index'] = val + 1;
+                            group.forEach(function (keys, vals) {
+                                if (key.group_id == keys.id) {
+                                    key.group_name = keys.group_name;
+                                }
+                            });
+                        });
+                    });
+                    _this._subuserlist = response.items;
+                    _this.gridDataObj.data = _this._subuserlist;
+                    _this.loader = false;
+                }
+                else {
+                    _this.loader = false;
+                    _this.commonServices.error(response.message);
+                }
+            }, function (err) {
+            });
+        };
+        this.getLinkedData = function (eventObj) {
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        this.dropDownRefresh = function () {
+            var dummyPost = {};
+            //Dropdown call
+            _this.commonServices.getRequest('/ioni_groupsbyClientId/' + dummyPost).then(function (response) {
+                var dropDummyArray = [];
+                if (response.status == "success") {
+                    response.items.forEach(function (key, val) {
+                        var dummGenObj = {};
+                        dummGenObj.group_id = response.items[val].id;
+                        dummGenObj.group_name = response.items[val].group_name;
+                        _this.langs.push(dummGenObj);
+                    });
+                    //this.langs = dropDummyArray;
+                }
+                else {
+                    _this.loader = false;
+                    _this.commonServices.error(response.message);
+                }
+            }), function (err) {
+            };
+        };
+        this.mappingOnChange = function (e) {
+            _this.mappingLoader = true;
+            var mapPost = { "clientid": 10122, "groupid": e };
+            var mappedUnMapData = [];
+            /* C1 for Un-Mapped */
+            _this.commonServices.postRequest('/getDevice_for_mapping', mapPost).then(function (response) {
+                if (response.status == "success") {
+                    if (response.items.length > 0) {
+                        response.items.forEach(function (element) {
+                            var loopObj = {};
+                            loopObj.ip = element.deviceip + '-' + element.name;
+                            loopObj.selected = false;
+                            mappedUnMapData.push(loopObj);
+                        });
+                    }
+                    /* C1 for Mapped */
+                    _this.commonServices.postRequest('/getDevice_for_mapped', mapPost).then(function (response2) {
+                        if (response2.status == "success") {
+                            if (response2.items.length > 0) {
+                                response2.items.forEach(function (element) {
+                                    var loopObj = {};
+                                    loopObj.ip = element.deviceip + '-' + element.name;
+                                    loopObj.selected = true;
+                                    mappedUnMapData.push(loopObj);
+                                });
+                            }
+                        }
+                        else {
+                        }
+                    }), function (err) {
+                    };
+                    _this.ipsDB = {
+                        key: 'ip',
+                        data: mappedUnMapData
+                    };
+                    _this.updatedIps = Object.assign({}, _this.ipsDB, {});
+                    _this.isGroupChange = true;
+                    _this.mappingLoader = false;
+                }
+                else {
+                    _this.isGroupChange = false;
+                    _this.mappingLoader = false;
+                }
+            }), function (err) {
+            };
+        };
+        this.redirectModules = function (redirectPage) {
+            if (redirectPage == 'menu-mapping') {
+                var sendData = {};
+                sendData.pageView = redirectPage;
+                _this.PageViewService.setData(sendData);
+                _this.router.navigate([redirectPage]);
+            }
+            else if (redirectPage == 'roles') {
+                var sendData = {};
+                sendData.pageView = redirectPage;
+                _this.PageViewService.setData(sendData);
+                _this.router.navigate([redirectPage]);
+            }
+        };
+        this.updateSubUser = function (rowObj) {
+            _this.selectedUser = rowObj;
+            _this.isEdit = (_this.selectedUser.checked) ? true : false;
+            _this.modalRef = _this.modalService.show(_this.upDateTemplate, { class: 'first' });
+            _this.groupName = (rowObj.role_shortcode == 'NoRole' ? '' : rowObj.role_shortcode);
+            _this.form.setValue({
+                username: rowObj.user_name,
+                firstName: rowObj.user_firstname,
+                lastName: rowObj.user_lastname,
+                email: rowObj.user_email_id,
+                mobile: rowObj.user_mobile_no,
+                groupName: (rowObj.role_shortcode == 'NoRole' ? '' : rowObj.role_shortcode),
+            });
+        };
+        this.deleteSubUser = function (rowObj) {
+            _this.deleteUserObj = rowObj;
+            _this.modalRef = _this.modalService.show(_this.confirmTemplate);
+        };
+        this.deleteUser = function () {
+            var _post = {
+                'user_id': 0,
+                'user_name': _this.deleteUserObj.user_name,
+                'user_firstname': _this.deleteUserObj.user_firstname,
+                'user_lastname': _this.deleteUserObj.user_lastname,
+                'user_email_id': _this.deleteUserObj.user_email_id,
+                'user_mobile_no': _this.deleteUserObj.user_mobile_no,
+                'user_authtype': 1,
+                'user_type': 6,
+                'user_status': 1,
+                'user_passwd': "",
+                'customer_id': _this.currentUser.customer_id,
+                'service_id': "",
+                'role_shortcode': _this.deleteUserObj.role_shortcode,
+                'ioni_userscol': 'NULL'
+            };
+            _this.commonServices.putRequest('./api/ioni_users', _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.gridCall(_this.currentUser.customer_id);
+                    _this.modalRef.hide();
+                    _this.commonServices.success('User has been deleted successfully');
+                    _this.modalRef = null;
+                    _this.deleteUserObj = {};
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                }
+            }, function (err) {
+                _this.createUserLoader = false;
+                _this.commonServices.error(err.message);
+            });
+        };
+    }
+    SubUserComponent.prototype.changed = function () {
+    };
+    SubUserComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.gridDataObj.columns = [{
+                dataKey: 'user_name',
+                title: 'User Name',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'user_firstname',
+                title: 'First Name',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'user_lastname',
+                title: 'Last Name',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'group_name',
+                title: 'Group Name',
+                hide: true,
+                width: ''
+            }, {
+                dataKey: 'role_name',
+                title: 'Role Name',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'role_description',
+                title: 'Role Description',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'role_shortcode',
+                title: 'Role',
+                hide: true,
+                width: ''
+            }, {
+                dataKey: 'user_email_id',
+                title: 'Email ID',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'user_mobile_no',
+                title: 'Mobile',
+                hide: false,
+                width: ''
+            }];
+        this.gridDataObj.id = 'subuser-status-grid';
+        this.currentUser = this.cookie.getObject('globals');
+        console.log('this.currentUser', this.currentUser);
+        var _post = this.currentUser.customer_id;
+        this.userType = this.currentUser.user_type;
+        this.isGroupChange = false;
+        this.mappingLoader = false;
+        this.loader = true;
+        this.gridCall(this.currentUser.customer_id);
+        this.commonServices.getRequest('/_core/role').then(function (response) {
+            var dropDummyArray = [];
+            if (response.status == "success") {
+                response.items.forEach(function (roleValue) {
+                    var dummGenObj = {};
+                    dummGenObj.group_id = roleValue.roleShortCode;
+                    dummGenObj.group_name = roleValue.roleName;
+                    _this.langs.push(dummGenObj);
+                });
+            }
+            else {
+                _this.loader = false;
+                _this.commonServices.error(response.message);
+            }
+        }), function (err) {
+        };
+        this.form = this.formBuilder.group({
+            username: [null, forms_1.Validators.required],
+            firstName: [null, [forms_1.Validators.required, forms_1.Validators.minLength]],
+            lastName: [null, [forms_1.Validators.required, forms_1.Validators.minLength]],
+            email: [null, [forms_1.Validators.required, forms_1.Validators.email]],
+            mobile: [null, [forms_1.Validators.required, forms_1.Validators.maxLength]],
+            groupName: [null, forms_1.Validators.required],
+        });
+        var userPrefix = this.currentUser.account_number;
+        this.username_prefix = userPrefix.toString();
+        this.groupform = this.formBuilder.group({
+            groupnamedetails: [null, forms_1.Validators.required]
+        });
+    };
+    SubUserComponent.prototype.openModal = function (template) {
+        this.selectedUser = {};
+        this.deleteUserObj = {};
+        this.isEdit = false;
+        this.reset();
+        this.modalRef = this.modalService.show(template, { class: 'first' });
+    };
+    SubUserComponent.prototype.openModal2 = function (template) {
+        this.modalRef2 = this.modalService.show(template, { class: 'second' });
+    };
+    SubUserComponent.prototype.openModal3 = function (template) {
+        this.modalRef3 = this.modalService.show(template, { class: 'first modal-cust-lg' });
+    };
+    SubUserComponent.prototype.closeFirstModal = function () {
+        this.modalRef.hide();
+        this.modalRef = null;
+    };
+    SubUserComponent.prototype.isFieldValid = function (field) {
+        return !this.form.get(field).valid && this.form.get(field).touched;
+    };
+    SubUserComponent.prototype.displayFieldCss = function (field) {
+        return {
+            'has-error': this.isFieldValid(field),
+            'has-feedback': this.isFieldValid(field)
+        };
+    };
+    SubUserComponent.prototype.onSubmit = function (eventData) {
+        var _this = this;
+        if (this.form.valid) {
+            this.isEdit = (this.selectedUser.checked) ? true : false;
+            var unamePost = (this.selectedUser.checked) ? this.form._value.username : this.username_prefix + "_" + this.form._value.username;
+            var _post = {
+                'user_id': 0,
+                'user_name': unamePost,
+                'user_firstname': this.form._value.firstName,
+                'user_lastname': this.form._value.lastName,
+                'user_email_id': this.form._value.email,
+                'user_mobile_no': this.form._value.mobile,
+                'user_authtype': 1,
+                'user_type': 6,
+                'user_status': 0,
+                'user_passwd': "",
+                'customer_id': this.currentUser.customer_id,
+                'service_id': "",
+                'role_shortcode': this.form._value.groupName,
+                'ioni_userscol': 'NULL'
+            };
+            console.log('_post', _post);
+            this.createUserLoader = true;
+            /* Posting Details */
+            if (this.selectedUser.checked) {
+                this.commonServices.putRequest('./api/ioni_users', _post).then(function (response) {
+                    if (response.status == "success") {
+                        _this.gridCall(_this.currentUser.customer_id);
+                        _this.modalRef.hide();
+                        _this.commonServices.success(response.message);
+                        _this.modalRef = null;
+                        _this.createUserLoader = false;
+                        _this.selectedUser = {};
+                        _this.reset();
+                    }
+                    else {
+                        _this.createUserLoader = false;
+                        _this.commonServices.error(response.message);
+                    }
+                }, function (err) {
+                    _this.createUserLoader = false;
+                    _this.commonServices.error(err.message);
+                });
+            }
+            else {
+                this.commonServices.postRequest('./api/ioni_users', _post).then(function (response) {
+                    if (response.status == "success") {
+                        _this.gridCall(_this.currentUser.customer_id);
+                        _this.modalRef.hide();
+                        _this.commonServices.success(response.message);
+                        _this.modalRef = null;
+                        _this.createUserLoader = false;
+                        _this.reset();
+                    }
+                    else {
+                        _this.createUserLoader = false;
+                        _this.commonServices.error(response.message);
+                    }
+                }, function (err) {
+                    _this.createUserLoader = false;
+                    _this.commonServices.error(err.message);
+                });
+            }
+        }
+        else {
+            // this.reset();
+            this.createUserLoader = false;
+            this.validateAllFormFields(this.form);
+        }
+    };
+    /* Group Submision */
+    SubUserComponent.prototype.isFieldValid2 = function (field) {
+        return !this.groupform.get(field).valid && this.groupform.get(field).touched;
+    };
+    SubUserComponent.prototype.displayFieldCss2 = function (field) {
+        return {
+            'has-error': this.isFieldValid2(field),
+            'has-feedback': this.isFieldValid2(field)
+        };
+    };
+    SubUserComponent.prototype.onSubmit2 = function () {
+        var _this = this;
+        if (this.groupform.valid) {
+            var _post = {
+                'id': 0,
+                //	'group_name': this.groupform._value.firstName,
+                'clientid': this.currentUser.customer_id
+            };
+            /* Posting Details */
+            this.commonServices.postRequest('./api/ioni_groups', _post).then(function (response) {
+                if (response.status == "success") {
+                    _this.dropDownRefresh();
+                }
+                else {
+                }
+            }), function (err) {
+            };
+        }
+        else {
+            this.validateAllFormFields(this.groupform);
+        }
+    };
+    SubUserComponent.prototype.validateAllFormFields = function (formGroup) {
+        var _this = this;
+        Object.keys(formGroup.controls).forEach(function (field) {
+            var control = formGroup.get(field);
+            if (control instanceof forms_1.FormControl) {
+                control.markAsTouched({ onlySelf: true });
+            }
+            else if (control instanceof forms_1.FormGroup) {
+                _this.validateAllFormFields(control);
+            }
+        });
+    };
+    SubUserComponent.prototype.reset = function () {
+        this.form.reset();
+    };
+    SubUserComponent.prototype.getUpdatedIps = function (filteredIps) {
+        this.updatedIps = Object.assign({}, filteredIps, {});
+    };
+    SubUserComponent.prototype.keyPress = function (event) {
+        var pattern = /[0-9\+\-\ ]/;
+        var inputChar = String.fromCharCode(event.charCode);
+        if (event.keyCode != 8 && !pattern.test(inputChar)) {
+            event.preventDefault();
+        }
+    };
+    SubUserComponent.prototype.ngOnDestroy = function () {
+        if (this.modalRef) {
+            this.modalRef.hide();
+        }
+        else if (this.modalRef2) {
+            this.modalRef2.hide();
+        }
+        else if (this.modalRef3) {
+            this.modalRef3.hide();
+        }
+    };
+    __decorate([
+        core_1.ViewChild('template'),
+        __metadata("design:type", core_1.ElementRef)
+    ], SubUserComponent.prototype, "upDateTemplate", void 0);
+    __decorate([
+        core_1.ViewChild('confirmtemplate'),
+        __metadata("design:type", core_1.ElementRef)
+    ], SubUserComponent.prototype, "confirmTemplate", void 0);
+    SubUserComponent = __decorate([
+        core_1.Component({
+            selector: '<sub-user>',
+            template: __webpack_require__(1670),
+            styles: [__webpack_require__(1671)]
+        }),
+        __metadata("design:paramtypes", [router_1.Router, ngx_cookie_1.CookieService, common_service_1.CommonService, page_view_service_1.PageViewService, modal_1.BsModalService, forms_1.FormBuilder])
+    ], SubUserComponent);
+    return SubUserComponent;
+}());
+exports.SubUserComponent = SubUserComponent;
+
+
+/***/ }),
+
+/***/ 1669:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var sub_user_component_1 = __webpack_require__(1390);
+var SUB_USER_ROUTER = [
+    {
+        path: '',
+        component: sub_user_component_1.SubUserComponent,
+        pathMatch: 'full'
+    }
+];
+exports.SubUserRouter = router_1.RouterModule.forChild(SUB_USER_ROUTER);
+
+
+/***/ }),
+
+/***/ 1670:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li class=\"active\">Sub User</li>\n      </ol>\n    <!-- <div class=\"dashboard-txt\">\n      <h1>Sub User</h1>\n    </div> -->\n    <div class=\"row\" id=\"subuser-management\">\n\t\t\t<div class=\"col-md-12\">\n\t\t\t\t<div class=\"box-title box-title-tabs\">              \n\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t  <ul class=\"box-title-right\" id=\"sub-usermenu\">\n              <li>\n                <a (click)=\"redirectModules('menu-mapping')\" class=\"user_create pull-right\" style=\"margin-right: 6px;\">Menu / Site Mapping</a>\n               </li>\n               <li>\n                <a (click)=\"redirectModules('roles')\" class=\"user_create pull-right\"style=\"margin-right: 6px;\">Add Role</a>\n               </li>\n\t\t\t\t\t  </ul>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t  <h3>Sub User</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n   \n   \n\t<data-grid  *ngIf=\"!loader\" (addClickEvent)=\"openModal(template)\" (linkClick)=\"getLinkedData($event)\" (updateClickEvent)=\"updateSubUser($event)\" (deleteClickEvent)=\"deleteSubUser($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n    <content-loader *ngIf=\"loader\"></content-loader>   \n    </section>\n</section>\n\n<ng-template #template>\n    <div class=\"modal-header subusrModalHeader\">\n      <h4 *ngIf=\"!selectedUser.checked\" class=\"modal-title pull-left\"><i class=\"fa fa-fw fa-user-plus fa-1x\"></i> Create Sub User</h4>\n      <h4 *ngIf=\"selectedUser.checked\" class=\"modal-title pull-left\"><i class=\"fa fa-fw fa-user-plus fa-1x\"></i> Update Sub User</h4>\n      <button type=\"button\" class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">\n        <span aria-hidden=\"true\">&times;</span>\n      </button>\n    </div>\n    <div class=\"modal-body row\">\n     \n      <div class=\"col-md-12\" id=\"subuserAdd\" style=\"margin-top: 22px;\">\n              <div class=\"form-group col-md-4\" *ngIf=\"!isEdit\" style=\"margin-left: -12px;\">\n                  <input type=\"text\" disabled=\"true\" [(ngModel)]=\"username_prefix\" class=\"form-control\" name=\"username_prefix\" />\n              </div>\n          <form class=\"form-horizontal\" [formGroup]=\"form\">\n              <div class=\"form-group col-md-8\" *ngIf=\"!isEdit\" [ngClass]=\"displayFieldCss('username')\">\n                  <input [attr.disabled] = \"selectedUser.checked\" type=\"text\" id=\"username\" class=\"form-control\" formControlName=\"username\"  name=\"username\" required>\n                  <span class=\"floating-label\">Username</span>\n                  <app-field-error-display [displayError]=\"isFieldValid('username')\" errorMsg=\"Required username\">\n                  </app-field-error-display>\n              </div>\n              <div class=\"form-group col-md-12\" *ngIf=\"isEdit\" [ngClass]=\"displayFieldCss('username')\">\n                <input [attr.disabled] = \"selectedUser.checked\" type=\"text\" id=\"username\" class=\"form-control\" formControlName=\"username\"  name=\"username\" required>\n                <span class=\"floating-label\">Username</span>\n                <app-field-error-display [displayError]=\"isFieldValid('username')\" errorMsg=\"Required username\">\n                </app-field-error-display>\n            </div>\n              <div class=\"form-group col-md-12\" [ngClass]=\"displayFieldCss('firstName')\">\n                    <input type=\"text\" minLength=\"3\" class=\"form-control\" formControlName=\"firstName\" name=\"firstName\" required/>\n                    <span class=\"floating-label\">First Name</span>\n                    <app-field-error-display [displayError]=\"isFieldValid('firstName')\" errorMsg=\"Required first Name\">\n                      </app-field-error-display>\n                </div>\n             \n              <div class=\"form-group col-md-12\" [ngClass]=\"displayFieldCss('lastName')\">\n                  <input type=\"text\" minLength=\"3\" class=\"form-control\" formControlName=\"lastName\" name=\"lastName\" required/>\n                  <span class=\"floating-label\">Last Name</span>\n                  <app-field-error-display [displayError]=\"isFieldValid('lastName')\" errorMsg=\"Required Last Name\">\n                    </app-field-error-display>\n              </div>\n\n              <div class=\"form-group col-md-12\" [ngClass]=\"displayFieldCss('email')\">\n                  <input [attr.disabled] = \"selectedUser.checked\" type=\"text\"  class=\"form-control\" formControlName=\"email\" name=\"email\" required/>\n                  <span class=\"floating-label\">Email Id</span>\n                  <app-field-error-display [displayError]=\"isFieldValid('email')\" errorMsg=\"Required email\">\n                    </app-field-error-display>\n              </div>\n\n              <div class=\"form-group col-md-12\" [ngClass]=\"displayFieldCss('mobile')\">\n                  <input type=\"text\" (keypress)=\"keyPress($event)\" class=\"form-control\"  maxLength=\"10\" formControlName=\"mobile\" name=\"mobile\" required/>\n                  <span class=\"floating-label\">Mobile Number</span>\n                  <app-field-error-display [displayError]=\"isFieldValid('mobile')\" errorMsg=\"Required mobile\">\n                    </app-field-error-display>\n              </div>\n\n              <div class=\"ngx-select-form col-md-12\" [ngClass]=\"displayFieldCss('groupName')\">\n                  <ngx-select class=\"\" formControlName=\"groupName\"  [optionValueField]=\"optionValueField\" [optionTextField]=\"optionTextField\" [items]=\"langs\" [defaultValue] = \"groupName\" [(ngModel)]=\"groupName\" name=\"groupName\" placeholder=\"Select a Role\" required>\n\t\t\t\t\t\t\t\t\t</ngx-select>\n                  <app-field-error-display [displayError]=\"isFieldValid('groupName')\" errorMsg=\"Required group Name\">\n                    </app-field-error-display>\n              </div>\n              <!-- <button type=\"button\" class=\"group_create_sub\" (click)=\"openModal2(templateNested)\">Create Group</button> -->\n              <div class=\"col-md-12\" style=\"margin-top: 40px;\">\n                  <content-loader *ngIf=\"createUserLoader\"></content-loader>   \n                <button class=\"btn ang-submit\" *ngIf=\"!createUserLoader && !selectedUser.checked\"  (click)=\"onSubmit($event)\">Create User</button>\n                <button class=\"btn ang-submit\" *ngIf=\"!createUserLoader && selectedUser.checked\"  (click)=\"onSubmit($event)\">Update User</button>\n            \n              </div>\n              <!-- <button class=\"btn\" (click)=\"reset()\">Reset</button> -->\n      </form>\n      </div>\n      \n      \n    </div>\n  </ng-template>\n   \n  <ng-template #templateNested>\n    <div class=\"modal-header subusrModalHeader\">\n      <h4 class=\"modal-title pull-left\">Create Group</h4>\n      <button type=\"button\" class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef2.hide()\">\n        <span aria-hidden=\"true\">&times;</span>\n      </button>\n    </div>\n    <div class=\"modal-body\">\n        <div class=\"\" style=\"padding: 25px;\">\n            <form class=\"form-horizontal\" [formGroup]=\"groupform\">\n                <div class=\"form-group\" [ngClass]=\"displayFieldCss2('groupnamedetails')\">\n                    <input type=\"text\" id=\"groupnamedetails\" class=\"form-control\" formControlName=\"groupnamedetails\"  name=\"groupnamedetails\" required>\n                    <span class=\"floating-label\">Enter Group Name</span>\n                    <app-field-error-display [displayError]=\"isFieldValid2('groupnamedetails')\" errorMsg=\"Required Group Name\">\n                    </app-field-error-display>\n                </div>\n                <button class=\"btn ang-submit\"  (click)=\"onSubmit2()\">Create Group</button>\n\n              </form>\n         </div>\n\n      <!-- <button *ngIf=\"modalRef\" type=\"button\" class=\"btn btn-danger\" (click)=\"closeFirstModal()\">Close first modal</button> -->\n    </div>\n  </ng-template>\n\n\n  <ng-template #mappingtemplate>\n    <div class=\"modal-header subusrModalHeader\">\n      <h4 class=\"modal-title pull-left\">Service Mapping</h4>\n      <button type=\"button\" class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef3.hide()\">\n        <span aria-hidden=\"true\">&times;</span>\n      </button>\n    </div>\n    <div class=\"modal-body\">\n      <div style=\"padding: 25px;\">\n          <form class=\"form-horizontal\" [formGroup]=\"form2\">\n              <div class=\"form-group select-ang\" [ngClass]=\"displayFieldCss('groupName')\">\n                  <select class=\"form-control\" (change)=\"mappingOnChange($event.target.value)\"  formControlName=\"groupName\" name=\"groupName\" required placeholder=\"Select a Group Name\">\n                      <option value=\"default\" [selected]=\"true\" [disabled]=\"true\">Select a Group Name</option>\n                      <option *ngFor=\"let lang of langs\" [value]=\"lang.group_id\">{{lang.group_name}}\n                      </option>\n                  </select>\n                  <app-field-error-display [displayError]=\"isFieldValid('groupName')\" errorMsg=\"Required group Name\"></app-field-error-display>\n              </div>\n              <div class=\"col-md-12 col-lg-12\" *ngIf=\"isGroupChange\">\n                <content-loader *ngIf=\"mappingLoader\"></content-loader>\n                <items-chooser [items]=\"ipsDB\" (filteredItems)=\"getUpdatedIps($event)\"></items-chooser>\n              </div>\n             \n              <button type=\"button\" class=\"pull-right\">Create</button>  &nbsp;&nbsp;&nbsp;\n      </form>\n      </div>\n    </div>\n  </ng-template>\n  \n  <ng-template #confirmtemplate>\n    <div class=\"modal-header subusrModalHeader\">\n      <h4 class=\"modal-title pull-left\">Delete Sub User</h4>\n      <button type=\"button\" class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">\n        <span aria-hidden=\"true\">&times;</span>\n      </button>\n    </div>\n    <div class=\"modal-body\">\n      <div style=\"padding: 25px;\">\n\t\t\t<p> Are you sure to delete the sub user {{deleteUserObj.user_name}} ?</p>\n           <button (click)=\"modalRef.hide()\" type=\"button\" class=\"pull-left\">NO</button>  &nbsp;&nbsp;&nbsp;\n           <button (click)=\"deleteUser()\" type=\"button\" class=\"pull-right\">YES</button>  &nbsp;&nbsp;&nbsp;\n      </div>\n    </div>\n  </ng-template>\n  ";
+
+/***/ }),
+
+/***/ 1671:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1672);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1672:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1673);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./sub-user.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./sub-user.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1673:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n.ang-submit{\n    background: #00a6c9;\n    font-size: 18px;\n    color: #fff;\n    width: 100%;\n    padding: 15px;\n}\n\n.select-ang{\n    width: 75%;margin-bottom: 4px;\n}\n\n.group_create_sub {\n    color: #fff;\n    padding: 7px 15px;\n    background-color: #3b4249;\n    float: right;\n    margin-top: -38px;\n    margin-bottom: 20px;\n}\n\n.subusrModalHeader {\n    padding: 15px;\n    border-bottom: 1px solid #e5e5e5;\n    height: 52px !important;\n}\n\n.modal-cust-lg{\n    width: 80% !important;\n}\n\n.ngx-select-form{\n    margin-right: -15px;\n    margin-left: -15px;\n\n}\n\n#sub-usermenu a:hover{\n    background: #556670;\n    color: #fff;\n    text-decoration: none;\n}\n#subuserAdd .floating-label {\n    margin-left: 13px;\n}\n\n#subuserAdd  .form-group {\n    position: relative;\n    margin-bottom: 20px;\n}", ""]);
+
+// exports
+
+
+/***/ })
+
+});]]></script>
+        <script_name>32.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>18b689cbdb3d2300429e2a9a4896196c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.32.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_18b689cbdb3d2300429e2a9a4896196c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:01</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

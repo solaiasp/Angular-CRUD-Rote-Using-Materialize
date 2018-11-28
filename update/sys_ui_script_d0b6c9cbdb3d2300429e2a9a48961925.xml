@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.50.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([50],{
+
+/***/ 1304:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var command_create_component_1 = __webpack_require__(1535);
+var command_create_router_1 = __webpack_require__(1783);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var http_1 = __webpack_require__(87);
+var forms_1 = __webpack_require__(26);
+var CommandCreateModule = /** @class */ (function () {
+    function CommandCreateModule() {
+    }
+    CommandCreateModule = __decorate([
+        core_1.NgModule({
+            imports: [
+                common_1.CommonModule,
+                shared_module_1.SharedModule,
+                command_create_router_1.commandcreateRouter,
+                http_1.HttpClientModule, forms_1.FormsModule, forms_1.ReactiveFormsModule
+            ],
+            declarations: [
+                command_create_component_1.CommandCreateComponent
+            ]
+        })
+    ], CommandCreateModule);
+    return CommandCreateModule;
+}());
+exports.CommandCreateModule = CommandCreateModule;
+
+
+/***/ }),
+
+/***/ 1535:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var forms_1 = __webpack_require__(26);
+var common_service_1 = __webpack_require__(61);
+var modal_1 = __webpack_require__(104);
+var router_1 = __webpack_require__(48);
+var CommandCreateComponent = /** @class */ (function () {
+    function CommandCreateComponent(commonServices, formBuilder, router, modalService) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.formBuilder = formBuilder;
+        this.router = router;
+        this.modalService = modalService;
+        this.commandtext = true;
+        this.commandgenerator = false;
+        this.makeService = false;
+        this.modalAddService = false;
+        this.serviceTypeService = false;
+        this.functionalityService = false;
+        this.errorMsgObj = {};
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        this.submit = function (eventData) {
+            if (_this.commandExecutor.valid) {
+                var value = _this.commandTextArea;
+                var found = [], rxp = /{([^}]+)}/g, str = value, curMatch;
+                _this.commandtext = false;
+                _this.commandgenerator = true;
+                _this.formbuilder();
+                while (curMatch = rxp.exec(str)) {
+                    found.push(curMatch[1]);
+                }
+                _this.commandAttributes = found;
+                _this.commandgeneratorobj = {
+                    templateText: value,
+                    variables: found.toString(),
+                    variableAttributes: [],
+                    selectType: '',
+                    make: '',
+                    model: '',
+                    serviceType: '',
+                    functionality: ''
+                };
+                _this.reset();
+                for (var i = 0; i < found.length; i++) {
+                    if (_this.commandgeneratorobj.variableAttributes[i] == undefined) {
+                        _this.commandgeneratorobj.variableAttributes[i] = {};
+                    }
+                    _this.commandgeneratorobj.variableAttributes[i] = { name: found[i] };
+                    _this.errorMsgObj[i] = {};
+                }
+                _this.commandClassification("0", 'type');
+                _this.make = ["Select Make"];
+                _this.model = ["Select Model"];
+                _this.serviceType = ["Select ServiceType"];
+                _this.functionality = ["Select Functionality"];
+            }
+            else {
+                _this.validateAllFormFields(_this.commandExecutor);
+            }
+        };
+        this.commandClassification = function (parentId, type) {
+            var parentId = parentId;
+            _this.commonServices.postRequest('_commandexecuter/CommandExecuterClassification', { 'parentId': parentId }).then(function (response) {
+                if (response.status == "success") {
+                    _this.commandParentIds = response.items[0].CommandExecuterClassificationList;
+                    var newtype = _this.commandParentIds.map(function (obj) {
+                        var newVal = obj.name + "(" + obj.id + ")";
+                        return newVal;
+                    });
+                    switch (type) {
+                        case "type":
+                            _this.parentIds = newtype;
+                            break;
+                        case "make":
+                            _this.make = newtype;
+                            break;
+                        case "model":
+                            _this.model = newtype;
+                            break;
+                        case "serviceType":
+                            _this.serviceType = newtype;
+                            break;
+                        case "functionality":
+                            _this.functionality = newtype;
+                            break;
+                    }
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                }
+            }), function (err) {
+                _this.commonServices.error(err.message);
+            };
+        };
+        this.serviceUpdate = function (eventData) {
+            var postData;
+            var id;
+            switch (_this.initialState) {
+                case "type":
+                    id = 0;
+                    break;
+                case "make":
+                    id = _this.commandgeneratorobj.selectTypeId;
+                    break;
+                case "model":
+                    id = _this.commandgeneratorobj.makeId;
+                    break;
+                case "serviceType":
+                    id = _this.commandgeneratorobj.modelId;
+                    break;
+                case "functionality":
+                    id = _this.commandgeneratorobj.serviceTypeId;
+                    break;
+            }
+            postData = {
+                name: _this.newServiceName,
+                parentId: id
+            };
+            _this.commonServices.postRequest('_commandexecuter/CommandExecuterClassificationadd', postData).then(function (response) {
+                if (response.status == "success") {
+                    _this.modalRef.hide();
+                    switch (_this.initialState) {
+                        case "type":
+                            _this.commandClassification("0", 'type');
+                            break;
+                        case "make":
+                            _this.commandClassification(postData.parentId, 'make');
+                            break;
+                        case "model":
+                            _this.commandClassification(postData.parentId, 'model');
+                            break;
+                        case "serviceType":
+                            _this.commandClassification(postData.parentId, 'serviceType');
+                            break;
+                        case "functionality":
+                            _this.commandClassification(postData.parentId, 'functionality');
+                            break;
+                    }
+                    _this.commonServices.success('service created successfully.');
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                }
+            }), function (err) {
+                _this.commonServices.error(err.message);
+            };
+        };
+        this.commandTypeChange = function (eventData, index) {
+            _this.commandType = eventData[0].value;
+            _this.commandgeneratorobj.variableAttributes[index].type = eventData[0].value;
+        };
+        this.typeChange = function (eventData) {
+            if (eventData.length != 0) {
+                var id = eventData[0].value.slice(eventData[0].value.indexOf("(") + 1, eventData[0].value.indexOf(")"));
+                _this.commandgeneratorobj.selectTypeId = id;
+                _this.commandClassification(id, 'make');
+                _this.makeService = true;
+                _this.modalAddService = false;
+                _this.serviceTypeService = false;
+                _this.functionalityService = false;
+                _this.model = [];
+                _this.serviceType = [];
+                _this.functionality = [];
+            }
+        };
+        this.makeChange = function (eventData) {
+            if (eventData.length != 0) {
+                var id = eventData[0].value.slice(eventData[0].value.indexOf("(") + 1, eventData[0].value.indexOf(")"));
+                _this.commandgeneratorobj.makeId = id;
+                _this.commandClassification(id, 'model');
+                _this.modalAddService = true;
+                _this.serviceTypeService = false;
+                _this.functionalityService = false;
+                _this.serviceType = [];
+                _this.functionality = [];
+            }
+        };
+        this.modelChange = function (eventData) {
+            if (eventData.length != 0) {
+                var id = eventData[0].value.slice(eventData[0].value.indexOf("(") + 1, eventData[0].value.indexOf(")"));
+                _this.commandgeneratorobj.modelId = id;
+                _this.serviceType = _this.commandClassification(id, 'serviceType');
+                _this.serviceTypeService = true;
+                _this.functionalityService = false;
+                _this.functionality = [];
+            }
+        };
+        this.serviceTypeChange = function (eventData) {
+            if (eventData.length != 0) {
+                var id = eventData[0].value.slice(eventData[0].value.indexOf("(") + 1, eventData[0].value.indexOf(")"));
+                _this.commandgeneratorobj.serviceTypeId = id;
+                _this.functionality = _this.commandClassification(id, 'functionality');
+                _this.functionalityService = true;
+            }
+        };
+        this.functionalityChange = function (eventData) {
+            if (eventData.length != 0) {
+                var id = eventData[0].value.slice(eventData[0].value.indexOf("(") + 1, eventData[0].value.indexOf(")"));
+                _this.commandgeneratorobj.functionalityId = id;
+                console.log(eventData[0].value);
+            }
+        };
+        this.filtercommands = function (id) {
+            var value = _this.commandParentIds && _this.commandParentIds.filter(function (x) { return x.parentId == id; });
+            var newValue = value.map(function (obj) {
+                var newVal = obj.name + "(" + obj.id + ")";
+                return newVal;
+            });
+            return newValue;
+        };
+        this.createCommand = function (form) {
+            if (form.valid) {
+                _this.commandgeneratorobj.functionality = _this.commandgeneratorobj.functionality.slice(0, _this.commandgeneratorobj.functionality.indexOf("("));
+                _this.commandgeneratorobj.make = _this.commandgeneratorobj.make.slice(0, _this.commandgeneratorobj.make.indexOf("("));
+                _this.commandgeneratorobj.model = _this.commandgeneratorobj.model.slice(0, _this.commandgeneratorobj.model.indexOf("("));
+                _this.commandgeneratorobj.selectType = _this.commandgeneratorobj.selectType.slice(0, _this.commandgeneratorobj.selectType.indexOf("("));
+                _this.commandgeneratorobj.serviceType = _this.commandgeneratorobj.serviceType.slice(0, _this.commandgeneratorobj.serviceType.indexOf("("));
+                var postData = _this.commandgeneratorobj;
+                for (var i = 0; i < postData.variableAttributes.length; i++) {
+                    if (postData.variableAttributes[i].type == "List") {
+                        postData.variableAttributes[i] = {
+                            name: postData.variableAttributes[i].name,
+                            type: postData.variableAttributes[i].type,
+                            list: postData.variableAttributes[i].list
+                        };
+                    }
+                    else if (postData.variableAttributes[i].type == "IP") {
+                        postData.variableAttributes[i] = {
+                            name: postData.variableAttributes[i].name,
+                            type: postData.variableAttributes[i].type
+                        };
+                    }
+                }
+                var arr = postData.variableAttributes;
+                var result = {};
+                for (var i = 0; i < arr.length; i++) {
+                    result[arr[i].name] = arr[i];
+                }
+                postData.variableAttributes = JSON.stringify(result);
+                _this.commonServices.postRequest('_commandexecuter/CommandExecuter', postData).then(function (response) {
+                    if (response.status == "success") {
+                        _this.reset();
+                        _this.commandtext = true;
+                        _this.commandgenerator = false;
+                        _this.router.navigate(['/cmd-list']);
+                        _this.commonServices.success('Command template created successfully.');
+                    }
+                    else {
+                        _this.commonServices.error(response.message);
+                    }
+                }), function (err) {
+                    _this.commonServices.error(err.message);
+                };
+            }
+            else {
+                _this.validateAllFormFields(form);
+            }
+        };
+    }
+    CommandCreateComponent.prototype.formbuilder = function () {
+        this.commandExecutor = this.formBuilder.group({
+            commandTextArea: [null, forms_1.Validators.required]
+        });
+    };
+    ;
+    CommandCreateComponent.prototype.ngOnInit = function () {
+        this.formbuilder();
+        this.commandtype = [
+            "IP",
+            "String",
+            "Integer",
+            "List"
+        ];
+    };
+    CommandCreateComponent.prototype.openModal = function (name) {
+        var initialState = name;
+        this.initialState = name;
+        this.newServiceName = '';
+        this.modalRef = this.modalService.show(this.modalTemplate, { initialState: initialState });
+    };
+    CommandCreateComponent.prototype.isFieldValid = function (field, name) {
+        if (name == 'commandExecutor') {
+            return !this.commandExecutor.get(field).valid && this.commandExecutor.get(field).touched;
+        }
+        else if (name == 'command') {
+            return !this.commandGenerator.get(field).valid && this.commandGenerator.get(field).touched;
+        }
+        else if (name == 'commandGenerator') {
+            return !field.valid && field.touched;
+        }
+    };
+    CommandCreateComponent.prototype.displayFieldCss = function (field, name) {
+        return {
+            'has-error': this.isFieldValid(field, name),
+            'has-feedback': this.isFieldValid(field, name)
+        };
+    };
+    CommandCreateComponent.prototype.validateAllFormFields = function (formGroup) {
+        var _this = this;
+        Object.keys(formGroup.controls).forEach(function (field) {
+            var control = formGroup.get(field);
+            if (control instanceof forms_1.FormControl) {
+                control.markAsTouched({ onlySelf: true });
+            }
+            else if (control instanceof forms_1.FormGroup) {
+                _this.validateAllFormFields(control);
+            }
+            else if (control instanceof forms_1.FormArray) {
+                for (var _i = 0, _a = control.controls; _i < _a.length; _i++) {
+                    var controlindex = _a[_i];
+                    _this.validateAllFormFields(controlindex);
+                }
+            }
+        });
+    };
+    CommandCreateComponent.prototype.reset = function () {
+        this.commandExecutor.reset();
+        this.formbuilder();
+    };
+    __decorate([
+        core_1.ViewChild('commandcreatemodel'),
+        __metadata("design:type", core_1.ElementRef)
+    ], CommandCreateComponent.prototype, "modalTemplate", void 0);
+    CommandCreateComponent = __decorate([
+        core_1.Component({
+            selector: '<command-executor>',
+            template: __webpack_require__(1779),
+            styles: [__webpack_require__(1780)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService,
+            forms_1.FormBuilder,
+            router_1.Router,
+            modal_1.BsModalService])
+    ], CommandCreateComponent);
+    return CommandCreateComponent;
+}());
+exports.CommandCreateComponent = CommandCreateComponent;
+
+
+/***/ }),
+
+/***/ 1779:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n\t<section class=\"wrapper\" id=\"command-executor-wrapper\">\n\t\t<ol class=\"breadcrumb\">\n\t\t\t<li>\n\t\t\t\t<a (click)=\"goToHomePage()\">Home</a>\n\t\t\t</li>\n\t\t\t<li>\n\t\t\t\t<a [routerLink]=\"['/command-create']\"> Command Create </a>\n\t\t\t</li>\n\t\t</ol>\n\t\t<div class=\"dashboard-txt\">\n\t\t\t<h1>Command Create</h1>\n\t\t</div>\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-md-12\">\n\t\t\t\t<div *ngIf=\"commandtext\">\n\t\t\t\t\t<form [formGroup]=\"commandExecutor\">\n\t\t\t\t\t\t<div class=\"ctrl-command-sty\">\n\t\t\t\t\t\t\t<span> Add Flower Brackets for variables \"{{ '{' }}\" variablename \"{{ '}' }}\" without space inside the bracket</span>\n\t\t\t\t\t\t\t<textarea class=\"form-control\" [(ngModel)]=\"commandTextArea\" formControlName=\"commandTextArea\" placeholder=\"commandTextArea\"\n\t\t\t\t\t\t\t name=\"commandExecutor\"></textarea>\n\t\t\t\t\t\t\t<app-field-error-display [displayError]=\"isFieldValid('commandTextArea', 'commandExecutor')\" errorMsg=\"Please Enter command\">\n\t\t\t\t\t\t\t</app-field-error-display>\n\t\t\t\t\t\t\t<button class=\"btn ang-submit\" style=\"float: right;\" (click)=\"submit($event)\">Next</button>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</form>\n\t\t\t\t</div>\n\t\t\t\t<div *ngIf=\"commandgenerator\">\n\t\t\t\t\t<form #commandGenerator=\"ngForm\" (ngSubmit)=\"createCommand(commandGenerator.form)\">\n\t\t\t\t\t\t<div class=\"box-border\">\n\t\t\t\t\t\t\t<div *ngFor=\"let item of commandgeneratorobj.variableAttributes; let index = index;\">\n\t\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-3  ctrl-cus-select1\">\n\t\t\t\t\t\t\t\t\t\t<span>\n\t\t\t\t\t\t\t\t\t\t\t{{item.name}}\n\t\t\t\t\t\t\t\t\t\t</span>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-3  ctrl-cus-select form-group\">\n\t\t\t\t\t\t\t\t\t\t<ngx-select [optionValueField]=\"optionValueField\" [optionTextField]=\"optionTextField\" [items]=\"commandtype\" (selectionChanges)=\"commandTypeChange($event, index)\"\n\t\t\t\t\t\t\t\t\t\t placeholder=\"Select a commandType\" [defaultValue]=\"commandtype[0]\">\n\t\t\t\t\t\t\t\t\t\t</ngx-select>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div *ngIf=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].type =='String'\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" [(ngModel)]=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].min\"\n\t\t\t\t\t\t\t\t\t\t\t name=\"minimumstring{{index}}\" placeholder=\"minimum 1\" minlength=\"1\" required name=\"minstring\" #minstring=\"ngModel\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"minstring.errors && (minstring.dirty || minstring.touched)\">\n\t\t\t\t\t\t\t\t\t\t\t\t<div *ngIf=\"minstring.errors.required\">\n\t\t\t\t\t\t\t\t\t\t\t\t\tMinimum string is required.\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div *ngIf=\"minstring.errors.minlength\">\n\t\t\t\t\t\t\t\t\t\t\t\t\tString must be at least 1 character long.\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" [(ngModel)]=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].max\"\n\t\t\t\t\t\t\t\t\t\t\t name=\"maximumstring{{index}}\" placeholder=\"maximum 255\" maxlength=\"255\" required name=\"maxstring\" #maxstring=\"ngModel\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"maxstring.errors && (maxstring.dirty || maxstring.touched)\">\n\t\t\t\t\t\t\t\t\t\t\t\t<div *ngIf=\"maxstring.errors.required\">\n\t\t\t\t\t\t\t\t\t\t\t\t\tMaximum string is required.\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div *ngIf=\"maxstring.errors.maxlength\">\n\t\t\t\t\t\t\t\t\t\t\t\t\tString can be max 255 characters long.\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div *ngIf=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].type =='Integer'\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" [(ngModel)]=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].min\"\n\t\t\t\t\t\t\t\t\t\t\t name=\"minimuminteger{{index}}\" placeholder=\"minimum 1\" minlength=\"1\" required name=\"mininteger\" #mininteger=\"ngModel\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"mininteger.errors && (mininteger.dirty || mininteger.touched)\">\n\t\t\t\t\t\t\t\t\t\t\t\tMinimum integer is required.\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" [(ngModel)]=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].max\"\n\t\t\t\t\t\t\t\t\t\t\t name=\"maximuminteger{{index}}\" placeholder=\"maximum 255\" maxlength=\"255\" required name=\"maxinteger\" #maxinteger=\"ngModel\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"maxinteger.errors && (maxinteger.dirty || maxinteger.touched)\">\n\t\t\t\t\t\t\t\t\t\t\t\tMaximum integer is required.\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t<div *ngIf=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].type =='List'\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-6\">\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" [(ngModel)]=\"commandgeneratorobj.variableAttributes[index] && commandgeneratorobj.variableAttributes[index].list\"\n\t\t\t\t\t\t\t\t\t\t\t name=\"list\" placeholder=\"option1,option2\" required name=\"list\" #list=\"ngModel\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"list.errors && (list.dirty || list.touched)\">\n\t\t\t\t\t\t\t\t\t\t\t\tList options is required.\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"box-border\">\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select1\">\n\t\t\t\t\t\t\t\t\tSelect Type\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select form-group\">\n\t\t\t\t\t\t\t\t\t<ngx-select [optionValueField]=\"optionValueField\" [optionTextField]=\"optionTextField\" [(ngModel)]=\"commandgeneratorobj.selectType\"\n\t\t\t\t\t\t\t\t\t [items]=\"parentIds\" (selectionChanges)=\"typeChange($event)\" placeholder=\"Select Type\" required name=\"type\" #type=\"ngModel\">\n\t\t\t\t\t\t\t\t\t</ngx-select>\n\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"type.errors && (type.dirty || type.touched)\">\n\t\t\t\t\t\t\t\t\t\tPlease Select SelectType\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<i class=\"fa fa-plus-circle ctrl-plus-icon\" (click)=\"openModal('type')\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select1\">\n\t\t\t\t\t\t\t\t\tSelect Make\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"col-md-3  ctrl-cus-select form-group\">\n\t\t\t\t\t\t\t\t\t<ngx-select [optionValueField]=\"optionValueField\" [optionTextField]=\"optionTextField\" [(ngModel)]=\"commandgeneratorobj.make\"\n\t\t\t\t\t\t\t\t\t [items]=\"make\" (selectionChanges)=\"makeChange($event)\" placeholder=\"Select make\" required name=\"smake\" #smake=\"ngModel\">\n\t\t\t\t\t\t\t\t\t</ngx-select>\n\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"smake.errors && (smake.dirty || smake.touched)\">\n\t\t\t\t\t\t\t\t\t\tPlease Select Make\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<i *ngIf=\"makeService\" class=\"fa fa-plus-circle ctrl-plus-icon\" (click)=\"openModal('make')\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select1 \">\n\t\t\t\t\t\t\t\t\tSelect Model\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select form-group\">\n\t\t\t\t\t\t\t\t\t<ngx-select [optionValueField]=\"optionValueField\" [optionTextField]=\"optionTextField\" [(ngModel)]=\"commandgeneratorobj.model\"\n\t\t\t\t\t\t\t\t\t [items]=\"model\" (selectionChanges)=\"modelChange($event)\" placeholder=\"Select model\" required name=\"smodel\" #smodel=\"ngModel\">\n\t\t\t\t\t\t\t\t\t</ngx-select>\n\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"smodel.errors && (smodel.dirty || smodel.touched)\">\n\t\t\t\t\t\t\t\t\t\tPlease Select Model\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<i *ngIf=\"modalAddService\" class=\"fa fa-plus-circle ctrl-plus-icon\" (click)=\"openModal('model')\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select1\">\n\t\t\t\t\t\t\t\t\tSelect ServiceType\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select form-group\">\n\t\t\t\t\t\t\t\t\t<ngx-select [optionValueField]=\"optionValueField\" [optionTextField]=\"optionTextField\" [(ngModel)]=\"commandgeneratorobj.serviceType\"\n\t\t\t\t\t\t\t\t\t [items]=\"serviceType\" (selectionChanges)=\"serviceTypeChange($event)\" placeholder=\"Select servicetype\" required name=\"sservicetype\"\n\t\t\t\t\t\t\t\t\t #sservicetype=\"ngModel\">\n\t\t\t\t\t\t\t\t\t</ngx-select>\n\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"sservicetype.errors && (sservicetype.dirty || sservicetype.touched)\">\n\t\t\t\t\t\t\t\t\t\tPlease Select ServiceType\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<i *ngIf=\"serviceTypeService\" class=\"fa fa-plus-circle ctrl-plus-icon\" (click)=\"openModal('serviceType')\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select1\">\n\t\t\t\t\t\t\t\t\tSelect Functionality\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select form-group\">\n\t\t\t\t\t\t\t\t\t<ngx-select [optionValueField]=\"optionValueField\" [optionTextField]=\"optionTextField\" [(ngModel)]=\"commandgeneratorobj.functionality\"\n\t\t\t\t\t\t\t\t\t [items]=\"functionality\" (selectionChanges)=\"functionalityChange($event)\" placeholder=\"Select functionality\" required\n\t\t\t\t\t\t\t\t\t name=\"sfunctionality\" #sfunctionality=\"ngModel\">\n\t\t\t\t\t\t\t\t\t</ngx-select>\n\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"sfunctionality.errors && (sfunctionality.dirty || sfunctionality.touched)\">\n\t\t\t\t\t\t\t\t\t\tPlease Select Functionality\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t<i *ngIf=\"functionalityService\" class=\"fa fa-plus-circle ctrl-plus-icon\" (click)=\"openModal('functionality')\" aria-hidden=\"true\"></i>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"col-md-3 ctrl-cus-select1\">\n\t\t\t\t\t\t\t\t\tTemplate\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"col-md-6 ctrl-cus-select form-group\">\n\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"template\" [(ngModel)]=\"commandgeneratorobj.templateName\" required #template=\"ngModel\">\n\t\t\t\t\t\t\t\t\t<div class=\"error-msg\" *ngIf=\"template.errors && (template.dirty || template.touched)\">\n\t\t\t\t\t\t\t\t\t\tPlease Select Template\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t<div class=\"col-md-9\">\n\t\t\t\t\t\t\t\t<button class=\"btn ang-submit\" style=\"float: right;\">Create</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</form>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n</section>\n\n<ng-template #commandcreatemodel>\n\t<div class=\"modal-header\">\n\t\t<div class=\"modal-title\">\n\t\t\tAdd - {{initialState}}\n\t\t</div>\n\t\t<button type=\"button\" class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">\n\t\t\t<span aria-hidden=\"true\">&times;</span>\n\t\t</button>\n\t</div>\n\t<div class=\"modal-body\">\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-md-3 ctrl-cus-select1\">\n\t\t\t\tName\n\t\t\t</div>\n\t\t\t<div class=\"col-md-6\">\n\t\t\t\t<input type=\"text\" class=\"form-control\" [(ngModel)]=\"newServiceName\" name=\"servicename\">\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-md-12\">\n\t\t\t\t<button class=\"btn ang-submit\" style=\"float: right; margin-left : 20px;\" (click)=\"serviceUpdate($event)\">Add</button>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</ng-template>";
+
+/***/ }),
+
+/***/ 1780:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1781);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1781:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1782);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./command-create.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./command-create.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1782:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".ctrl-command-sty {\r\n    margin: 10px auto 0;\r\n    width: 100%;\r\n    max-width: 1200px;\r\n}\r\n\r\n.ctrl-command-sty textarea {\r\n    border: 1px solid #d5d5d5;\r\n    height: 300px;\r\n}\r\n\r\n.ctrl-cus-select{\r\n    padding: 5px;\r\n}\r\n\r\n.ctrl-cus-select1{\r\n    height: 40px;\r\n    line-height: 44px;\r\n    float: left;\r\n    text-align: center;\r\n}\r\n\r\n\r\n#command-executor-wrapper .form-group:last-child{\r\n    margin-bottom: 10px;\r\n}\r\n#command-executor-wrapper .border-btn:hover::after, #command-executor-wrapper .border-btn:focus::after, #command-executor-wrapper .border-btn.active::after, #command-executor-wrapper .login-register-dropdown.open .border-btn::after {\r\n    content: '';\r\n    position: absolute;\r\n    bottom: 100%;\r\n    left: 50%;\r\n    margin-left: -15px;\r\n    width: 0;\r\n    height: 0;\r\n    border-bottom: solid 15px #00a6c9;\r\n    border-left: solid 15px transparent;\r\n    border-right: solid 15px transparent;\r\n    z-index: 100;\r\n    border-top: 0;\r\n    top: auto;\r\n}\r\n\r\n#command-executor-wrapper .ngx-select__selected\r\n{\r\n font-size:6px !important;\r\n}\r\n#command-executor-wrapper .ngx-select__toggle\r\n{\r\nbackground:#f9f9f9 !important;\r\n}\r\n#command-executor-wrapper .ngx-select__placeholder\r\n{\r\ncolor:#999;\r\n}\r\n\r\n#command-executor-wrapper .ngx-select__selected-single \r\n{\r\nfont-size:14px !important;\r\n}\r\n\r\n\r\n#command-executor-wrapper .box-border {\r\n    border: 1px solid #dbdad9;\r\n    padding: 15px;\r\n    margin-bottom: 20px;\r\n    position: relative;\r\n    background: #fff;\r\n    border-radius: 4px;\r\n}\r\n\r\n#command-executor-wrapper .ctrl-plus-icon {\r\n    height: 40px;\r\n    line-height: 44px;\r\n    font-size: 22px;\r\n    color: #a1b52c;\r\n    cursor: pointer;\r\n}\r\n\r\n#command-executor-wrapper .ctrl-button-submit button {\r\n    margin-left : 20px; \r\n}\r\n\r\n.modal-header .close {\r\n    margin-top: -2px;\r\n    top: -16px;\r\n    position: relative;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1783:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var command_create_component_1 = __webpack_require__(1535);
+var COMMAND_EXECUTOR_ROUTER = [
+    {
+        path: '',
+        component: command_create_component_1.CommandCreateComponent,
+        pathMatch: 'full'
+    }
+];
+exports.commandcreateRouter = router_1.RouterModule.forChild(COMMAND_EXECUTOR_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>50.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>d0b6c9cbdb3d2300429e2a9a48961925</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.50.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_d0b6c9cbdb3d2300429e2a9a48961925</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

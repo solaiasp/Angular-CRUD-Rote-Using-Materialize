@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="content_css">
+    <content_css action="INSERT_OR_UPDATE">
+        <name>styles</name>
+        <style>@font-face{&#13;
+font-family:'FontAwesome';&#13;
+src:url('/sys_attachment.do?sys_id=4f628a4bdbfd2300429e2a9a48961986');/* eot*/&#13;
+src:url('/sys_attachment.do?sys_id=4f628a4bdbfd2300429e2a9a48961986') format('embedded-opentype'),&#13;
+url('/sys_attachment.do?sys_id=86c3064bdbfd2300429e2a9a48961979') format('woff2'), &#13;
+url('/sys_attachment.do?sys_id=2783424bdbfd2300429e2a9a48961947') format('woff'),&#13;
+url('/sys_attachment.do?sys_id=0df30a4bdbfd2300429e2a9a4896198c'),&#13;
+url('/sys_attachment.do?sys_id=d1630a4bdbfd2300429e2a9a4896198b') format('svg');&#13;
+font-weight:normal;font-style:normal}&#13;
+&#13;
+&#13;
+@font-face {&#13;
+  font-family: opensans;&#13;
+  src: url("/sys_attachment.do?sys_id=5ac6ca4bdbfd2300429e2a9a48961953");&#13;
+  src: url("/sys_attachment.do?sys_id=5ac6ca4bdbfd2300429e2a9a48961953") format("embedded-opentype"), &#13;
+url("/sys_attachment.do?sys_id=5277ca4bdbfd2300429e2a9a48961956") format("woff"), &#13;
+url("/sys_attachment.do?sys_id=0b97ca0bdbfd2300429e2a9a489619d4") format("woff2"),&#13;
+url("/sys_attachment.do?sys_id=f647064bdbfd2300429e2a9a4896197f") format("truetype"),&#13;
+url("/sys_attachment.do?sys_id=ff070acbdbfd2300429e2a9a489619bf") format("svg");&#13;
+ font-weight: 700;&#13;
+ font-style: italic;&#13;
+ }&#13;
+&#13;
+</style>
+        <sys_class_name>content_css</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-15 15:03:43</sys_created_on>
+        <sys_id>d1a14929dbfd2300429e2a9a48961934</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>styles</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>content_css_d1a14929dbfd2300429e2a9a48961934</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 12:05:13</sys_updated_on>
+        <type>local</type>
+        <url/>
+    </content_css>
+</record_update>

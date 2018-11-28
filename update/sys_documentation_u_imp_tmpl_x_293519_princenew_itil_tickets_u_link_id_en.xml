@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="u_link_id" label="Link ID" language="en" table="u_imp_tmpl_x_293519_princenew_itil_tickets">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>u_link_id</element>
+            <help/>
+            <hint/>
+            <label>Link ID</label>
+            <language>en</language>
+            <name>u_imp_tmpl_x_293519_princenew_itil_tickets</name>
+            <plural>Link IDs</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-11-28 08:41:52</sys_created_on>
+            <sys_id>22e666a5db422300429e2a9a48961956</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Link ID</sys_name>
+            <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+            <sys_update_name>sys_documentation_u_imp_tmpl_x_293519_princenew_itil_tickets_u_link_id_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-11-28 08:41:52</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

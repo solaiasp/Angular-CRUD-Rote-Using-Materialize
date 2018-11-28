@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.55.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([55],{
+
+/***/ 1296:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var optical_uptime_report_component_1 = __webpack_require__(1402);
+var optical_uptime_report_router_1 = __webpack_require__(1737);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var OpticalUptimeReportModule = /** @class */ (function () {
+    function OpticalUptimeReportModule() {
+    }
+    OpticalUptimeReportModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, optical_uptime_report_router_1.OpticalUptimeRouter],
+            declarations: [optical_uptime_report_component_1.OpticalUptimeReportComponent]
+        })
+    ], OpticalUptimeReportModule);
+    return OpticalUptimeReportModule;
+}());
+exports.OpticalUptimeReportModule = OpticalUptimeReportModule;
+
+
+/***/ }),
+
+/***/ 1402:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var OpticalUptimeReportComponent = /** @class */ (function () {
+    function OpticalUptimeReportComponent(commonServices, cookies, dateFilter) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.gridDataObj = {
+            pdfName: 'Optical-UpTime-Report',
+            pdfTitle: 'Optical-UpTime-Report',
+            excelTitle: 'Optical-UpTime-Report',
+            excelName: 'Optical-UpTime-Report',
+            fromDate: new Date(),
+            toDate: new Date()
+        };
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.loadGridData = function (from, to) {
+            _this.loader = true;
+            var _postData = { "from": from, "to": to };
+            _this.commonServices.postRequest('/_optical/OpticalUptimeReport', _postData).then(function (response) {
+                console.log('resdata', response);
+                if (response.status == "success") {
+                    _this.gridDataObj.data = response.items[0].OpticalUptimeList;
+                    _this.loader = false;
+                }
+                else {
+                    _this.loader = false;
+                    _this.commonServices.error(response.message);
+                }
+            }), function (err) {
+                _this.loader = false;
+                _this.commonServices.error(err.message);
+            };
+        };
+        this.setMaxToDate = function (fromDate, toDate) {
+            var frDate = _this.dateFilter.transform(fromDate, "yyyy-MM-dd");
+            var toDate = _this.dateFilter.transform(toDate, "yyyy-MM-dd");
+            _this.gridDataObj.fromDate = fromDate;
+            _this.gridDataObj.toDate = toDate;
+            _this.loadGridData(frDate, toDate);
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    OpticalUptimeReportComponent.prototype.ngOnInit = function () {
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.loader = false;
+        this.getTodayDate = new Date();
+        this.getTodayDate.setDate(this.getTodayDate.getDate() - 1);
+        this.fromDate = new Date();
+        this.toDate.setDate(this.getTodayDate.getDate());
+        this.fromDate.setDate(this.fromDate.getDate() - 2);
+        this.gridDataObj.id = 'opticalUpTimeReport';
+        this.gridDataObj.columns = [{ dataKey: 'serviceName', title: 'Service Name', hide: false, width: '' },
+            { dataKey: 'ip', title: 'IP', hide: false, width: '' },
+            { dataKey: 'port', title: 'Port', hide: false, width: '' },
+            { dataKey: 'reportDate', title: 'Report Date', hide: false, width: '' },
+            { dataKey: 'availability', title: 'Availability (%)', hide: false, width: '' },
+            { dataKey: 'downtime', title: 'Down Time (Mins)', hide: false, width: '' }];
+        var frDate = this.dateFilter.transform(this.fromDate, "yyyy-MM-dd");
+        var toDate = this.dateFilter.transform(this.toDate, "yyyy-MM-dd");
+        this.gridDataObj.fromDate = this.fromDate;
+        this.gridDataObj.toDate = this.toDate;
+        this.loadGridData(frDate, toDate);
+    };
+    OpticalUptimeReportComponent = __decorate([
+        core_1.Component({
+            selector: '<optical-uptime-report>',
+            template: __webpack_require__(1736),
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe])
+    ], OpticalUptimeReportComponent);
+    return OpticalUptimeReportComponent;
+}());
+exports.OpticalUptimeReportComponent = OpticalUptimeReportComponent;
+
+
+/***/ }),
+
+/***/ 1736:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n  <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n      <li>\n        <a (click)=\"goToHomePage()\">Home</a>\n      </li>\n      <li class=\"active\">Optical Uptime Report</li>\n    </ol>\n\n    <div class=\"row\">\n      <div class=\"col-md-12\">\n        <div class=\"box-title box-title-tabs\">              \n          <div class=\"pull-right\">\n            <ul class=\"box-title-right\">\n              <li>\n                <div class=\"picker\">\n                  <div class=\"input-group datetimepicker-start-end\">\n                    <input bsDatepicker (ngModelChange)=\"setMaxToDate($event ,toDate)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"fromDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n                      id=\"datetimepicker-start\" placeholder=\"From Date\" aria-invalid=\"false\"  [maxDate]=\"getTodayDate\">\n                    <span>to</span>\n                    <input bsDatepicker (ngModelChange)=\"setMaxToDate(fromDate,$event)\" type=\"text\" class=\"form-control\" [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\"\n                      id=\"datetimepicker-end\" placeholder=\"To Date\" aria-invalid=\"false\"  [maxDate]=\"getTodayDate\" [minDate]=\"fromDate\">\n                  </div>\n                  <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n                </div>\n              </li>\n            </ul>\n          </div>\n          <div class=\"pull-left\">\n            <h3>Optical Uptime Report</h3>\n          </div>\n          <div class=\"clearfix\"></div>\n        </div>\n      </div>\n    </div>    \n  \n    <div class=\"row\">\n      <div class=\"col-md-12\">\n        <data-grid *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\"></data-grid>\n        <content-loader *ngIf=\"loader\"></content-loader>\n      </div>\n    </div>\n\n  </section>\n</section>";
+
+/***/ }),
+
+/***/ 1737:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var optical_uptime_report_component_1 = __webpack_require__(1402);
+var OPTICAL_UPTIME_ROUTER = [
+    {
+        path: '',
+        component: optical_uptime_report_component_1.OpticalUptimeReportComponent,
+        pathMatch: 'full'
+    }
+];
+exports.OpticalUptimeRouter = router_1.RouterModule.forChild(OPTICAL_UPTIME_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>55.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>54b6c9cbdb3d2300429e2a9a48961908</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.55.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_54b6c9cbdb3d2300429e2a9a48961908</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:01</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

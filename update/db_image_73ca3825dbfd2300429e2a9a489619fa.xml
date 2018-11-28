@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="db_image">
+    <db_image action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <category/>
+        <format>png</format>
+        <height>26</height>
+        <image>d61ffc25dbfd2300429e2a9a48961971</image>
+        <name>src/assets/images/dropdown-arrow.png</name>
+        <size_bytes>1089</size_bytes>
+        <sys_class_name>db_image</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-15 14:33:52</sys_created_on>
+        <sys_id>73ca3825dbfd2300429e2a9a489619fa</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>src/assets/images/dropdown-arrow.png</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>db_image_73ca3825dbfd2300429e2a9a489619fa</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-15 14:52:36</sys_updated_on>
+        <thumbnail/>
+        <width>26</width>
+    </db_image>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color>#ffffff</average_image_color>
+        <chunk_size_bytes>734003</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>image/png</content_type>
+        <file_name>image</file_name>
+        <image_height>26</image_height>
+        <image_width>26</image_width>
+        <size_bytes>1089</size_bytes>
+        <size_compressed>760</size_compressed>
+        <state>available</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-15 14:52:36</sys_created_on>
+        <sys_id>d61ffc25dbfd2300429e2a9a48961971</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-15 14:52:36</sys_updated_on>
+        <table_name>ZZ_YYdb_image</table_name>
+        <table_sys_id>73ca3825dbfd2300429e2a9a489619fa</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAAAA==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="image" sys_id="d61ffc25dbfd2300429e2a9a48961971">d61ffc25dbfd2300429e2a9a48961971</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-15 14:52:36</sys_created_on>
+        <sys_id>1a1ffc25dbfd2300429e2a9a48961971</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>nVPLa9RAGA8+q2wPHhStHmKKoOgmmd1k04SumtfWLW4t2y0tQsE0mW1jm0yaTN1tRXygBx8HEV8HUUs9qKCg4EEEH4eCinqxBxH/BB83hYrFSd2tItKDA8nM983v933ffI+TnR1tjSubVlIU1ZjfZRTJ3hR/DcvI/1b77jdkW4fNXtyFyrhihZBSHdQP6bxnDcAitJyxkRewlaIWl91SL+4t7FZs5LFWjGGrXkDFq3VHNbDsIYjpfjjg+lnmy6MnDO06WaZHLPCFQIeD7q7xEHaNd5Ts8SFbdpgd2+nWqkIMeBBbdNUb9iOlmmXm7CrkHKs5hp6D4KEs8yuo3kInraMQ0iLLJ20+A+iMwAKBlwV5G53iAc+BFMdLScAroqTwgK4thngLnbJSNHI1X0TKMoMYBwrHVSoVtpJmUTjAAVmWOT7FpVJJgkhGYz62qkk/aq5bMGBkh26AXeTTsWz1o1GcZZj6E7ygUJg37Ee1RJGUcVUr4ADLc57H1dERLsLywuioNBZArggjNBrapB7l5j9cLUyNgSQaZU/okqJYwwayRz3o47yRZcgN67iOklFb0oaQUk1RzJkSAFpa0zRVTEsgB0BG5+s2/sWVhZwKcpLekhYBAKakpVOmqQFZ5yVBl9JmnZv3I2z5Nqxz3d9cbUGuoofQwigsITRc74DOQYRRNIgCWu8SWUD3uL6DKlFcnlqkMHQPQCcXIo+ey6/i/sO/KLWogmFqpiiB+N0kHkEmCiDoQM2kMkyN6/xPzjgSDPdXs9RVpAPj43zrE2F+eKBPJiYko3Ft75oeMlYjeUMtVd9/nH7WeIRPLH6q2E9nJ0HbkbZVt8+/nN4/1Tz7daR99fLPjy8svXd/84rXJ6gNbydO3bwMnncf7Zs6Y5Zerb2Re3b20saJwzu/zeS2fjj4PWEeOjmz6VDf6S0N3e++lSYbHiQ+3VlfuHr9+NUrixIUbld/PLx4bkk81Hmzw7ir7Tv2E8osE8ZBBAAA</data>
+        <length>1000</length>
+        <position>1</position>
+        <sys_attachment display_value="image" sys_id="d61ffc25dbfd2300429e2a9a48961971">d61ffc25dbfd2300429e2a9a48961971</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-15 14:52:36</sys_created_on>
+        <sys_id>9a1ffc25dbfd2300429e2a9a48961971</sys_id>
+    </sys_attachment_doc>
+</record_update>

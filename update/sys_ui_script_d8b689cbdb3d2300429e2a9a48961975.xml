@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.54.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([54],{
+
+/***/ 1314:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var nse_history_component_1 = __webpack_require__(1553);
+var nse_history_router_1 = __webpack_require__(1873);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var NseHistoryModule = /** @class */ (function () {
+    function NseHistoryModule() {
+    }
+    NseHistoryModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, nse_history_router_1.nseHistoryRouter],
+            declarations: [nse_history_component_1.NseHistoryComponent]
+        })
+    ], NseHistoryModule);
+    return NseHistoryModule;
+}());
+exports.NseHistoryModule = NseHistoryModule;
+
+
+/***/ }),
+
+/***/ 1553:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var nse_history_columns_1 = __webpack_require__(1871);
+var common_1 = __webpack_require__(6);
+var NseHistoryComponent = /** @class */ (function () {
+    function NseHistoryComponent(commonServices, cookies, dateFilter) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.pageTitle = 'NSE History of Changes';
+        this.gridDetails = {};
+        this.fromDate = new Date();
+        this.toDate = new Date();
+        this.fileConfig = {
+            displayKey: 'requestId',
+            search: true,
+            height: 'auto',
+            placeholder: 'Select Request ID'
+        };
+        this.defaultCustomer = [];
+        this.folderTypes = [];
+        this.requestIDSetter = "";
+        this.getGridItems = function (postDataVal) {
+            _this.loader = true;
+            _this.gridDetails.data = [];
+            _this.commonServices.postRequest('/_workflow/NSEOrderUpdateHistory', postDataVal).then(function (response) {
+                if (response.status == "success") {
+                    if (response.items[0].NSEOrderHistory.length > 0) {
+                        _this.gridDetails.data = response.items[0].NSEOrderHistory;
+                    }
+                    else {
+                        _this.gridDetails.data = [];
+                    }
+                    _this.loader = false;
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                    _this.loader = false;
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+                _this.loader = false;
+            });
+        };
+        this.onSelectSacId = function (e) {
+            if (e.value.length) {
+                console.log("Event", e.value[0].requestId);
+                _this.requestIDSetter = e.value[0].requestId;
+                _this.postData = { "requestId": e.value[0].requestId, "fromDate": _this.dateFilter.transform(_this.fromDate, "yyyy-MM-dd"), "toDate": _this.dateFilter.transform(_this.toDate, "yyyy-MM-dd") };
+                _this.getGridItems(_this.postData);
+            }
+        };
+        this.getRequestDetails = function () {
+            _this.loader = true;
+            _this.commonServices.getRequest('/_workflow/NSEOrdersIdList').then(function (response) {
+                if (response.status == "success") {
+                    _this.folderTypes = response.items;
+                    _this.loader = false;
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                    _this.loader = false;
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+                _this.loader = false;
+            });
+        };
+        this.getLists = function (getFromDate, getToDate) {
+            _this.postData = { "requestId": _this.requestIDSetter, "fromDate": _this.dateFilter.transform(getFromDate, "yyyy-MM-dd"), "toDate": _this.dateFilter.transform(getToDate, "yyyy-MM-dd") };
+            _this.getGridItems(_this.postData);
+        };
+        this.reset = function () {
+            _this.bind_sac_id = '';
+            _this.defaultCustomer = [];
+            _this.postData = { "requestId": "", "fromDate": _this.fromDate, "toDate": _this.toDate };
+            _this.getGridItems(_this.postData);
+        };
+    }
+    NseHistoryComponent.prototype.ngOnInit = function () {
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.gridDetails = nse_history_columns_1.nseHistoryGridColumnInfo;
+        this.loader = false;
+        /* Getting Grid Details Start */
+        var today = new Date();
+        var time = today.getTime();
+        var yesterday = time - (24 * 1 * 60 * 60 * 1000);
+        this.fromDate = new Date(yesterday);
+        this.toDate = new Date();
+        this.maxDate = new Date();
+        //this.postData = {"fromDate": this.dateFilter.transform(this.fromDate, "yyyy-MM-dd"), "toDate": this.dateFilter.transform(this.toDate, "yyyy-MM-dd")};
+        this.postData = { "requestId": "", "fromDate": this.fromDate, "toDate": this.toDate };
+        this.getRequestDetails();
+        this.getGridItems(this.postData);
+        /* Grid Details End */
+    };
+    NseHistoryComponent = __decorate([
+        core_1.Component({
+            selector: '<nse-history>',
+            template: __webpack_require__(1872),
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe])
+    ], NseHistoryComponent);
+    return NseHistoryComponent;
+}());
+exports.NseHistoryComponent = NseHistoryComponent;
+
+
+/***/ }),
+
+/***/ 1871:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.nseHistoryGridColumnInfo = {
+    pdfName: 'NSE_History_Of_Changes',
+    pdfTitle: 'NSE History Of Changes',
+    excelTitle: 'NSE History Of Changes',
+    excelName: 'NSE_History_Of_Changes',
+    id: 'NSE_History_Of_Changes',
+    disablePdf: true,
+    updateEvent: false,
+    deleteEvent: false,
+    hasCheckbox: false,
+    data: [],
+    columns: [{
+            dataKey: 'requestID',
+            title: 'Request ID',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'token',
+            title: 'Token',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'tokenType',
+            title: 'Category',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'oldValue',
+            title: 'Old Value',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'newValue',
+            title: 'New Value',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'linkNumber',
+            title: 'Link Number',
+            hide: false,
+            link: false,
+            width: ''
+        }, {
+            dataKey: 'time',
+            title: 'Date & Time',
+            hide: false,
+            link: false,
+            width: ''
+        }]
+};
+
+
+/***/ }),
+
+/***/ 1872:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n        <section class=\"wrapper\">\n            <ol class=\"breadcrumb\">\n                <li><a href=\"#dashboard\">Home</a></li>\n                <li class=\"active\">{{pageTitle}}</li>\n            </ol>\n            <div class=\"col-md-12\" style=\"padding:0px;\">\n                    <div class=\"box-title box-title-tabs\">\n                        <div class=\"pull-right\" style=\"margin-top: -6px;\">\n                            <ul class=\"box-title-right\" id=\"sub-usermenu\">\n                                <li>\n                                    <div class=\"picker\">\n                                        <div class=\"input-group datetimepicker-start-end\">\n                                            <input bsDatepicker (ngModelChange)=\"getLists($event ,toDate)\" type=\"text\" class=\"form-control\"\n                                                [(ngModel)]=\"fromDate\" [maxDate]=\"maxDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-start\"\n                                                placeholder=\"From Date\" aria-invalid=\"false\"><span>to</span>\n                                            <input bsDatepicker (ngModelChange)=\"getLists(fromDate,$event)\" type=\"text\" class=\"form-control\"\n                                                [(ngModel)]=\"toDate\" [bsConfig]=\"{ dateInputFormat: 'YYYY-MM-DD' }\" id=\"datetimepicker-end\"\n                                                placeholder=\"To Date\" aria-invalid=\"false\" [minDate]=\"fromDate\" [maxDate]=\"maxDate\">\n                                        </div>\n                                        <i class=\"fa fa-calendar start-end-icon\" aria-hidden=\"true\"></i>\n                                    </div>\n                                </li>\n                                <li *ngIf=\"!loader\" class=\"grid-event-icon\" data-toggle=\"tooltip\" placement=\"top\" tooltip=\"Reset\">\n                                    <span class=\"fa fa-refresh\" style=\"font-size: 30px;\" (click)=\"reset()\"></span>\n                                </li>\n                                <li>\n                                    &nbsp;\n                                </li>\n                            </ul>\n                        </div>\n                        <div class=\"pull-left\">\n                            <h3>{{pageTitle}}</h3>\n                        </div>\n                        <div class=\"clearfix\"></div>\n                    </div>\n                </div>\n                <div class=\"col-md-12\" style=\"max-height: 20px;margin-top: -48px;margin-left: -21%;\">\n                    <div class=\"col-md-4 col-md-offset-4 form-group pull-right\">\n                        <ngx-select-dropdown (change)=\"onSelectSacId($event)\" [(value)]=\"defaultCustomer\" [(ngModel)]=\"bind_sac_id\" [config]=\"fileConfig\" [options]=\"folderTypes\"></ngx-select-dropdown>\n                    </div>\n                </div>\n                <div class=\"col-md-12 no-padding\" *ngIf=\"!loader\">\n                    <content-loader *ngIf=\"loader\"></content-loader>\n                    <data-grid [gridobj]=\"gridDetails\"></data-grid>\n                </div>\n        </section>\n    </section>";
+
+/***/ }),
+
+/***/ 1873:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var nse_history_component_1 = __webpack_require__(1553);
+var NSE_HISTORY_ROUTER = [
+    {
+        path: '',
+        component: nse_history_component_1.NseHistoryComponent,
+        pathMatch: 'full'
+    }
+];
+exports.nseHistoryRouter = router_1.RouterModule.forChild(NSE_HISTORY_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>54.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>d8b689cbdb3d2300429e2a9a48961975</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.54.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_d8b689cbdb3d2300429e2a9a48961975</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

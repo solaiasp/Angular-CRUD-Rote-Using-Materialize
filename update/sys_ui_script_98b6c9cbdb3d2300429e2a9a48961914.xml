@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.51.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([51],{
+
+/***/ 1303:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var cmd_excecution_component_1 = __webpack_require__(1534);
+var cmd_excecution_router_1 = __webpack_require__(1778);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var CmdExecutionModule = /** @class */ (function () {
+    function CmdExecutionModule() {
+    }
+    CmdExecutionModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, cmd_excecution_router_1.cmdExeRouter],
+            declarations: [cmd_excecution_component_1.CmdExecutionComponent]
+        })
+    ], CmdExecutionModule);
+    return CmdExecutionModule;
+}());
+exports.CmdExecutionModule = CmdExecutionModule;
+
+
+/***/ }),
+
+/***/ 1534:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var common_1 = __webpack_require__(6);
+var page_view_service_1 = __webpack_require__(498);
+var CmdExecutionComponent = /** @class */ (function () {
+    function CmdExecutionComponent(commonServices, cookies, dateFilter, pageView) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.dateFilter = dateFilter;
+        this.pageView = pageView;
+        this.pageData = {};
+        this.formFields = [];
+        this.formModel = {};
+        this.errorMsgObj = {};
+        this.displayCmd = {};
+        this.finalCmd = {};
+        this.hasError = false;
+        this.copyText = '';
+        this.getFormFields = function () {
+            var fieldObj = _this.pageData.variableAttributes;
+            if (fieldObj) {
+                fieldObj = JSON.parse(fieldObj);
+                for (var key in fieldObj) {
+                    _this.formModel[key] = '';
+                    _this.errorMsgObj[key] = '';
+                    _this.formFields.push(fieldObj[key]);
+                }
+            }
+            //this.displayCmd = this.pageData.templateText;
+            _this.displayCmd = _this.buildCmd();
+        };
+        this.onChange = function (value, name) {
+            _this.formModel[name] = value;
+            var textContent = _this.buildCmd();
+            /*if(value){
+                var str = '{'+name+'}';
+                var regex : any = new RegExp(str, "g");
+                var validatedObj : any = this.validateField(name,value);
+                textContent = textContent.replace(regex,' <strong class="'+validatedObj.className+'" placement="top" tooltip="'+validatedObj.errorMsg+'"> '+replacableStr+'</strong>')
+            }*/
+            _this.displayCmd = textContent;
+        };
+        this.buildCmd = function () {
+            console.log('this.formModel', _this.formModel);
+            var text = (' ' + _this.pageData.templateText).slice(1);
+            _this.copyText = (' ' + _this.pageData.templateText).slice(1);
+            _this.hasError = false;
+            for (var key in _this.formModel) {
+                var str = '{' + key + '}';
+                var replacableStr = '{' + key + '}';
+                if (_this.formModel[key]) {
+                    replacableStr = _this.formModel[key];
+                }
+                var regex = new RegExp(str, "g");
+                var validatedObj = _this.validateField(key, _this.formModel[key]);
+                _this.errorMsgObj[key] = validatedObj.errorMsg;
+                if (validatedObj.errorMsg) {
+                    _this.hasError = true;
+                }
+                text = text.replace(regex, ' <strong class="' + validatedObj.className + '" placement="top" tooltip="' + validatedObj.errorMsg + '"> ' + replacableStr + '</strong>');
+                _this.copyText = _this.copyText.replace(regex, ' ' + replacableStr + ' ');
+            }
+            return text;
+        };
+        this.copyCmd = function () {
+            var el = document.createElement('textarea');
+            el.value = _this.copyText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        };
+        this.validateField = function (key, value) {
+            var fields = JSON.parse(_this.pageData.variableAttributes);
+            var selectedField = fields[key];
+            var errorMsg = '';
+            var className = 'active-cmd';
+            if (selectedField.type.toLowerCase() == 'integer') {
+                if ((value + '') == '') {
+                    errorMsg = 'Value cannot be empty';
+                    className = 'inactive-cmd';
+                }
+                else if (value < parseInt(selectedField.min)) {
+                    errorMsg = 'Value should be greater than ' + (parseInt(selectedField.min) - 1);
+                    className = 'inactive-cmd';
+                }
+                else if (value > parseInt(selectedField.max)) {
+                    errorMsg = 'Value should be lesser than ' + (parseInt(selectedField.max) + 1);
+                    className = 'inactive-cmd';
+                }
+            }
+            else if (selectedField.type.toLowerCase() == 'string') {
+                if (value == '') {
+                    errorMsg = 'Value cannot be empty';
+                    className = 'inactive-cmd';
+                }
+                else if (value.length < parseInt(selectedField.min)) {
+                    errorMsg = 'Character should be greater than ' + (parseInt(selectedField.min) - 1);
+                    className = 'inactive-cmd';
+                }
+                else if (value.length > parseInt(selectedField.max)) {
+                    errorMsg = 'Character should be less than ' + (parseInt(selectedField.max) + 1);
+                    className = 'inactive-cmd';
+                }
+            }
+            else {
+                if (value == '') {
+                    errorMsg = 'Value cannot be empty';
+                    className = 'inactive-cmd';
+                }
+            }
+            return {
+                errorMsg: errorMsg,
+                className: className
+            };
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    CmdExecutionComponent.prototype.ngOnInit = function () {
+        this.pageData = this.pageView.getData();
+        this.getFormFields();
+    };
+    CmdExecutionComponent = __decorate([
+        core_1.Component({
+            selector: '<cmd-excecution>',
+            template: __webpack_require__(1774),
+            styles: [__webpack_require__(1775)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, common_1.DatePipe, page_view_service_1.PageViewService])
+    ], CmdExecutionComponent);
+    return CmdExecutionComponent;
+}());
+exports.CmdExecutionComponent = CmdExecutionComponent;
+
+
+/***/ }),
+
+/***/ 1774:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n    <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n        <li><a (click)=\"goToHomePage()\">Home</a></li>\n          <li><a [routerLink]=\"['/cmd-list']\">Command Lists</a></li>\n\t\t  <li class=\"active\">Command Excecution</li>\n      </ol>\n      <div class=\"row\" id=\"command-execution\">\n        <div class=\"col-md-12\">\n            <div class=\"box-title box-title-tabs\">              \n                <div class=\"pull-right\">\n                <ul class=\"box-title-right\">\n                   \n                </ul>\n                </div>\n                <div class=\"pull-left\">\n                  <h3>Command Execution</h3>\n                </div>\n                <div class=\"clearfix\"></div>\n            </div>\n        </div>\n    </div>\n\t<div class=\"row cmd-attr-container\">\n\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t<div class=\"col-md-6\">\n\t\t\t\t<div class=\"box-title\">\n\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t<img-icon class=\"svg\" src=\"servicerequest.svg\"></img-icon>\n\t\t\t\t\t\t<h3>Command Attributes</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"col-md-6\">\n\t\t\t\t<div class=\"box-title\">\n\t\t\t\t\t<div class=\"pull-left\">\n\t\t\t\t\t\t<img-icon class=\"svg\" src=\"servicerequest.svg\"></img-icon>\n\t\t\t\t\t\t<h3>Command Execution</h3>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\t\n\t\t<div class=\"col-md-12 parent-box-cmd no-padding\">\n\t\t\t<div class=\"col-md-6 child-box-cmd\">\n\t\t\t\t<div class=\"box-border card-border-cust col-md-12\">\n\t\t\t\t\t<div class=\"box-tab\">\n\t\t\t\t\t\t<div class=\"col-md-6 cmd-field no-padding\" *ngFor=\"let field of formFields\">\n\t\t\t\t\t\t\t<div class=\"col-md-12\">\n\t\t\t\t\t\t\t   <div class=\"form-group\">\n\t\t\t\t\t\t\t\t <input [ngClass] = \"{'ng-invalid' : errorMsgObj[field.name] && errorMsgObj[field.name] != 'Value cannot be empty'}\" *ngIf=\"field.type.toLowerCase() != 'integer'\" (ngModelChange)=\"onChange($event,field.name)\" [(ngModel)]=\"formModel[field.name]\" class=\"form-control cmd-input\" name=\"field.name\" required type=\"text\"/>\n\t\t\t\t\t\t\t\t <input [ngClass] = \"{'ng-invalid' : errorMsgObj[field.name] && errorMsgObj[field.name] != 'Value cannot be empty'}\" *ngIf=\"field.type.toLowerCase() == 'integer'\" (ngModelChange)=\"onChange($event,field.name)\" [(ngModel)]=\"formModel[field.name]\" class=\"form-control cmd-input\" name=\"field.name\" required type=\"number\"/>\n\t\t\t\t\t\t\t\t <span class=\"floating-label\">{{field.name}}\n\t\t\t\t\t\t\t\t\t<span>*</span>\n\t\t\t\t\t\t\t\t </span>\n\t\t\t\t\t\t\t\t <div [ngClass] = \"{'active' : errorMsgObj[field.name] && errorMsgObj[field.name] != 'Value cannot be empty'}\" class=\"cmd-validation-msg\">{{errorMsgObj[field.name]}}</div>\n\t\t\t\t\t\t\t   </div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"col-md-6 child-box-cmd\">\n\t\t\t\t<div class=\"box-border card-border-cust col-md-12\">\n\t\t\t\t<div class=\"box-tab\">\n\t\t\t\t\t<div id=\"cmd-content\" class=\"col-md-12 cmd-content\" [innerHTML] = \"displayCmd\">\n\t\t\t\t\t \n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-2 pull-right\">\n\t\t\t\t\t\t<button (click)=\"copyCmd()\" [ngClass]=\"{'in-active' : hasError}\" class=\"cmd-copy\" [disabled]=\"hasError\">Copy</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n </section>\n</section>";
+
+/***/ }),
+
+/***/ 1775:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1776);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1776:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1777);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./cmd-excecution.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./cmd-excecution.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1777:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".cmd-field {\r\n\tmargin-bottom : 10px;\r\n\tmargin-top : 10px;\r\n}\r\n.cmd-attr-container {\r\n\tmargin-top : 15px;\r\n}\r\n\r\n.active-cmd {\r\n\tfont-size : 20px;\r\n\tcolor : #00b050;\r\n}\r\n.inactive-cmd {\r\n\tfont-size : 20px;\r\n\tcolor : rgb(241, 46, 54);\r\n}\r\n\r\n.cmd-content{\r\n\tline-height: 30px;\r\n    font-size: 16px;\r\n}\r\n\r\n.child-box-cmd {\r\n\tdisplay : flex;\r\n}\r\n.parent-box-cmd {\r\n\tdisplay : flex;\r\n}\r\n\r\n.cmd-validation-msg{\r\n    height: 20px;\r\n    visibility: hidden;\r\n\tcolor : rgb(241, 46, 54);\r\n}\r\n\r\n.cmd-validation-msg.active{\r\n    height: 20px;\r\n    visibility: visible;\r\n\tcolor : rgb(241, 46, 54);\r\n}\r\n.cmd-input {\r\n\tmargin : 0 !important;\r\n}\r\n.cmd-copy.in-active {\r\n\tcursor : not-allowed;\r\n}\r\n.cmd-copy {\r\n\tmargin-top : 20px;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1778:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var cmd_excecution_component_1 = __webpack_require__(1534);
+var CMD_EXE_ROUTER = [
+    {
+        path: '',
+        component: cmd_excecution_component_1.CmdExecutionComponent,
+        pathMatch: 'full'
+    }
+];
+exports.cmdExeRouter = router_1.RouterModule.forChild(CMD_EXE_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>51.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>98b6c9cbdb3d2300429e2a9a48961914</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.51.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_98b6c9cbdb3d2300429e2a9a48961914</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

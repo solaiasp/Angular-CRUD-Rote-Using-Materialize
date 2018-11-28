@@ -1,0 +1,838 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.42.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([42],{
+
+/***/ 1293:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var net_topology_component_1 = __webpack_require__(1399);
+var net_topology_router_1 = __webpack_require__(1724);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var NetTopologyModule = /** @class */ (function () {
+    function NetTopologyModule() {
+    }
+    NetTopologyModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, net_topology_router_1.NetTopologyRouter],
+            declarations: [net_topology_component_1.NetTopologyComponent]
+        })
+    ], NetTopologyModule);
+    return NetTopologyModule;
+}());
+exports.NetTopologyModule = NetTopologyModule;
+
+
+/***/ }),
+
+/***/ 1399:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var page_view_service_1 = __webpack_require__(498);
+var common_1 = __webpack_require__(6);
+var router_1 = __webpack_require__(48);
+var common_2 = __webpack_require__(6);
+var modal_1 = __webpack_require__(104);
+var ngx_pipes_1 = __webpack_require__(267);
+var excell_service_1 = __webpack_require__(266);
+var NetTopologyComponent = /** @class */ (function () {
+    function NetTopologyComponent(modalService, router, location, commonServices, cookies, pageViewService, datePipe, filter, excellService) {
+        var _this = this;
+        this.modalService = modalService;
+        this.router = router;
+        this.location = location;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.pageViewService = pageViewService;
+        this.datePipe = datePipe;
+        this.filter = filter;
+        this.excellService = excellService;
+        this.deviceUpCount = 0;
+        this.deviceDownCount = 0;
+        this.filterType = 'all';
+        this.siteName = '';
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+        this.gotoPerf = function (perfType) {
+            _this.modalRef.hide();
+            var pageData = {};
+            pageData.siteName = _this.siteName;
+            pageData.perfType = perfType;
+            pageData.hostname = _this.hostName;
+            _this.pageViewService.setData(pageData);
+            _this.router.navigate(['/assets-details']);
+        };
+        this.goToLinkPerf = function (link) {
+            _this.modalRef.hide();
+            var pageData = {};
+            pageData.siteName = _this.siteName;
+            pageData.link_desc = link.link_desc;
+            _this.pageViewService.setData(pageData);
+            _this.router.navigate(['/assets-details']);
+        };
+        this.subscription = this.commonServices.textSearched$.subscribe(function (searchText) {
+            var clonedReport = _this.allAssets.slice();
+            var filterArr = _this.commonServices.constructFilter(clonedReport);
+            _this._asset_report_details = _this.filter.transform(clonedReport, filterArr, searchText).slice();
+            // //console.log('initializing',this.excelArray);
+            var clonedExcel = _this.excelArray.slice();
+            var filterExcel = _this.commonServices.constructFilter(clonedExcel);
+            var finalExcel = _this.filter.transform(clonedExcel, filterExcel, searchText);
+            //  //console.log('searchBasedClonedExcel',finalExcel);
+            var excel = _this.groupDeviceIps(finalExcel, [], []);
+            ////console.log('groupDeviceIpsExcel',excel);
+            _this.calculateLinkStatus(excel.slice());
+            // //console.log('searchBasedassetdetails',this._asset_report_details);
+        });
+    }
+    NetTopologyComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.slaLists = [];
+        this.cutsttopologyDetails = {};
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.groupId = "";
+        // console.log('siteNameVisibility',this.pageViewService.getData().siteNameVisibility);
+        this.allAssets = [];
+        this.oneAtATime = true;
+        this.gridDataObj = {};
+        this.deviceDetailsLoader = false;
+        this.gridDataObj.excelTitle = "Topology Reports";
+        this.gridDataObj.excelName = "Topology";
+        this.excelArray = [];
+        this.siteNameVisibility = this.commonServices.checkApiAvailability('NWTopologyWithSitename');
+        this.gridDataObj.columns = [
+            {
+                /*	dataKey : 'customerId',	title : 'Customer Name',		hide : false,width:'',cell : (cellProps:any) =>{
+              return {
+                click:false,
+                html:cellProps.customerId+'( '+cellProps.customerName+')'
+              };
+              }
+              */
+                dataKey: 'device_name', title: 'Host Name', hide: false, width: ''
+            },
+            { dataKey: 'ip', title: 'Ip', hide: false, width: '' },
+            { dataKey: 'devstatus', title: 'Device Status', hide: false, width: '' },
+            { dataKey: 'dev_poll_time_since', title: 'Device Alarm Time', hide: false, width: '' },
+            { dataKey: 'link_desc', title: 'Link Description', hide: false, width: '' },
+            { dataKey: 'make', title: 'Make', hide: false, width: '' },
+            { dataKey: 'location', title: 'City', hide: false, width: '' },
+            { dataKey: 'state', title: 'State', hide: false, width: '' },
+            { dataKey: 'linkstatus', title: 'Link Status', hide: false, width: '' },
+            { dataKey: 'link_poll_time_since', title: 'Link Alarm Time', hide: false, width: '' }
+        ];
+        this.userPartyid = this.currentUser.party_id;
+        if (this.userType == 6) {
+            this.groupId = this.currentUser.group_id;
+        }
+        this.show_down = true;
+        this.show_up = true;
+        this.currentDate = Date.now();
+        this.interval = setInterval(function () {
+            var _postData = {};
+            _this.currentDate = Date.now();
+            _this.autoRefresh(_postData);
+        }, 300000);
+        this.getSlaReports();
+    };
+    NetTopologyComponent.prototype.exportList = function () {
+        this.excellService.generateExcell(this.gridDataObj);
+    };
+    NetTopologyComponent.prototype.createTicketService = function () {
+        var _this = this;
+        var stringText = "";
+        return {
+            getLinks: function (data) {
+                // var deferred = $q.defer();
+                var inputData = {
+                    "dbname": "",
+                    "tablename": "",
+                    "rpt_type": 0,
+                    "clientids": "",
+                    "st_limit": "",
+                    "end_limit": 2000,
+                    "condition": "party_id='" + data + "'"
+                };
+                return _this.commonServices.postRequest("api/con_link_details" + stringText, inputData).then(function (response) {
+                    // deferred.resolve(response);
+                    return response;
+                }, function (error) {
+                    return error;
+                });
+            },
+            createTicket: function (data) {
+                // var deferred = $q.defer();
+                stringText = '?problem_summary=' + data.problem_summary + '&x_problem_description=' + data.x_problem_description + '&xx_customer_id=' + data.xx_customer_id + '&x_service_type=' + data.x_service_type + '&x_problem_code=' + data.x_problem_code + '&x_caller_type=' + data.x_caller_type + '&x_userid=' + data.x_userid + '&x_creation_channel=' + data.x_creation_channel + '&x_customer_site_id=' + data.x_customer_site_id + '&primary_contact_no=' + data.primary_contact_no + '&sec_contact_no=' + data.sec_contact_no + '&primary_contact_name=' + data.primary_contact_name + '&sec_contact_name=' + data.sec_contact_name + '&primary_email_id=' + data.primary_email_id + '&sec_email_id=' + data.sec_email_id + '&linkid=' + data.linkid + '&org_account_number=' + data.org_account_number + '&cryptedtext=' + data.cryptedtext + '&tac_id=' + data.tac_id;
+                return _this.commonServices.postRequest("./api/con_createsr", data).then(function (res) {
+                    return res;
+                }, function (error) {
+                    return error;
+                });
+            },
+            viewTicketList: function (linkID, userPartyid, fromdate, todate, accountid) {
+                var inputData = { "party_id": userPartyid, "fromdate": fromdate, "todate": todate, "linkid": linkID, accountid: accountid };
+                //console.log(inputData)
+                return _this.commonServices.postRequest("./api/con_getSRList", inputData).then(function (response) {
+                    //deferred.resolve(response.items);
+                    return response.items;
+                }, function (error) {
+                    return error;
+                });
+            },
+            editTicket: function (data) {
+                //var inputData = {"party_id":userPartyid,"fromdate":fromdate,"todate":todate,"linkid":linkID};
+                //var inputData = {"party_id":425857,"fromdate":"01-Apr-2016","todate":"04-Jul-2016","linkid":2094400510};
+                return _this.commonServices.postRequest("./api/con_editsr", data).then(function (response) {
+                    return response;
+                }, function (error) {
+                    return error;
+                });
+            },
+            viewTicketDetails: function (ticketNo) {
+                var inputData = { "srno": ticketNo };
+                return _this.commonServices.postRequest("./api/con_getSRdetails", inputData).then(function (res) {
+                    var viewData = res.items[0].return.srdetailsview.$value;
+                    if (viewData) {
+                        var sv_arr = viewData.split('###');
+                        var ticketDatas = {};
+                        ticketDatas.arrVal1 = sv_arr.splice(0, 22);
+                        var arrValues = sv_arr;
+                        var size = 5;
+                        var availArray = [];
+                        for (var i = 0; i < arrValues.length; i += size) {
+                            var smallarray = arrValues.slice(i, i + size);
+                            if (typeof smallarray !== 'undefined' && smallarray.length == 5) {
+                                var newObject = {};
+                                var textVal = smallarray[2].replace(/[<]br[^>]*[>]/gi, "");
+                                var retextVal = textVal.replace(/##*/gi, "");
+                                ////console.log(retextVal);
+                                newObject.description = retextVal;
+                                newObject.creation_date = smallarray[0];
+                                newObject.user_name = smallarray[1];
+                                newObject.note_type = smallarray[3];
+                                newObject.group_name = smallarray[4];
+                                availArray.push(newObject);
+                            }
+                        }
+                        ticketDatas.arrVal2 = availArray;
+                    }
+                    //console.log(ticketDatas)
+                    return ticketDatas;
+                }, function (error) {
+                    return error;
+                });
+            }
+        };
+    };
+    NetTopologyComponent.prototype.toggleOpen = function (open, index) {
+        //console.log('open',open);
+        this.openAccordion[index] = open ? true : false;
+    };
+    NetTopologyComponent.prototype.autoRefresh = function (data) {
+        this.getSlaReports();
+    };
+    NetTopologyComponent.prototype.changeGroup = function (group) {
+        var _this = this;
+        //$scope.currentPage = 1;
+        this._asset_report_details = [];
+        this.selectedGrp = group;
+        if (group == 'all') {
+            this._asset_report_details = this.allAssets.slice();
+        }
+        else {
+            this.allAssets.map(function (asset) {
+                if (asset.site == group) {
+                    _this._asset_report_details.push(asset);
+                }
+            });
+        }
+        this.totalCount = this._asset_report_details.length;
+        //totalPages = $scope.totalPages = Math.ceil($scope.totalCount / $scope.pageSize);
+        //$rootScope.$broadcast('icon-conversion',{});
+    };
+    NetTopologyComponent.prototype.groupDeviceIps = function (linkAll, siteNameAndGroups, siteNamePos) {
+        var _this = this;
+        var linkIpsArray = linkAll.slice();
+        var mappedDeviceIpLinks = [];
+        var found = false;
+        console.log('linkIpsArray', linkIpsArray);
+        this.deviceUpCount = 0;
+        this.deviceDownCount = 0;
+        var k = 0;
+        for (var i = 0; i < siteNamePos.length; i++) {
+            for (var j = 0; j < siteNamePos[i]; j++) {
+                linkIpsArray[k].siteName = siteNameAndGroups[i].siteName;
+                linkIpsArray[k].group = siteNameAndGroups[i].group;
+                k++;
+            }
+        }
+        this.excelLinkIpsArray = linkIpsArray.slice();
+        this.excelLinkIpsArray.map(function (links) {
+            var performaceData = links.linkPerformaceData;
+            for (var data in performaceData) {
+                if (data == 'devstatus' || data == 'linkstatus') {
+                    if (performaceData[data] == '1')
+                        links[data] = 'UP';
+                    else
+                        links[data] = 'DOWN';
+                }
+                else
+                    links[data] = performaceData[data];
+            }
+        });
+        ////console.log("linkipsarray ",linkIpsArray);
+        this.gridDataObj.data = this.excelLinkIpsArray.slice();
+        linkIpsArray.map(function (linkIpsObj) {
+            // //console.log('linkIpsObj0',linkIpsObj);
+            if (mappedDeviceIpLinks.length > 0) {
+                mappedDeviceIpLinks.map(function (mappedIp) {
+                    //  //console.log('linkIpsObj1',linkIpsObj);
+                    if (mappedIp.ip == linkIpsObj.ip) {
+                        found = true;
+                        mappedIp.links = mappedIp.links.concat([linkIpsObj]);
+                    }
+                });
+                if (found == false) {
+                    var devObj = {};
+                    devObj.ip = linkIpsObj["ip"];
+                    devObj.deviceName = linkIpsObj['device_name'];
+                    devObj.devStatus = linkIpsObj['linkPerformaceData'].devstatus;
+                    devObj.devAlarmTime = linkIpsObj['linkPerformaceData'].dev_poll_time_since;
+                    devObj.siteName = linkIpsObj['siteName'];
+                    devObj.group = linkIpsObj['group'];
+                    devObj.state = linkIpsObj['state'];
+                    devObj.city = linkIpsObj['location'];
+                    devObj.make = linkIpsObj['make'];
+                    devObj.links = [];
+                    devObj.links = devObj.links.concat([linkIpsObj]);
+                    if (devObj.devStatus && devObj.devStatus == 1) {
+                        _this.deviceUpCount++;
+                    }
+                    else {
+                        _this.deviceDownCount++;
+                    }
+                    mappedDeviceIpLinks = mappedDeviceIpLinks.concat([devObj]);
+                }
+                else
+                    found = false;
+            }
+            else {
+                var devObj = {};
+                devObj.ip = linkIpsObj["ip"];
+                devObj.deviceName = linkIpsObj['device_name'];
+                devObj.devStatus = linkIpsObj['linkPerformaceData'].devstatus;
+                devObj.devAlarmTime = linkIpsObj['linkPerformaceData'].dev_poll_time_since;
+                devObj.siteName = linkIpsObj['siteName'];
+                devObj.group = linkIpsObj['group'];
+                devObj.state = linkIpsObj['state'];
+                devObj.city = linkIpsObj['location'];
+                devObj.make = linkIpsObj['make'];
+                devObj.links = [];
+                devObj.links = devObj.links.concat([linkIpsObj]);
+                if (devObj.devStatus && devObj.devStatus == '1') {
+                    _this.deviceUpCount += 1;
+                }
+                else {
+                    _this.deviceDownCount += 1;
+                }
+                mappedDeviceIpLinks = mappedDeviceIpLinks.concat([devObj]);
+            }
+        });
+        //console.log(mappedDeviceIpLinks);
+        return mappedDeviceIpLinks.slice();
+    };
+    NetTopologyComponent.prototype.showUp = function () {
+        this.filterType = 'up';
+        this.show_down = false;
+        this.show_up = true;
+        var upDevicesExcel = this.excelArray.filter(function (val) {
+            return val.linkPerformaceData.devstatus == 1;
+        });
+        this.gridDataObj.data = upDevicesExcel.slice();
+    };
+    NetTopologyComponent.prototype.showDown = function () {
+        this.filterType = 'down';
+        this.show_down = true;
+        this.show_up = false;
+        var downDevicesExcel = this.excelArray.filter(function (val) {
+            return !(val.linkPerformaceData.devstatus == 1);
+        });
+        this.gridDataObj.data = downDevicesExcel.slice();
+    };
+    NetTopologyComponent.prototype.showAll = function () {
+        this.filterType = 'all';
+        this.show_down = true;
+        this.show_up = true;
+        this.getSlaReports();
+    };
+    NetTopologyComponent.prototype.removeFilter = function () {
+        this.filterType = 'all';
+        this.show_down = true;
+        this.show_up = true;
+        this.gridDataObj.data = this.excelArray.slice();
+    };
+    NetTopologyComponent.prototype.getSlaReports = function () {
+        var _this = this;
+        this.allAssets = [];
+        this.totalAssetDevice = [];
+        this.totalAssetLinks = [];
+        this.selectedGrp = 'all';
+        this.loader = true;
+        var _postData = {};
+        this.linkUpCount = 0;
+        this.linkDownCount = 0;
+        this.deviceUpCount = 0;
+        this.deviceDownCount = 0;
+        this.commonServices.postRequest('/_asset/assetInventoryLinkList', _postData).then(function (response) {
+            //console.log('assetInventoryLinkList', response);
+            var itemsLinkDevice = [];
+            var mappedDeviceIps = response.items[0].AssetInventoryLinkList;
+            var siteNameAndGroups = [], siteNamePos = [];
+            if (response.status == 'success') {
+                var completeDeviceIpsInformation = [];
+                mappedDeviceIps.map(function (siteInfo, index) {
+                    var tempPos = siteInfo.AssetInventoryLinkCloud.concat(siteInfo.AssetInventoryLinkWAN, siteInfo.AssetInventoryLinkLAN, siteInfo.AssetInventoryLinkAPP);
+                    completeDeviceIpsInformation = completeDeviceIpsInformation.concat(tempPos);
+                    siteNameAndGroups = siteNameAndGroups.concat([{ siteName: siteInfo.siteName, group: siteInfo.group }]);
+                    siteNamePos = siteNamePos.concat([tempPos.length]);
+                });
+                //console.log('completeDeviceIpInformationoriginal',completeDeviceIpsInformation);
+                var excelArrayLocal = completeDeviceIpsInformation.slice();
+                _this.excelArray = excelArrayLocal.slice();
+                //console.log('excel',excelArrayLocal);
+                //console.log('excel',this.excelArray);
+                completeDeviceIpsInformation = _this.groupDeviceIps(completeDeviceIpsInformation, siteNameAndGroups, siteNamePos).slice();
+                _this.calculateLinkStatus(completeDeviceIpsInformation);
+                //console.log('completeDeviceIpsinformation',completeDeviceIpsInformation);
+                completeDeviceIpsInformation.sort(function (a, b) {
+                    return ((b.linkDown / (b.linkUp + b.linkDown)) * 100) - ((a.linkDown / ((a.linkUp + a.linkDown)) * 100));
+                });
+                _this._asset_report_details = completeDeviceIpsInformation.slice();
+                console.log('_1asset_report_details', JSON.parse(JSON.stringify(_this._asset_report_details)));
+                _this.allAssets = completeDeviceIpsInformation.slice();
+                //console.log('excelFinal',excelArrayLocal);
+                //console.log('excelFinal',this.excelArray);
+                /*
+                this.upDeviceDetails=[];
+                this.downDeviceDetails=[];
+                this.allDeviceDetails=[...this._asset_report_details];
+        
+                this._asset_report_details.map((devices:any)=>{
+        if(devices.deviceStatus=='1')
+        {
+          this.upDeviceDetails=[...this.upDeviceDetails,devices];
+        }
+        else if(devices.deviceStatus=='')
+        {
+          this.downDeviceDetails=[...this.downDeviceDetails,devices];
+        }
+                });
+                */
+                /*
+                var items: any = {};
+        
+                items.deviceCount = response.totalItems;
+                this.deviceUpCount = 0;
+                this.deviceDownCount = 0;
+                this.linkUpCount = 0;
+                this.linkDownCount = 0;
+                
+                
+                response.items.map((item: any) => {
+                  if (item.dev_status === 0) {
+                    this.deviceDownCount++;
+                  } else {
+                    this.deviceUpCount++;
+                  }
+                  item.links.map((link: any) => {
+                    if (link.link_status === 0) {
+                      this.linkDownCount++;
+                    }
+                    else {
+                      this.linkUpCount++;
+                    }
+                  });
+                }
+                );
+                
+                response.deviceUpCount = this.deviceUpCount;
+                response.deviceDownCount = this.deviceDownCount;
+                response.linkUpCount = this.linkUpCount;
+                response.linkDownCount = this.linkDownCount;
+                //console.log('dummy', response);
+                this.cutsttopologyDetails = Object.assign({},response,{});
+                this._asset_report_details = response.items;
+                this.totalDeviceCount = 0;
+                this.totalLinkCount = 0;
+                for (var m = 0; response.items.length > m; m++) {
+                  this.totalDeviceCount = (Number(response.items[m].devcount)) + (this.totalDeviceCount);
+                  this.totalLinkCount = (Number(response.items[m].linkcount)) + (this.totalLinkCount);
+                }
+                this.allAssets = [...this._asset_report_details];
+                this.totalAssets = this.allAssets.length;
+                this.totalCount = this._asset_report_details.length;
+                //$rootScope.$broadcast('icon-conversion', {});
+                */
+            }
+            else {
+                _this.commonServices.error(response.message);
+            }
+            _this.loader = false;
+        }, function (err) {
+            _this.loader = false;
+        });
+    };
+    NetTopologyComponent.prototype.calculateLinkStatus = function (completeDeviceIpsInformation) {
+        var _this = this;
+        this.linkUpCount = 0;
+        this.linkDownCount = 0;
+        // //console.log('calculatelinkstatus',completeDeviceIpsInformation);
+        completeDeviceIpsInformation.map(function (deviceLinks) {
+            var linkDown = 0;
+            var linkUp = 0;
+            deviceLinks.devStatus = (deviceLinks.devStatus && deviceLinks.devStatus == 1 ? 1 : 0);
+            deviceLinks.links.map(function (link, index) {
+                deviceLinks["link_bandwidth_" + index] = link.bandwidth;
+                deviceLinks["interface_name_" + index] = link.interface_name;
+                deviceLinks["link_desc_" + index] = link.link_desc;
+                // deviceLinks["link_type_"+index]=link.link_type;
+                // let prevStatus=link.linkPerformaceData.linkstatus;
+                // //console.log("prevStatus",prevStatus);
+                // //console.log("prevStatusAllowed",link.linkPerformaceData.linkstatus == 0);
+                // //console.log("trueorfalse",link.linkPerformaceData.linkstatus && link.linkPerformaceData.linkstatus == 0);
+                link.linkPerformaceData.linkstatus = (link.linkPerformaceData.linkstatus != undefined && link.linkPerformaceData.linkstatus == 1 ? 1 : 0);
+                // //console.log("linkstatus "+index+" prevStatus "+prevStatus+" Current Status "+link.linkPerformaceData.linkstatus);
+                if (link.linkPerformaceData.linkstatus == 1) {
+                    _this.linkUpCount += 1;
+                    linkUp += 1;
+                }
+                else if (link.linkPerformaceData.linkstatus == 0) {
+                    _this.linkDownCount += 1;
+                    linkDown += 1;
+                }
+            });
+            deviceLinks.linkUp = linkUp;
+            deviceLinks.linkDown = linkDown;
+        });
+        // //console.log("linkUp",this.linkUpCount);
+        // //console.log("linkDown",this.linkDownCount);
+        return completeDeviceIpsInformation.slice();
+    };
+    NetTopologyComponent.prototype.viewTopologyDetails = function (data, deviceDetails) {
+        var _this = this;
+        //console.log('data',data)
+        this.siteName = data.siteName;
+        this.modalBox = true;
+        this.showTicketBox = false;
+        this.linkDown = false;
+        this.hostName = data.deviceName;
+        this.deviceIp = data.ip;
+        this.deviceStatus = data.devStatus;
+        this.deviceStatusSince = data.devAlarmTime;
+        this.deviceState = data.state;
+        this.deviceCity = data.city;
+        this.deviceMake = data.make;
+        this.viewLinks = data.links.slice();
+        this.openAccordion = [];
+        this.interFaceid = [];
+        this.deviceDetailsLoader = true;
+        this.linkids = [];
+        this.showTickeloader = false;
+        this.viewLinks.map(function (val) {
+            _this.openAccordion = _this.openAccordion.concat([false]);
+        });
+        this.viewLinks.map(function (viewLink) {
+            _this.interFaceid.push(viewLink.interfaceid);
+            if (viewLink.link_status === 0) {
+                _this.linkids.push(viewLink.link_id);
+                _this.linkDown = true;
+            }
+        });
+        var interface1 = this.interFaceid.join(", ");
+        this.linkidArr = this.linkids.join(", ");
+        var _getDeviceDetails = {
+            "clientid": "10122",
+            "deviceip": this.deviceIp,
+            "make": this.deviceMake,
+            "interfaceids": interface1
+        };
+        this.commonServices.postRequest('/_asset/assetInventoryList', { "siteName": data.siteName }).then(function (response) {
+            if (response.status == 'success') {
+                _this.modalBox = false;
+                var deviceData = response.items[0].AssetInventoryList.filter(function (val) { return val.ip == _this.deviceIp; });
+                _this.cpuData = deviceData[0].AssetPerformaceData.cpu;
+                _this.memData = deviceData[0].AssetPerformaceData.memory;
+            }
+            else if (response.status == 'failure') {
+                _this.cpuData = false;
+                _this.memData = false;
+                _this.modalBox = true;
+                _this.commonServices.error(response.message);
+                setTimeout(function () {
+                    _this.modalRef.hide();
+                }, 2000);
+            }
+            else {
+                _this.cpuData = false;
+                _this.memData = false;
+                _this.modalBox = true;
+                _this.commonServices.error("No response status");
+                setTimeout(function () {
+                    _this.modalRef.hide();
+                }, 2000);
+            }
+            _this.deviceDetailsLoader = false;
+        }, function (err) {
+            _this.modalBox = true;
+            _this.deviceDetailsLoader = false;
+            _this.commonServices.error(err);
+            setTimeout(function () {
+                _this.modalRef.hide();
+            }, 2000);
+        });
+        this.showDetails(deviceDetails);
+    };
+    NetTopologyComponent.prototype.showTickets = function (data) {
+        var _this = this;
+        //console.log(data.split(','));
+        //console.log('showticketsloader : showTickeLoader: ',this.showTickeloader,' showTicketbox: ',this.showTicketBox);
+        this.showTickeloader = true;
+        //$scope.showTicketBox = false;
+        if (this.showTicketBox) {
+            this.showTicketBox = false;
+            this.showTickeloader = false;
+            //console.log('showticketsloaderif : showTickeLoader: ',this.showTickeloader,' showTicketbox: ',this.showTicketBox);
+        }
+        else {
+            var linksArra = data.split(',');
+            linksArra.map(function (linksVal) {
+                var linkid = linksVal;
+                var accid = "";
+                _this.fromDate = _this.datePipe.transform(new Date().setMonth(new Date().getMonth() - 7), "dd-MMM-yyyy");
+                _this.toDate = _this.datePipe.transform(new Date(), "dd-MMM-yyyy");
+                //console.log('showticketsloaderelse : showTickeLoader: ',this.showTickeloader,' showTicketbox: ',this.showTicketBox);
+                _this.createTicketService().viewTicketList(linkid, _this.userPartyid, _this.fromDate, _this.toDate, accid).then(function (response) {
+                    //console.log(response)
+                    _this.ticketsNo = response;
+                    _this.showTicketBox = true;
+                    _this.showTickeloader = false;
+                    //console.log('showticketsloaderelserest : showTickeLoader: ',this.showTickeloader,' showTicketbox: ',this.showTicketBox);
+                }, function (err) {
+                    _this.commonServices.error(err.message);
+                });
+            });
+            /*
+            angular.forEach(linksArra, function (value) {
+              var linkid = value;
+              var fromDate = $filter('date')(new Date().setMonth(new Date().getMonth() - 7), "dd-MMM-yyyy"); //
+              var toDate = $filter('date')(new Date(), "dd-MMM-yyyy");
+              createTicketService.viewTicketList(linkid, userPartyid, fromDate, toDate).then(function (response) {
+                //console.log(response)
+                $scope.ticketsNo = response;
+                $scope.showTicketBox = true;
+                $scope.showTickeloader = false;
+              }, function (err) {
+                notifications.showError(err.message);
+              });
+            })
+      */
+            //$scope.showTicketBox = true;
+        }
+    };
+    NetTopologyComponent.prototype.viewPerformance = function (_selectedList, selectedLink, reportViewType) {
+        ////console.log(_selectedList);
+        if (reportViewType == "linkInfo") {
+            _selectedList.selectedLink = selectedLink;
+        }
+        _selectedList.performanceViewType = reportViewType;
+        this.pageViewService.setData(_selectedList);
+        this.router.navigate(['/link-performance']);
+    };
+    /*
+    send_sitename(resp_datalist:any) {
+      //console.log(resp_datalist);
+      resp_datalist.siteName = resp_datalist.siteName;
+      resp_datalist.pageType = "performance";
+    this.pageViewService.setData(resp_datalist);
+    }
+    */
+    NetTopologyComponent.prototype.showDetails = function (template) {
+        this.modalRef = this.modalService.show(template, Object.assign({}, { class: 'modal-lg' }));
+    };
+    NetTopologyComponent.prototype.ngOnDestroy = function () {
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+    };
+    NetTopologyComponent = __decorate([
+        core_1.Component({
+            selector: 'net-topology',
+            template: __webpack_require__(1720),
+            styles: [__webpack_require__(1721)]
+        }),
+        __metadata("design:paramtypes", [modal_1.BsModalService, router_1.Router, common_1.Location, common_service_1.CommonService, ngx_cookie_1.CookieService, page_view_service_1.PageViewService, common_2.DatePipe, ngx_pipes_1.FilterByPipe, excell_service_1.ExcellService])
+    ], NetTopologyComponent);
+    return NetTopologyComponent;
+}());
+exports.NetTopologyComponent = NetTopologyComponent;
+
+
+/***/ }),
+
+/***/ 1720:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = "<section id=\"net-topology\">\n    <section id=\"main-content\">\n\t<section class=\"wrapper\">\n\t<ol class=\"breadcrumb\">\n\t\t\t<li><a (click)=\"goToHomePage()\">Home</a></li>\n\t\t  <li class=\"active\">Live Status {{searchedText}}</li>\n\t  </ol>\n\t  <div class=\"dashboard-txt\">\n\t\t<div class=\"col-md-12 no-padding\">\n\t\t\t\t <h3 class=\"chip\" [ngClass]=\"{'active' : filterType == 'all'}\" (click)=\"removeFilter()\">All: <span class=\"dupcls\">{{deviceUpCount + deviceDownCount}}</span> </h3>\n\t\t\t\t <h3 [ngClass]=\"{'active' : filterType == 'up'}\" class=\"chip\" (click)=\"showUp()\">Device UP: <span class=\"dupcls\">{{deviceUpCount}}</span> </h3>\n\t\t\t\t <h3 [ngClass]=\"{'active' : filterType == 'down'}\" class=\"chip\" (click)=\"showDown()\">Device DOWN: <span class=\"ddowncls\">{{deviceDownCount}}</span></h3>\n\t\t\t\t <h3 class=\"chip default-cursor\">Link UP:  <span class=\"dupcls\">{{linkUpCount}}</span></h3>\n\t\t\t\t <h3 class=\"chip default-cursor\">Link DOWN: <span class=\"ddowncls\">{{linkDownCount}}</span></h3>\n\t\t\t\t <h3 class=\"chip default-cursor\">Last Refresh: {{currentDate | date:'yyyy-MM-dd hh:mm:ss a'}}</h3>\n\t\t\t\t <h3 class=\"chip\" (click)=\"showAll()\"><span class=\"glyphicon glyphicon-refresh glyphicon-refresh-animate\"></span> <span class=\"dupcls\" style=\"color:white;\">Refresh</span> </h3>\n\t\t\t\t <h3 style=\"display:inline-block;\" class=\"pull-right\"><span><img  class=\"export-grid\" src=\"" + __webpack_require__(500) + "\" (click)=\"exportList()\"/></span></h3>\n\t </div>\n\t  </div>\n\t<div class=\"content-txt\">\n\t<div class=\"row\">\n\t\t<!-- <div class=\"col-sm-6\"><h1>Performance</h1></div> -->\n\t\t<div class=\"col-sm-12\">\n\t\t  \n\t\t\t\t<!-- <div class=\"pn-ProductNav_Wrapper\">\n\t\t\t\t  <nav id=\"pnProductNav\" class=\"pn-ProductNav\">\n\t\t\t\t\t  <div id=\"pnProductNavContents\" class=\"pn-ProductNav_Contents\">\n\t\t\t\t\t\t  <a [ngClass]=\"{'active' : selectedGrp == 'all'}\" (click)=\"changeGroup('all')\" class=\"pn-ProductNav_Link\" >All</a>\n\t\t\t\t\t\t  <a [ngClass]=\"{'active' : selectedGrp == menu.site}\" (click)=\"changeGroup(menu.site)\" *ngFor=\"menu in assetSubMenus\" class=\"pn-ProductNav_Link\">{{menu.site}}</a>\n\t\t\t\t\t\t  \n\t\t\t\t\t\t  <span id=\"pnIndicator\" class=\"pn-ProductNav_Indicator\"></span>\n\t\t\t\t\t  </div>\n\t\t\t\t  </nav>\n\t\t\t\t\t<button id=\"pnAdvancerLeft\" class=\"pn-Advancer pn-Advancer_Left\" type=\"button\">\n\t\t\t\t\t  <svg class=\"pn-Advancer_Icon\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 551 1024\"><path d=\"M445.44 38.183L-2.53 512l447.97 473.817 85.857-81.173-409.6-433.23v81.172l409.6-433.23L445.44 38.18z\"/></svg>\n\t\t\t\t\t</button>\n\t\t\t\t\t<button id=\"pnAdvancerRight\" class=\"pn-Advancer pn-Advancer_Right\" type=\"button\">\n\t\t\t\t\t  <svg class=\"pn-Advancer_Icon\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 551 1024\"><path d=\"M105.56 985.817L553.53 512 105.56 38.183l-85.857 81.173 409.6 433.23v-81.172l-409.6 433.23 85.856 81.174z\"/></svg>\n\t\t\t\t\t</button>\n\t\t\t\t</div> -->\n\t\t\t\t\n\t\t\t\t<!-- <div class=\"pagination-box\" *ngIf=\"totalCount > 0\">\n\t\t\t\t\t<div class=\"pull-left paging_top\" style=\"\">\n\t\t\t\t\t  Total Records - <a href=\"\">{{totalCount}}</a>\n\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t<paging *ngIf=\"totalCount > 0\"\n\t\t\t\t\t\t\tpage=\"currentPage\"\n\t\t\t\t\t\t\tpage-size=\"pageSize\" \n\t\t\t\t\t\t\ttotal=\"totalCount\"\n\t\t\t\t\t\t\tshow-prev-next=\"true\"\n\t\t\t\t\t\t\tshow-first-last=\"true\"\n\t\t\t\t\t\t\tpaging-action=\"paginate(page)\">\n\t\t\t\t\t\t</paging> \n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t  </div> -->\n\t\t</div>\n\t\t<div class=\"clearfix\"></div>\n\t\t<div class=\"col-sm-12\">\n\t\t\t<content-loader *ngIf=\"loader\"></content-loader>\n\t\t\t<div class=\"row auto-clear unalign\" *ngIf=\"!loader\">\n\t\t\t\t<div class=\"col-md-2 col-sm-6 cardhight\" [ngStyle]=\"{'display':(lists.devStatus == '1' && show_up==true) ?'block': (!(lists.devStatus=='1') && show_down==true) ?'block': (show_up==true && show_down==true) ?'block':'none'}\" *ngFor=\"let lists of _asset_report_details\">\n\t\t\t\t\t  <div class=\"asset-box\">\n\t\t\t\t\t\t<div class=\"asset\"   *ngIf=\"!(lists.devStatus== '1')\" style=\" border:2px solid #ff3336;\" tooltip=\"{{lists.ip}}\" placement=\"top\">\n\t\t\t\t\t\t \n \n\t\t\t\t\t\t\t<div class=\"asset-header\"> \n\t\t\t\t\t\t\t\t <h4><a ui-sref=\"asset-details\" (click)=\"viewTopologyDetails(lists,myModal1)\"><span *ngIf=\"siteNameVisibility\">{{lists.siteName}} - </span>{{lists.deviceName}}</a> </h4>\n\t\t\t\t\t\t\t\t <div class=\"clearfix\"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"asset-section\">\n\t\t\t\t\t\t\t  <div class=\"row net-topology-box\" style=\" height: 70px;overflow-y: hidden;overflow-x: hidden; \">\n\t\t\t\t\t\t\t <div class=\"col-md-1\" *ngFor=\"let subitem of lists.links\"  style=\"margin-left:7px;\">\n\t\t\t\t\t\t\t\t <div class=\"col-md-1\" style=\"margin-top:5px;\"> \n\t\t\t\t\t\t\t\t\t\t <span class=\"btn btn-xs btn-danger pull-right\" *ngIf=\"!(subitem.linkPerformaceData.linkstatus=='1')\"  (click)=\"viewTopologyDetails(lists,myModal1)\" style=\"color:aliceblue;float:left;background:#ff3336;width:30px;\"><ng-container  *ngIf=\"!(subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()=='')\">{{subitem.short_name}}</ng-container ><ng-container  *ngIf=\"subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()==''\">S</ng-container ></span>\n\t\t\t\t\t\t\t\t\t\t <span class=\"btn btn-xs btn-success pull-right\" *ngIf=\"subitem.linkPerformaceData.linkstatus =='1'\" (click)=\"viewTopologyDetails(lists,myModal1)\" style=\"color:aliceblue;float:left;background:#00b050;width:30px;\"><ng-container  *ngIf=\"!(subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()=='')\">{{subitem.short_name}}</ng-container ><ng-container  *ngIf=\"subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()==''\">S</ng-container ></span>\n\t\t\t\t\t\t\t\t </div>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t </div>\n\t\t\t\t\t\t\t \n\t\t\t\t\t\t   \n\t\t\t\t\t\t\t  </div> \n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"clearfix\"></div>        \n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"asset\" style=\"border:2px solid #00b050;\" *ngIf=\"lists.devStatus == '1'\"  tooltip=\"{{lists.ip}}\" placement=\"top\">\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t <div class=\"asset-header\"> \n\t\t\t\t\t\t\t  <h4><a ui-sref=\"asset-details\" (click)=\"viewTopologyDetails(lists,myModal1)\"><span *ngIf=\"siteNameVisibility\">{{lists.siteName}} - </span>{{lists.deviceName}}  </a></h4>\n\t\t\t\t\t\t\t  <div class=\"clearfix\"></div>\n\t\t\t\t\t\t </div>\n\t\t\t\t\t\t <div class=\"asset-section\">\n\t\t\t\t\t\t   <div class=\"row net-topology-box\"  style=\" height: 70px;overflow-y: hidden;overflow-x: hidden; \">\n\t\t\t\t\t\t  <div class=\"col-md-1\" *ngFor=\"let subitem of lists.links\"  style=\"margin-left:7px;\">\n\n\t\t\t\t\t\t\t  <div class=\"col-md-1\" style=\"margin-top:5px;\"> \n\t\t\t\t\t\t\t\t\t  <span class=\"btn btn-xs btn-danger pull-right\" *ngIf=\"!(subitem.linkPerformaceData.linkstatus =='1')\" style=\"width:30px;\" (click)=\"viewTopologyDetails(lists,myModal1)\" style=\"color:aliceblue;float:left;background:#ff3336;width:30px;\"><ng-container *ngIf=\"!(subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()=='')\">{{subitem.short_name}}</ng-container ><ng-container  *ngIf=\"subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()==''\">S</ng-container ></span>\n\t\t\t\t\t\t\t\t\t  <span class=\"btn btn-xs btn-success pull-right\" *ngIf=\"subitem.linkPerformaceData.linkstatus =='1'\" style=\"width:30px;\" (click)=\"viewTopologyDetails(lists,myModal1)\" style=\"color:aliceblue;float:left;background:#00b050;width:30px;\"><ng-container  *ngIf=\"!(subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()=='')\">{{subitem.short_name}}</ng-container ><ng-container  *ngIf=\"subitem.short_name==undefined || subitem.short_name==null || subitem.short_name.trim()==''\">S</ng-container ></span>\n\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t \n\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t  \n\t\t\t\t\t\t\n\t\t\t\t\t\t   </div> \n\t\t\t\t\t\t </div>\n\t\t\t\t\t\t <div class=\"clearfix\"></div>        \n\t\t\t\t\t </div>        \n\t\t\t\t\t  </div>    \n\t\t\t\t  </div> \t\n\t\t\t</div>\n\t\t\t\n\t\t\t<!-- <div class=\"pagination-box\" *ngIf=\"totalCount > 0\">\n\t\t\t\t\t<div class=\"pull-left\" style=\"\">\n\t\t\t\t\t  Total Records - <a href=\"\">{{totalCount}}</a>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"pull-right\">\n\t\t\t\t\t\t<paging *ngIf=\"totalCount > 0\"\n\t\t\t\t\t\t\tpage=\"currentPage\"\n\t\t\t\t\t\t\tpage-size=\"pageSize\" \n\t\t\t\t\t\t\ttotal=\"totalCount\"\n\t\t\t\t\t\t\tshow-prev-next=\"true\"\n\t\t\t\t\t\t\tshow-first-last=\"true\"\n\t\t\t\t\t\t\tpaging-action=\"paginate(page)\">\n\t\t\t\t\t\t</paging> \n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"clearfix\"></div>\n\t\t\t  </div> -->\n \n \n\t\t</div>\n\t</div>\n\t</div>\n \n\t\n\t\n </section>\n </section>\n</section>\n <!-- Modal -->\n <ng-template #myModal1>\n\t<div class=\"modal-header\">\n\t\t<button type=\"button\" class=\"close\" (click)=\"modalRef.hide()\">&times;</button>\n\t\t<h4 class=\"modal-title\">View Topology</h4>\n\t</div>\n\n\t<div class=\"modal-body\">\n\t\t\t<content-loader *ngIf=\"deviceDetailsLoader\"></content-loader>\n\t\t\t\n\t\t<div class=\"row col-md-12\" *ngIf=\"!deviceDetailsLoader\">\n\t\t\t<div class=\"view-list\" [ngClass]='{showTicketContainer: showTicketBox}' [hidden]=\"modalBox\">\n\t\t\t<ul class=\"view-box device-list col-sm-6 no-padding\">\n\t\t\t\t<h4>Device Details</h4>\n\t\t\t\t<li>\n\t\t\t\t<label class=\"left-label\">Host Name</label>\n\t\t\t\t<label class=\"right-label\">{{hostName}}</label>\n\t\t\t\t</li>\n\t\t\t\t<li>\n\t\t\t\t<label class=\"left-label\">Device IP</label>\n\t\t\t\t<label class=\"right-label\">{{deviceIp}}</label>\n\t\t\t\t</li>\n\t\t\t\t<li>\n\t\t\t\t<label class=\"left-label\">Make</label>\n\t\t\t\t<label class=\"right-label\">{{deviceMake}}</label>\n\t\t\t\t</li>\n\t\t\t\t<li>\n\t\t\t\t<label class=\"left-label\">Status</label>\n\t\t\t\t<label class=\"right-label\" *ngIf=\"deviceStatus == ''\">DOWN - <span class=\"down-triangle\"></span> - From - {{deviceStatusSince}}</label>\n\t\t\t\t<label class=\"right-label\" *ngIf=\"deviceStatus == '1'\">UP - <span class=\"up-triangle\"></span> - From - {{deviceStatusSince}}</label>\n\t\t\t\t</li>\n\t\t\t\t<li>\n\t\t\t\t<label class=\"left-label\">State</label>\n\t\t\t\t<label class=\"right-label\">{{deviceState}}</label>\n\t\t\t\t</li>\n\t\t\t\t<li>\n\t\t\t\t<label class=\"left-label\">City</label>\n\t\t\t\t<label class=\"right-label\">{{deviceCity}}</label>\n\t\t\t\t</li>\n\t\t\t\t<li class=\"progressBar\">\n\t\t\t\t<label class=\"left-label\">CPU</label>\n\t\t\t\t<label class=\"right-label\" [ngClass]='{green_bar :  (cpuData>=0 && cpuData <= 50) , red_bar: (cpuData>=50 && cpuData <= 100)}' *ngIf=\"cpuData\"> <a (click)=\"gotoPerf('cpu')\"><span class=\"value-box\">{{cpuData}}<ng-container *ngIf=\"!(cpuData=='NA')\">%</ng-container></span></a>\n\t\t\t\t<!--  <uib-progressbar uib-tooltip='{{cpuData}}%' tooltip-placement=\"top\" class='progress-striped' max=\"100\" value='cpuData'></uib-progressbar> -->\n\t\t\t\t</label>\n\t\t\t\t<label class=\"right-label\" *ngIf=\"!cpuData\"> No Data </label>\n\t\t\t\t</li>\n\t\t\t\t<li class=\"progressBar memBar\">\n\t\t\t\t<label class=\"left-label\">Memory</label>\n\t\t\t\t<label class=\"right-label\" [ngClass]='{green_bar :  (memData>=0 && memData <= 50) , red_bar: (memData>=50 && memData <= 100)}' *ngIf=\"memData\"> <a (click)=\"gotoPerf('cpu')\" ><span class=\"value-box\">{{memData}}<ng-container *ngIf=\"!(memData=='NA')\">%</ng-container></span></a>\n\t\t\t\t <!-- <uib-progressbar uib-tooltip='{{memData}}%' tooltip-placement=\"top\" class='progress-striped' max=\"100\" value='memData'></uib-progressbar> -->\n\t\t\t\t</label>\n\t\t\t\t<label class=\"right-label\" *ngIf=\"!memData\"> No Data </label>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t\t\n\t\t\t<div class=\"view-box link-list col-sm-6 no-padding\">\n\t\t\t\t<h4>Link Details</h4>\n\t\t\t\t<accordion class=\"accordion\" [closeOthers]=\"oneAtATime\">\n\t\t\t\t<accordion-group [ngClass]=\"{downLink :viewLink.linkPerformaceData.linkstatus == ''}\" (isOpenChange)=\"toggleOpen($event,i)\"  *ngFor=\"let viewLink of viewLinks;let i=index;\">\n\t\t\t\t\t<div  accordion-heading style=\"padding:10px;font-size:10px !important;\"> {{viewLink.link_desc}} <i class=\"fa chevron-icon\" [ngClass]=\"{'fa-chevron-down': openAccordion[i], 'fa-chevron-right': !openAccordion[i]}\"></i> </div>\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t<!--\n\t\t\t\t\t<li>\n\t\t\t\t\t\t<label class=\"left-label\">Link ID</label>\n\t\t\t\t\t\t<label class=\"right-label\">{{viewLink.link_id}}</label>\n\t\t\t\t\t</li>\n\t\t\t\t\t-->\n\t\t\t\t\t<li>\n\t\t\t\t\t\t<label class=\"left-label\">Interface Name</label>\n\t\t\t\t\t\t<label class=\"right-label\">{{viewLink.interface_name}}</label>\n\t\t\t\t\t</li>\n\t\t\t\t\t<li>\n\t\t\t\t\t\t<label class=\"left-label\">Link Bandwidth</label>\n\t\t\t\t\t\t<label class=\"right-label\">{{viewLink.bandwidth}}</label>\n\t\t\t\t\t</li>\n\t\t\t\t\t<li>\n\t\t\t\t\t\t<label class=\"left-label\">Status</label>\n\t\t\t\t\t\t<label class=\"right-label\" *ngIf=\"viewLink.linkPerformaceData.linkstatus == ''\">DOWN - <span class=\"down-triangle\"></span> - From - {{viewLink.linkPerformaceData.link_poll_time_since}}</label>\n\t\t\t\t\t\t<label class=\"right-label\" *ngIf=\"viewLink.linkPerformaceData.linkstatus =='1'\">UP - <span class=\"up-triangle\"></span> - From - {{viewLink.linkPerformaceData.link_poll_time_since}}</label>\n\t\t\t\t\t</li>\n\t\t\t\t\t<li class=\"linkTraffic\" *ngIf=\"viewLink.linkPerformaceData.linkstatus==''\">\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t<li class=\"link-click\" (click)=\"goToLinkPerf(viewLink)\">\n\t\t\t\t\t\t\t<label>In Traffic : </label>\n\t\t\t\t\t\t\t<label>0 Kbps</label>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t\t<li class=\"link-click\" (click)=\"goToLinkPerf(viewLink)\">\n\t\t\t\t\t\t\t<label>Out Traffic : </label>\n\t\t\t\t\t\t\t<label>0 Kbps</label>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</li>\n\t\t\t\t\t<li class=\"linkTraffic\" *ngIf=\"viewLink.linkPerformaceData.linkstatus == '1'\">\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t<li class=\"link-click\" (click)=\"goToLinkPerf(viewLink)\">\n\t\t\t\t\t\t\t<label>In Traffic : </label>\n\t\t\t\t\t\t\t<label>{{viewLink.linkPerformaceData.in}} Kbps</label>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t\t<li class=\"link-click\" (click)=\"goToLinkPerf(viewLink)\">\n\t\t\t\t\t\t\t<label>Out Traffic : </label>\n\t\t\t\t\t\t\t<label>{{viewLink.linkPerformaceData.out}} Kbps</label>\n\t\t\t\t\t\t</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</li>\n\t\t\t\t\t<!--\n\t\t\t\t\t<li *ngIf=\"viewLink.link_status == 0\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"left-label\">Tickets No</label>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"right-label\" *ngIf=\"ticketsNo\"><span (click)=\"showTickets()\">Available Tickets</span></label>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"right-label\" *ngIf=\"!ticketsNo\">No Tickets</label>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>  \n\t\t\t\t\t\t\t\t\t\t\t-->\n\t\t\t\t\t</ul>\n\t\t\t\t</accordion-group>\n\t\t\t\t</accordion>\n\t\t\t</div>\n\t\t\t<p style=\"float: left;clear: both;\"> All above Data is latest from the system at Time - {{currentDate | date:'yyyy-MM-dd HH:mm:ss a'}} </p>\n\t\t\t<p style=\"float: right;clear: both;\" *ngIf=\"linkDown\">\n\t\t\t\t<button (click)=\"showTickets(linkidArr)\" [disabled]=\"showTickeloader\" class=\"btn m-b-xs btn-sm btn-success btn-addon\" style=\"background: #904848;color: #fff;border-color: #904848;\"><i class=\"fa fa-ticket\" aria-hidden=\"true\"></i> Available Tickets</button>\n\t\t\t</p>\n\t\t\t<div id='rowload' style='text-align:center;clear: both;' [hidden]=\"!showTickeloader\"><span class=\"glyphicon glyphicon-refresh glyphicon-refresh-animate\"></span>\n\t\t\t</div>\n\t\t\t<div class=\"view-box ticket-list col-xs-12\" [hidden]=\"!showTickeloader && !showTicketBox\">\n\t\t\t\t<table id=\"tableID\" class=\"table table-striped display \" cellspacing=\"0\" width=\"100%\">\n\t\t\t\t<thead>\n\t\t\t\t\t<tr>\n\t\t\t\t\t<th>S.No</th>\n\t\t\t\t\t<th>Link Id</th>\n\t\t\t\t\t<th>Ticket No</th>\n\t\t\t\t\t<th>Problem Code</th>\n\t\t\t\t\t<th>Logged At</th>\n\t\t\t\t\t<th>Status</th>\n\t\t\t\t\t</tr>\n\t\t\t\t</thead>\n\t\t\t\t<tbody>\n\t\t\t\t\t\n\t\t\t\t\t<tr>\n\t\t\t\t\t<td class=\"center\">1</td>\n\t\t\t\t\t<td class=\"center\"></td>\n\t\t\t\t\t<td class=\"center\"></td>\n\t\t\t\t\t<td class=\"center\"></td>\n\t\t\t\t\t<td class=\"center\"></td>\n\t\t\t\t\t<td class=\"center\"></td>\n\t\t\t\t\t</tr>\n\t\t\t \n\t\t\t\t</tbody>\n\t\t\t\t<tfoot>\n\t\t\t\t\t<tr>\n\t\t\t\t\t<td colspan=\"13\" class=\"text-center\">\n\t\t\t\t\t <!-- <dir-pagination-controls boundary-links=\"true\"></dir-pagination-controls> -->\n\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t</tfoot>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t\t</div>\n\n\t\t</div>\n\t\t<div class=\"clearfix\"></div>\n\t</div>\n\t<div class=\"modal-footer\">\n\t\t<button type=\"button\" class=\"btn btn-default\" (click)=\"modalRef.hide()\">Close</button>\n\t</div>\n</ng-template>";
+
+/***/ }),
+
+/***/ 1721:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1722);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1722:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1723);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./net-topology.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./net-topology.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1723:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\r\n#net-topology .export-grid{\r\n\theight: 33px !important;\r\n    width: 33px !important;\r\n    margin-top: 1px;\r\n}\r\n#net-topology .asset-header h4 {\r\n font-size: 12px !important;\r\n margin: 0;\r\n text-transform: uppercase;\r\n color: #262f38;\r\n\r\n}\r\n  .asset-box {\r\n margin-bottom: 16px;\r\n}\r\n  .chip {\r\n display: inline-block;\r\n cursor: pointer;\r\n background-color: #4d5b68;\r\n font-size: 15px;\r\n padding: 10px;\r\n color: #fff;\r\n}\r\n#net-topology #main-content\r\n{\r\noverflow-x:hidden;\r\n}\r\n#net-topology .net-topology-box:hover { overflow-x:hidden !important;overflow-y:auto !important;  }\r\n#net-topology  .net-topology-box::-webkit-scrollbar {\r\n  width: 5px;\r\n  height: 5px;\r\n}\r\n#net-topology  .net-topology-box::-webkit-scrollbar-button {\r\n  background: #eee\r\n}\r\n#net-topology   .net-topology-box::-webkit-scrollbar-track-piece {\r\n  background: #eee\r\n}\r\n#net-topology  .net-topology-box::-webkit-scrollbar-thumb {\r\n  background: #c1c1c1\r\n}\r\n\r\n\r\n#net-topology h1 {\r\n font-size: 27px;\r\n\r\n}\r\n  .dupcls{\r\n color: #bed730;\r\n}\r\n  .ddowncls{\r\n color: rgb(243, 68, 82);\r\n}\r\n\r\n #net-topology  img:hover{cursor:pointer;}\r\n\r\n #net-topology a {\r\n text-decoration:none;\r\n}\r\n\r\n#net-topology ul { \r\n list-style-type: none; \r\n margin:0;\r\n padding:0;\r\n}\r\n\r\n#net-topology .asset-header{\r\n\tpadding : 5px;\r\n\theight : 50px;\r\n}\r\n#net-topology .asset-section span{\r\n\tmargin-bottom: 5px;\r\n}\r\n#net-topology .default-cursor{\r\n\tcursor : default !important;\r\n}\r\n\r\n\r\n.link-click .link-click label{\r\n\tcursor : pointer;\r\n}\r\n.chip.active{\r\n\tbackground-color : #2cabb6;\r\n}\r\n  .view-list li {\r\n padding: 5px 0;\r\n border-bottom: 1px dotted #ccc;\r\n}\r\n  .view-list li label {\r\n font-size: 11px;\r\n /*font-weight: normal;*/\r\n /* width: 42%; */\r\n font-weight: 700;\r\n\r\n}\r\n  .view-list li label.left-label {\r\n  width: 38%; \r\n  position: relative;\r\n  vertical-align: top;\r\n}\r\n  .view-list li label.right-label {\r\n  width: 60%; \r\n}\r\n  .view-list li label.left-label::after, .ticket-list li ul li label::after {\r\n content: \":\";\r\n position: absolute;\r\n right: 10px;\r\n}\r\n\r\n  .view-list {\r\n /* box-shadow: inset 0 0 5px #999; */\r\n padding: 15px;\r\n /* background: #f2f2f2; */\r\n}\r\n  .device-list {\r\n background: #ffffff;\r\n padding: 10px;\r\n box-shadow: inset 0 0 5px #999;\r\n margin-bottom: 10px;\r\n min-height: 260px;\r\n height: 319px;\r\n overflow-y: auto;\r\n}\r\n  .link-list {\r\n padding: 10px;\r\n background: #ffffff;\r\n box-shadow: inset 0 0 5px #999;\r\n min-height: 319px;\r\n max-height: 319px;\r\n overflow-y: auto;\r\n width: 49%;\r\n /* margin-left: 10px; */\r\n float: right;\r\n}\r\n  .ticket-list {\r\n padding: 10px;\r\n background: #f2f2f2;\r\n box-shadow: inset 0 0 5px #999;\r\n margin-bottom: 15px;\r\n}\r\n  .view-box > h4 {\r\n\r\n margin-top: 0;\r\n font-weight: 700;\r\n font-size: 14px;\r\n /* border-bottom: 1px solid #ddd; */\r\n}\r\n  .link-list > ul {\r\n padding: 5px 10px;\r\n box-shadow: inset 0px 0px 1px 1px #999;\r\n margin-bottom: 10px;\r\n background: #F9F9F9;\r\n}\r\n  .view-list li ul li {\r\n width: 49%;\r\n display: inline-block;\r\n border-bottom: 0;\r\n padding: 0;\r\n}\r\n  .up-triangle {\r\n width: 0;\r\n height: 0;\r\n border-bottom: 10px solid green;\r\n border-left: 5px solid transparent;\r\n border-right: 5px solid transparent;\r\n display: inline-block;\r\n}\r\n  .down-triangle { \r\nwidth: 0; \r\nheight: 0;\r\nborder-top: 10px solid red;\r\nborder-left: 5px solid transparent; \r\nborder-right: 5px solid transparent; \r\ndisplay: inline-block;\r\n}\r\n  .progressBar .progress{\r\n box-shadow: none;\r\n margin-bottom: -0px !important;\r\n width: 90%;\r\n float: right;\r\n height: 12px;\r\n background: rgba(0,0,0,0.1);\r\n}\r\n  .progressBar .green_bar .progress-striped .progress-bar  { background: #5cb85c; }\r\n   .progressBar .red_bar .progress-striped .progress-bar { background: #E44C41; }\r\n\r\n\r\n   .progressBar .green_bar .progress + .tooltip > .tooltip-inner {background-color: #5cb85c;}\r\n  .progressBar .green_bar .progress + .tooltip > .tooltip-arrow { border-top-color:#5cb85c; }\r\n  .progressBar .red_bar .progress + .tooltip > .tooltip-inner {background-color: #E44C41;}\r\n  .progressBar .red_bar .progress + .tooltip > .tooltip-arrow { border-top-color:#E44C41; }\r\n\r\n   .topo-box + .tooltip > .tooltip-inner {background-color: #57c8f1;}\r\n  .topo-box + .tooltip > .tooltip-arrow { border-top-color:#57c8f1; }\r\n/*.showTicketModal {\r\n width: 75%;\r\n}*/\r\n  .ticket-list li ul li {\r\n font-size: 11px;\r\n\r\n width: 100%;\r\n font-weight: 700;\r\n}\r\n\r\n  .ticket-list li ul li label {\r\n width: 35%;\r\n position: relative;\r\n}\r\n  .ticket-list .table>tbody>tr>td,   .ticket-list .table>tbody>tr>th,   .ticket-list .table>tfoot>tr>td,   .ticket-list .table>tfoot>tr>th,   .ticket-list .table>thead>tr>td,   .ticket-list .table>thead>tr>th {\r\n line-height: normal;\r\n font-size: 11px;\r\n\r\n font-weight: 700;\r\n padding: 5px 10px;\r\n}\r\n  .ticket-list .pagination{\r\n margin: 0;\r\n}\r\n  .ticket-list .table>thead>tr>th {\r\n background: #e1e1e1;\r\n}\r\n .view-list li.linkTraffic li{\r\n background: #2cabb6;\r\n text-align: center;\r\n color: #fff;\r\n padding: 2px 10px;\r\n}\r\n  .linkTraffic li label{\r\n margin-bottom: 0;\r\n cursor : pointer;\r\n}\r\n  .view-box.link-list .panel {\r\n color: #222;\r\n box-shadow: 0 3px 3px -3px #222;\r\n margin-bottom: 10px;\r\n border: 1px solid #ddd;\r\n border-radius: 0;\r\n}\r\n  .link-list .panel-heading {\r\n /*border: 1px solid #ddd;\r\n margin-bottom: 10px;\r\n box-shadow: 0 3px 3px -3px #222;*/\r\n border-radius: 0;\r\n padding: 0;\r\n}\r\n  .link-list .panel-heading .panel-title {\r\n\r\n font-size: 12px;\r\n font-weight: 700;\r\n}\r\n  .link-list .panel-heading a {\r\n padding: 10px;\r\n width: 100%;\r\n display: inline-block;\r\n}\r\n  .link-list .panel-heading .fa {\r\n float: right;\r\n color: #888;\r\n font-size: 12px;\r\n}\r\n  .link-list .panel-title,  .link-list .panel-title a:hover {\r\n color: green;\r\n}\r\n  .link-list .downLink .panel-title,  .link-list .downLink .panel-title a:hover {\r\n color: #ef1414;\r\n}\r\n  .link-list .panel-body {\r\n padding: 10px;\r\n}\r\n\r\n  .cardhight{\r\n     padding-right: 5px;\r\n    padding-left: 5px;\r\n}\r\n  .view-box.link-list .panel\r\n{\r\n    margin-bottom:0px !important;\r\n}\r\n  .fa-chevron-down\r\n{\r\n    transition:0.5s;\r\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1724:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var net_topology_component_1 = __webpack_require__(1399);
+var NET_TOPOLOGY_ROUTER = [
+    {
+        path: '',
+        component: net_topology_component_1.NetTopologyComponent,
+        pathMatch: 'full'
+    }
+];
+exports.NetTopologyRouter = router_1.RouterModule.forChild(NET_TOPOLOGY_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>42.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>d4b6c9cbdb3d2300429e2a9a48961921</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.42.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_d4b6c9cbdb3d2300429e2a9a48961921</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:01</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

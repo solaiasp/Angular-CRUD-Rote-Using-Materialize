@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.31.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([31],{
+
+/***/ 1273:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var user_role_mapping_component_1 = __webpack_require__(1364);
+var user_role_mapping_router_1 = __webpack_require__(1566);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+/* Module Start optical-service-details */
+var UserRoleMappingModule = /** @class */ (function () {
+    function UserRoleMappingModule() {
+    }
+    UserRoleMappingModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, user_role_mapping_router_1.UserRoleMappingRouter],
+            declarations: [
+                user_role_mapping_component_1.UserRoleMappingComponent,
+            ],
+        })
+    ], UserRoleMappingModule);
+    return UserRoleMappingModule;
+}());
+exports.UserRoleMappingModule = UserRoleMappingModule;
+/* Module End */
+
+
+/***/ }),
+
+/***/ 1364:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var modal_1 = __webpack_require__(104);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var UserRoleMappingComponent = /** @class */ (function () {
+    function UserRoleMappingComponent(modalService, commonServices, cookie) {
+        var _this = this;
+        this.modalService = modalService;
+        this.commonServices = commonServices;
+        this.cookie = cookie;
+        this.updateCustomer = { "username": "", "password": "", "confirmpassword": "" };
+        this.popuploader = false;
+        this.updateCustomerPassword = function (template) {
+            _this.updateCustomer = { "username": "", "password": "", "confirmpassword": "" };
+            //Call PopUP
+            _this.modifyUserDetails(template);
+        };
+        this.updateCustomerSend = function () {
+            if (_this.updateCustomer.password == _this.updateCustomer.confirmpassword) {
+                if (_this.updateCustomer.password.length > 3) {
+                    //API Code Start
+                    var _postData = { "username": _this.updateCustomer.username, "password": _this.updateCustomer.password };
+                    _this.popuploader = true;
+                    _this.commonServices.postRequest('/_ldap/updateCustomerAccountPassword', _postData).then(function (resdata) {
+                        if (resdata.status == "success") {
+                            _this.commonServices.success(resdata.message);
+                            _this.popuploader = false;
+                            _this.modalRef.hide();
+                        }
+                        else {
+                            _this.popuploader = false;
+                            _this.commonServices.error(resdata.message);
+                        }
+                    }), function (err) {
+                        _this.popuploader = false;
+                        _this.commonServices.error(err.message);
+                    };
+                    //End
+                }
+                else {
+                    _this.popuploader = false;
+                    _this.commonServices.error("Given Inputs are Wrong (or) Password is too small!");
+                }
+            }
+            else {
+                _this.popuploader = false;
+                _this.commonServices.error("Password or Confirm password are not same!");
+            }
+        };
+    }
+    UserRoleMappingComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.gridDataObj = { data: [] };
+        this.gridDataObj.id = "user-role-mapping-0";
+        this.gridDataObj.columns = [
+            { dataKey: 'userName', title: 'User Name', hide: false, width: '' },
+            { dataKey: 'firstName', title: 'First Name', hide: false, width: '' },
+            { dataKey: 'lastName', title: 'Last Name', hide: false, width: '' },
+            { dataKey: 'roleName', title: 'Role Name', hide: false, width: '' },
+            { dataKey: 'roleDescription', title: 'Role Description', hide: false, width: '' },
+            { dataKey: 'emailId', title: 'Email Id', hide: false, width: '' },
+            { dataKey: 'mobileNo', title: 'Mobile No', hide: false, width: '' }
+        ];
+        this.gridDataObj.hasCheckbox = true;
+        this.gridDataObj.updateEvent = true;
+        this.loader = true;
+        this.currentUser = this.cookie.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.commonServices.getRequest('/_core/role').then(function (res) {
+            if (res.status == "success") {
+                _this.userRoles = res.items.slice();
+            }
+            else {
+                _this.commonServices.success(res.message);
+            }
+        }, function (error) {
+            _this.commonServices.error(error);
+        });
+        this.reloadGrid();
+    };
+    UserRoleMappingComponent.prototype.updatedUserRole = function (userDetails, updatedUserDetails) {
+        this.userDetailsOriginal = Object.assign({}, userDetails, {});
+        console.log(updatedUserDetails);
+        this.userRole = this.userDetailsOriginal.roleShortCode;
+        this.modifyUserDetails(updatedUserDetails);
+    };
+    UserRoleMappingComponent.prototype.modifyUserDetails = function (template) {
+        this.modalRef = this.modalService.show(template, Object.assign({}, { class: 'modal-md' }));
+    };
+    UserRoleMappingComponent.prototype.updateUserInfo = function () {
+        var _this = this;
+        this.commonServices.postRequest('/_core/updateUserRole', { userName: this.userDetailsOriginal.userName, roleShortCode: this.userRole }).then(function (res) {
+            if (res.status == "success") {
+                _this.commonServices.success(res.message);
+                _this.reloadGrid();
+                _this.userRole = "";
+                setTimeout(function () {
+                    if (_this.modalRef)
+                        _this.modalRef.hide();
+                }, 1000);
+            }
+            else {
+                _this.commonServices.success(res.message);
+                _this.userRole = "";
+                setTimeout(function () {
+                    if (_this.modalRef)
+                        _this.modalRef.hide();
+                }, 1000);
+            }
+        }, function (error) {
+            _this.commonServices.error(error);
+        });
+    };
+    UserRoleMappingComponent.prototype.reloadGrid = function () {
+        var _this = this;
+        this.commonServices.postRequest('/_core/getUsersListBasedOnType', {}).then(function (res) {
+            if (res.status == "success") {
+                _this.gridDataObj.data = res.items[0].UsersListBasedOnType.slice();
+            }
+            else {
+                _this.commonServices.success(res.message);
+            }
+            _this.loader = false;
+        }, function (error) {
+            _this.commonServices.error(error);
+            _this.loader = false;
+        });
+    };
+    UserRoleMappingComponent.prototype.ngOnDestroy = function () {
+        if (this.modalRef)
+            this.modalRef.hide();
+    };
+    UserRoleMappingComponent = __decorate([
+        core_1.Component({
+            selector: 'user-role-mapping',
+            template: __webpack_require__(1562),
+            styles: [__webpack_require__(1563)]
+        }),
+        __metadata("design:paramtypes", [modal_1.BsModalService, common_service_1.CommonService, ngx_cookie_1.CookieService])
+    ], UserRoleMappingComponent);
+    return UserRoleMappingComponent;
+}());
+exports.UserRoleMappingComponent = UserRoleMappingComponent;
+
+
+/***/ }),
+
+/***/ 1562:
+/***/ (function(module, exports) {
+
+module.exports = "<!--  Section Start -->\n<section id=\"user-role-mapping\">\n    <section id=\"main-content\">\n        <section class=\"wrapper\">\n            <ol class=\"breadcrumb\">\n                <li>\n                    <a (click)=\"goToHomePage()\">Home</a>\n                </li>\n                <li class=\"active\">User Role Mapping</li>\n            </ol>\n\n            <div class=\"col-md-12\">\n                <div class=\"box-title box-title-tabs\">\n                    <div class=\"pull-right\" *ngIf=\"(userType == 1 || userType == 2)\">\n                        <ul class=\"box-title-right\" id=\"sub-usermenu\">\n                            <li id=\"updateCustbtn\">\n                                <a (click)=\"updateCustomerPassword(updatePasswordTemplate)\" class=\"user_create pull-right\" style=\"margin-right: 6px;\">Update Customer Password</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <div class=\"pull-left\">\n                        <h3>User Role Mapping</h3>\n                    </div>\n                    <div class=\"clearfix\"></div>\n                </div>\n            </div>\n            <div class=\"col-md-12\">\n                <content-loader *ngIf=\"loader\"></content-loader>\n                <data-grid [gridobj]=\"gridDataObj\" *ngIf=\"!loader\" (updateClickEvent)=\"updatedUserRole($event,editUser)\"></data-grid>\n            </div>\n        </section>\n    </section>\n</section>\n<!--  Section End -->\n<ng-template #editUser>\n    <div class=\"modal-header\">\n        <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n        <h4 class=\"modal-title\">Edit User Role</h4>\n    </div>\n    <div class=\"modal-body\" style=\"margin-top:20px;\">\n        <div class=\"form\">\n            <form novalidate=\"\" name=\"profileForm\">\n                <div class=\"form-group\">\n                    <input type=\"text\" class=\"form-control\" disabled=\"true\" [disabled]=\"true\" [(ngModel)]=\"userDetailsOriginal.userName\" name=\"userName\"\n                        required />\n                    <span class=\"floating-label\">User Name</span>\n                </div>\n                <div class=\"form-group\">\n                    <ngx-select [items]=\"userRoles\" [optionTextField]=\"'roleName'\" [optionValueField]=\"'roleShortCode'\" [(ngModel)]=\"userRole\"\n                        name=\"userRole\"></ngx-select>\n                    <span class=\"floating-label\" style=\"top:-20px;font-size: 14px;color: #00a6c9;\">User Role\n                        <span>*</span>\n                    </span>\n                </div>\n                <div class=\"form-group\">\n                    <button class=\"btn btn-lg btn-primary\" type=\"button\" (click)=\"updateUserInfo()\">Update User Role</button>\n                </div>\n            </form>\n        </div>\n    </div>\n\n</ng-template>\n\n<ng-template #updatePasswordTemplate>\n        <div class=\"modal-header\">\n            <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n            <h4 class=\"modal-title\">Update Customer Password</h4>\n        </div>\n        <div class=\"modal-body\" style=\"margin-top:20px;\">\n            <div class=\"form\">\n                <form novalidate=\"\" name=\"updateCustomerDetails\">\n                    <div class=\"form-group\">\n                        <input type=\"text\" class=\"form-control\"  [(ngModel)]=\"updateCustomer.username\" name=\"username\"\n                            required />\n                        <span class=\"floating-label\">User Name</span>\n                    </div>\n                    <div class=\"form-group\">\n                            <input type=\"password\" class=\"form-control\"  [(ngModel)]=\"updateCustomer.password\" name=\"password\"\n                                required />\n                            <span class=\"floating-label\">Password</span>\n                    </div>\n                    <div class=\"form-group\">\n                            <input type=\"password\" class=\"form-control\" [(ngModel)]=\"updateCustomer.confirmpassword\" name=\"confirmpassword\"\n                                required />\n                            <span class=\"floating-label\">Confirm Password</span>\n                    </div>\n                    <div class=\"form-group\">\n                        <content-loader *ngIf=\"popuploader\"></content-loader>\n                        <button *ngIf=\"!popuploader\" class=\"btn btn-lg btn-primary\" type=\"button\" (click)=\"updateCustomerSend()\">Submit</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </ng-template>";
+
+/***/ }),
+
+/***/ 1563:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1564);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1564:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1565);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./user-role-mapping.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./user-role-mapping.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1565:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "#updateCustbtn a:hover {\n    cursor: pointer;\n    text-decoration: none!important;\n    color: #fff;\n    background: #556670;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1566:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var user_role_mapping_component_1 = __webpack_require__(1364);
+var USER_ROLE_MAPPING_ROUTER = [
+    {
+        path: '',
+        component: user_role_mapping_component_1.UserRoleMappingComponent,
+        pathMatch: 'full'
+    }
+];
+exports.UserRoleMappingRouter = router_1.RouterModule.forChild(USER_ROLE_MAPPING_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>31.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:40</sys_created_on>
+        <sys_id>18b6c9cbdb3d2300429e2a9a48961955</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.31.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_18b6c9cbdb3d2300429e2a9a48961955</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

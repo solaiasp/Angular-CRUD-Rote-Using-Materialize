@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_293519_princenew.34.89aadbab.chunk</name>
+        <script><![CDATA[webpackJsonp([34],{
+
+/***/ 1288:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var roles_component_1 = __webpack_require__(1393);
+var roles_router_1 = __webpack_require__(1689);
+var shared_module_1 = __webpack_require__(497);
+var common_1 = __webpack_require__(6);
+var RolesModule = /** @class */ (function () {
+    function RolesModule() {
+    }
+    RolesModule = __decorate([
+        core_1.NgModule({
+            imports: [common_1.CommonModule, shared_module_1.SharedModule, roles_router_1.rolesRouter],
+            declarations: [roles_component_1.RolesComponent]
+        })
+    ], RolesModule);
+    return RolesModule;
+}());
+exports.RolesModule = RolesModule;
+
+
+/***/ }),
+
+/***/ 1393:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(1);
+var common_service_1 = __webpack_require__(61);
+var ngx_cookie_1 = __webpack_require__(62);
+var page_view_service_1 = __webpack_require__(498);
+var modal_1 = __webpack_require__(104);
+var RolesComponent = /** @class */ (function () {
+    function RolesComponent(commonServices, cookies, modalService, PageViewService) {
+        var _this = this;
+        this.commonServices = commonServices;
+        this.cookies = cookies;
+        this.modalService = modalService;
+        this.PageViewService = PageViewService;
+        this.gridDataObj = {
+            pdfName: 'Roles',
+            pdfTitle: 'Roles',
+            excelTitle: 'Roles',
+            excelName: 'Roles',
+            updateEvent: true,
+            deleteEvent: true,
+            hasCheckbox: true
+        };
+        this.loader = false;
+        this.currentUser = {};
+        this.userType = '';
+        this.roleObj = {};
+        this.isPageFromSubUser = false;
+        this.goBackSubUser = '';
+        this.selectedUser = {};
+        this.deleteUserObj = {};
+        this.createUserLoader = false;
+        this.getRoleLists = function () {
+            _this.loader = true;
+            _this.gridDataObj.data = [];
+            _this.commonServices.getRequest('/_core/role').then(function (response) {
+                if (response.status == "success") {
+                    _this.gridDataObj.data = response.items;
+                    _this.loader = false;
+                }
+                else {
+                    _this.loader = false;
+                    _this.commonServices.error(response.message);
+                }
+            }, function (err) {
+            });
+        };
+        this.getLinkedData = function (eventObj) {
+            console.log('eventObj', eventObj);
+        };
+        this.showCreateRole = function (template) {
+            _this.roleObj = {};
+            _this.selectedUser = {};
+            _this.modalRef = _this.modalService.show(template);
+        };
+        this.createRoleForm = function () {
+            if (_this.selectedUser.checked) {
+                _this.createUserLoader = true;
+                var updateData = { "RolesICanSeeResponse": [{ "roleShortCode": _this.roleObj.roleShortCode, "roleName": _this.roleObj.roleName, "roleDescription": _this.roleObj.roleDesc }] };
+                _this.commonServices.postRequest('/_core/role', updateData).then(function (response2) {
+                    if (response2.status == "success") {
+                        _this.roleObj = {};
+                        _this.commonServices.success(response2.message);
+                        _this.createUserLoader = false;
+                        _this.modalRef.hide();
+                        _this.getRoleLists();
+                    }
+                    else {
+                        _this.createUserLoader = false;
+                        _this.commonServices.error(response2.message);
+                    }
+                }), function (err) {
+                    _this.createUserLoader = false;
+                    _this.commonServices.error(err.message);
+                };
+            }
+            else {
+                _this.createUserLoader = true;
+                _this.commonServices.putRequest('/_core/role', _this.roleObj).then(function (response) {
+                    if (response.status == 'success') {
+                        _this.createUserLoader = false;
+                        _this.commonServices.success(response.message);
+                        _this.modalRef.hide();
+                        _this.getRoleLists();
+                    }
+                    else {
+                        _this.createUserLoader = false;
+                        _this.commonServices.error(response.message);
+                    }
+                }, function (err) {
+                    _this.createUserLoader = false;
+                    _this.commonServices.error(err.message);
+                });
+            }
+        };
+        this.updateRole = function (e) {
+            _this.selectedUser = e;
+            _this.modalRef = _this.modalService.show(_this.upDateTemplate, { class: 'first' });
+            _this.roleObj.roleShortCode = e.roleShortCode;
+            _this.roleObj.roleName = e.roleName;
+            _this.roleObj.roleDesc = e.roleDescription;
+        };
+        this.deleteRole = function (e) {
+            _this.selectedUser = e;
+            _this.roleObj.roleShortCode = e.roleShortCode;
+            _this.roleObj.roleName = e.roleName;
+            _this.roleObj.roleDesc = e.roleDescription;
+            _this.modalRef = _this.modalService.show(_this.confirmTemplate);
+        };
+        this.deleteUser = function () {
+            _this.commonServices.deleteRequest('/_core/role/' + _this.selectedUser.roleShortCode).then(function (response) {
+                if (response.status == "success") {
+                    _this.commonServices.success(response.message);
+                    _this.modalRef.hide();
+                    _this.getRoleLists();
+                }
+                else {
+                    _this.commonServices.error(response.message);
+                }
+            }, function (err) {
+                _this.commonServices.error(err.message);
+            });
+        };
+        this.goToHomePage = function () {
+            _this.commonServices.gotoDashboard();
+        };
+    }
+    RolesComponent.prototype.ngOnInit = function () {
+        var pageViewGet = this.PageViewService.getData();
+        if (pageViewGet.pageView == 'roles') {
+            this.isPageFromSubUser = true;
+            this.goBackSubUser = '#sub-user';
+        }
+        else {
+            this.isPageFromSubUser = false;
+            this.goBackSubUser = '';
+        }
+        this.gridDataObj.columns = [{
+                dataKey: 'roleShortCode',
+                title: 'Role Short Code',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'roleName',
+                title: 'Role Name',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'roleExistcount',
+                title: 'No. of Assignees',
+                hide: false,
+                width: ''
+            }, {
+                dataKey: 'roleDescription',
+                title: 'Role Description',
+                hide: false,
+                width: ''
+            }];
+        this.gridDataObj.id = 'project-status-grid';
+        this.currentUser = this.cookies.getObject('globals');
+        this.userType = this.currentUser.user_type;
+        this.getRoleLists();
+    };
+    __decorate([
+        core_1.ViewChild('createRole'),
+        __metadata("design:type", core_1.ElementRef)
+    ], RolesComponent.prototype, "upDateTemplate", void 0);
+    __decorate([
+        core_1.ViewChild('confirmtemplate'),
+        __metadata("design:type", core_1.ElementRef)
+    ], RolesComponent.prototype, "confirmTemplate", void 0);
+    RolesComponent = __decorate([
+        core_1.Component({
+            selector: '<roles>',
+            template: __webpack_require__(1685),
+            styles: [__webpack_require__(1686)]
+        }),
+        __metadata("design:paramtypes", [common_service_1.CommonService, ngx_cookie_1.CookieService, modal_1.BsModalService, page_view_service_1.PageViewService])
+    ], RolesComponent);
+    return RolesComponent;
+}());
+exports.RolesComponent = RolesComponent;
+
+
+/***/ }),
+
+/***/ 1685:
+/***/ (function(module, exports) {
+
+module.exports = "<section id=\"main-content\">\n  <section class=\"wrapper\">\n    <ol class=\"breadcrumb\">\n      <li>\n        <a (click)=\"goToHomePage()\">Home</a>\n      </li>\n      <li class=\"active\">Roles</li>\n    </ol>\n    <!-- <div class=\"dashboard-txt\">\n      <h1 class=\"col-md-6\">Roles</h1>\n\t  <div class=\"col-md-6 no-padding\"></div>\n    </div> -->\n    <div class=\"row\" id=\"roles-management\">\n      <div class=\"col-md-12\">\n        <div class=\"box-title box-title-tabs\">\n          <div class=\"pull-right\">\n            <ul class=\"box-title-right\">\n              <li>\n                <button class=\"user_create pull-right\" style=\"margin-right: 6px;\" (click)=\"showCreateRole(createRole)\">Create</button>\n              </li>\n              <li *ngIf=\"isPageFromSubUser\">\n                <a class=\"pull-right asset-top-page\" href=\"{{goBackSubUser}}\" style=\"float: right;line-height: 18px;text-decoration: underline;font-size: 16px;cursor: pointer;\">\n                  <i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i> Back</a>\n              </li>\n            </ul>\n          </div>\n          <div class=\"pull-left\">\n            <h3>Roles</h3>\n          </div>\n          <div class=\"clearfix\"></div>\n        </div>\n      </div>\n    </div>\n    <data-grid *ngIf=\"!loader\" (linkClick)=\"getLinkedData($event)\" [gridobj]=\"gridDataObj\" (updateClickEvent)=\"updateRole($event)\"\n      (deleteClickEvent)=\"deleteRole($event)\"></data-grid>\n    <content-loader *ngIf=\"loader\"></content-loader>\n  </section>\n</section>\n\n<ng-template #createRole>\n  <div class=\"modal-header\">\n    <button class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">&times;</button>\n    <h4 class=\"modal-title\" *ngIf=\"!createUserLoader && !selectedUser.checked\">Create Role</h4>\n    <h4 class=\"modal-title\" *ngIf=\"!createUserLoader && selectedUser.checked\">Update Role - {{roleObj.roleShortCode}}</h4>\n  </div>\n  <div class=\"modal-body\">\n    <div class=\"form\">\n      <form novalidate=\"\" name=\"roleCreationForm\">\n        <div class=\"form-group\">\n          <input type=\"text\" [attr.disabled] = \"selectedUser.checked\" class=\"form-control\" [(ngModel)]=\"roleObj.roleShortCode\" name=\"roleShortCode\" required=\"true\" />\n          <span class=\"floating-label\">Role Short Code</span>\n        </div>\n        <div class=\"form-group\">\n          <input type=\"text\" class=\"form-control\" [(ngModel)]=\"roleObj.roleName\" name=\"roleName\" required=\"true\" />\n          <span class=\"floating-label\">Role Name</span>\n        </div>\n        <div class=\"form-group\">\n          <textarea class=\"form-control\" [(ngModel)]=\"roleObj.roleDesc\" name=\"roleDesc\" required=\"\"></textarea>\n          <span class=\"floating-label\">Role Description</span>\n        </div>\n        <div class=\"form-group\">\n          <content-loader *ngIf=\"createUserLoader\"></content-loader>   \n          <button class=\"btn ang-submit\" *ngIf=\"!createUserLoader && !selectedUser.checked\"  (click)=\"createRoleForm()\">Create Role</button>\n          <button class=\"btn ang-submit\" *ngIf=\"!createUserLoader && selectedUser.checked\"  (click)=\"createRoleForm()\">Update Role</button>\n        </div>\n      </form>\n    </div>\n  </div>\n</ng-template>\n\n<ng-template #confirmtemplate>\n  <div class=\"modal-header subusrModalHeader\">\n    <h4 class=\"modal-title pull-left\">Delete Role</h4>\n    <button type=\"button\" class=\"close pull-right\" aria-label=\"Close\" (click)=\"modalRef.hide()\">\n      <span aria-hidden=\"true\">&times;</span>\n    </button>\n  </div>\n  <div class=\"modal-body\">\n    <div style=\"padding: 25px;\">\n      <p> Are you sure to delete this Role {{roleObj.roleName}} ?</p>\n      <button (click)=\"modalRef.hide()\" type=\"button\" class=\"pull-left\">NO</button> &nbsp;&nbsp;&nbsp;\n      <button (click)=\"deleteUser()\" type=\"button\" class=\"pull-right\">YES</button> &nbsp;&nbsp;&nbsp;\n    </div>\n  </div>\n</ng-template>";
+
+/***/ }),
+
+/***/ 1686:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+        var result = __webpack_require__(1687);
+
+        if (typeof result === "string") {
+            module.exports = result;
+        } else {
+            module.exports = result.toString();
+        }
+    
+
+/***/ }),
+
+/***/ 1687:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(1688);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(23)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../node_modules/css-loader/index.js!./roles.component.css", function() {
+		var newContent = require("!!../../../../node_modules/css-loader/index.js!./roles.component.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
+/***/ 1688:
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(false);
+// imports
+
+
+// module
+exports.push([module.i, "donut-chart{\r\n  width: 100%;\r\n  height: 100%;\r\n  position: absolute;\r\n}\r\nh4{\r\n    font-size: medium;\r\n    font-weight: 800;\r\n    color: #000;\r\n}\r\n.rbi-box{\r\n    padding: 0px 5px;\r\n    background: #4e81bc;\r\n    border: 1px solid #4e81bc;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.mbb-box{\r\n    padding: 0px 5px;\r\n    background: #8063a2;\r\n    border: 1px solid #8063a2;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.mbb-dc-box{\r\n    padding: 0px 5px;\r\n    background: #9bbb58;\r\n    border: 1px solid #9bbb58;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.rbi-dc-box{\r\n    padding: 0px 5px;\r\n    background: #c0504d;\r\n    border: 1px solid #c0504d;\r\n    font-size: 7px;\r\n    position: relative;\r\n    top: -3px;\r\n}\r\n.datetimepicker-start-end{\r\n\t\t\tpadding : 0 5px;\r\n\t\t\tmargin-right : 0;\r\n\t\t}\r\n\t\t.datetimepicker-start-end input {\r\n\t\t\theight : 30px;\r\n\t\t}\r\n\t\t.datetimepicker-start-end span {\r\n\t\t\tline-height : 30px;\r\n\t\t}\r\n\t\t.fa-calendar{\r\n\t\t\t    font-size : 22px !important;\r\n\t\t\t\t\r\n\t\t}\r\n        .dashboard-txt h1 {\r\n\r\n    margin-bottom: 0px !important;\r\n}\r\n.breadcrumb {\r\n    \r\n     margin-bottom: 0px !important; }", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ 1689:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(48);
+var roles_component_1 = __webpack_require__(1393);
+var ROLES_ROUTER = [
+    {
+        path: '',
+        component: roles_component_1.RolesComponent,
+        pathMatch: 'full'
+    }
+];
+exports.rolesRouter = router_1.RouterModule.forChild(ROLES_ROUTER);
+
+
+/***/ })
+
+});]]></script>
+        <script_name>34.89aadbab.chunk</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-20 07:16:39</sys_created_on>
+        <sys_id>d4b689cbdb3d2300429e2a9a4896198a</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_293519_princenew.34.89aadbab.chunk</sys_name>
+        <sys_package display_value="princenew" source="x_293519_princenew">26ca3025dbfd2300429e2a9a48961958</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="princenew">26ca3025dbfd2300429e2a9a48961958</sys_scope>
+        <sys_update_name>sys_ui_script_d4b689cbdb3d2300429e2a9a4896198a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-11-20 07:21:22</sys_updated_on>
+        <ui_type>0</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>
